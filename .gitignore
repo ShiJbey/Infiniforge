@@ -1,0 +1,5 @@
+*.fbx
+*.obj
+*.mtl
+*~
+*/node/node_modules/
