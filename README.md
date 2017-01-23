@@ -9,10 +9,15 @@ will need to make sure that you have Blender installed and make
 sure that Blender is added to your PATH.
 * You will also need to have Node installed
 
+## To-Do
+* Dockerfile is not complete so it will not build properly
+* Create a new script for the sword proc gen
+* Clean up index.js
 
 ## How to install and run (not using Docker)
-1) ```$ npm install```
-2) ```$ npm start```
+1) ```$ cd node```
+2) ```$ npm install```
+3) ```$ npm start``` or ```$ node index.js```
 
 ## How to install and run (using Docker)
 1) ```$ docker build -t .```
@@ -22,4 +27,4 @@ sure that Blender is added to your PATH.
 * Code for the Blender add-on that needs to be installed prior to running server
 
 This project was made as part of the August Reddit procedural generation challenge
-Found here: [REddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
+Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
