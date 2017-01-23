@@ -30,7 +30,18 @@ def resetScene() :
 # Creates the blade cross-section to be extruded later for building the blade
 def buildBladeCrossSection() :
 	# Create a circle to generate the cross section of the blade
-	bpy.ops.mesh.primitive_circle_add(vertices=8, radius=1, fill_type='NOTHING', calc_uvs=False, view_align=False, enter_editmode=False, location=(0, 0, 0), rotation=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
+	bpy.ops.mesh.primitive_circle_add( vertices = 8,
+                                          radius = 1,
+                                          fill_type = 'NOTHING',
+                                          calc_uvs = False,
+                                          view_align = False,
+                                          enter_editmode = False,
+                                          location = (0, 0, 0),
+                                          rotation=(0, 0, 0),
+                                          layers = ( True, False, False, False, False,
+                                                     False, False, False, False, False,
+                                                     False, False, False, False, False,
+                                                     False, False, False, False, False ) )
 
 	# Select verteces for shapping fuller edges
 	# ...

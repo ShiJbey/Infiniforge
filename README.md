@@ -1,9 +1,23 @@
-#Weapon Forge
-##Goal
-The goal of this project was to create a web interface for procedurally
-generating swords using blender.
+# Weapon Forge
 
-##What this project contains
+Weapon Forge is designed to be a RESTful API that returns JSON
+representations of 3D procedurally generated sword meshes.
+
+## Dependencies
+* If you do not plan to run this application in Docker, then you
+will need to make sure that you have Blender installed and make
+sure that Blender is added to your PATH.
+* You will also need to have Node installed
+
+
+## How to install and run (not using Docker)
+1) ```$ npm install```
+2) ```$ npm start```
+
+## How to install and run (using Docker)
+1) ```$ docker build -t .```
+
+## What this project contains
 * Code for a NodeJs server that handles web requests and connects to Blender
 * Code for the Blender add-on that needs to be installed prior to running server
 
