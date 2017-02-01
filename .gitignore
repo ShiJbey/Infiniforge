@@ -6,3 +6,4 @@
 **/*.txt
 /.vscode
 **/*.stl
+**/mesh-templates/
