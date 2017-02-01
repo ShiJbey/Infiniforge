@@ -8,6 +8,11 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const blenderConnect = require('./blenderConnect.js');
 const weaponTemplates = require('./weapontemplates.js');
+const EventEmitter = require('events');
+
+class ForgeEmitter extends EventEmitter {};
+const forgeEmitter = new ForgeEmitter();
+
 
 let app = express();
 let server;
@@ -24,33 +29,37 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 // Given the filename for a json file,
 // it returns the JSON string to be sent back to
 // the requester
-function GenerateJSONResponse(filename, weaponType, weaponStyle) {
-    var contents = fs.readFileSync("./json/" + filename);
+function GenerateJSONResponse(path, weaponType, weaponStyle) {
+    var contents = fs.readFileSync(path);
 
     var jsonContent = JSON.parse(contents);
     jsonContent.weapon_type = weaponType;
     jsonContent.weapon_style = weaponStyle;
     jsonContent.scale = ( jsonContent.scale !== undefined ) ? 1.0 / json.scale : 1.0;
     
-    return JSON.stringify(jsonContent);
+    return jsonContent;//JSON.stringify(jsonContent);
 }
 
 // Generates a unique filename Given
 // an Ip address
 function GenerateFileName(ip) {
-    // Get the ip of the system that made the request
-    // and replace the periods with dashes
-    var requestingIp = ip.replace(".","-").replace(":","-");
     // Get the current time as a string
     var d = new Date();
-    var timeString = d.toISOString().replace(":","-");
+    var timeString = d.toISOString();
     // Concatenate the two to make a unique filename
-    var filename = requestingIp + timeString + ".json";
-
+    var filename = ip + timeString;
+    filename = filename.replace(/\./g,"").replace(/\:/g,"");
+    filename = filename + + ".json";
     return filename;
 }
 
-function StartRESTAPI() {    
+function StartRESTAPI() {
+
+    forgeEmitter.on('forgeFinished', function(filePath, reqParams, res) {
+        var respJson = GenerateJSONResponse(filePath,reqParams.weaponType,reqParams.weaponStyle);
+        res.json(respJson);
+        fs.unlinkSync(filePath);
+    });    
     
     // Set up base endpoint
     app.get(API_BASE_ROUTE, (req, res) => {
@@ -68,11 +77,7 @@ function StartRESTAPI() {
         }
         var filename = GenerateFileName(req.ip);
 
-        var reqFilePath = blenderConnect.issueRenderRequest(filename, "", templateData);
-
-        var respJson = GenerateJSONResponse(filename,req.params.weaponType,req.params.weaponStyle);
-				
-        res.json(respJson);
+        blenderConnect.issueRenderRequest(filename, "", templateData, forgeEmitter, req.params, res);
     });
 
     // Request for a weapon mesh, providing a seed value
@@ -85,11 +90,7 @@ function StartRESTAPI() {
 
         var filename = GenerateFileName(req.ip);
 
-        var reqFilePath = blenderConnect.issueRenderRequest(filename, seed, templateData);
-
-        var respJson = GenerateJSONResponse(filename,req.params.weaponType,req.params.weaponStyle);
-				
-        res.json(respJson);
+        blenderConnect.issueRenderRequest(filename, seed, templateData, forgeEmitter, req.params, res);
     });
     
     // Handles errors
