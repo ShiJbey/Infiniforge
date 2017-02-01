@@ -5,15 +5,20 @@ const LogManager = require( './logmanager.js' );
 const spawn = require( 'child_process' ).spawn;
 const LOG_NAME = "BlenderConnect";
 	
-module.exports.issueRenderRequest = function ( args ) {
+module.exports.issueRenderRequest = function ( fileName, seed, templateData ) {
+
 	
 	const blender = spawn( 'blender',
 		[ '--background',
 		'--python',
-		`${__dirname}/python/renderSword.py`,
+		`${__dirname}/python/generateSword.py`,
 		'--',
-		__dirname,
-		args.weaponStyle ] );
+		`${__dirname}/json/`,
+		fileName,
+		seed,
+		templateData["baseWidth"],
+		templateData["widthMarginRatio"],
+		templateData["length"]] );
 		
 		blender.stdout.on( 'data', ( data ) => {
 			LogManager.writeToLog(LOG_NAME, 'stdout: ' + data);
@@ -31,5 +36,5 @@ module.exports.issueRenderRequest = function ( args ) {
 			console.log(err);
 		});
 
-		return String(args.weaponStyle) + "sword.json";
+		return fileName;
 }
