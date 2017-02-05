@@ -22,8 +22,4 @@ COPY three-blender/io_three /usr/share/blender/scripts/addons/io_three/
 EXPOSE 8080
  
 # Change to node directory
-CMD cd /node && node index.js 
-
-
-
-
+CMD cd /node && node index.js
