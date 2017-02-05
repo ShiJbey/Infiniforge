@@ -15,7 +15,7 @@ version that is included in this repo.
 1. Clone this repo and ```$ cd WeaponForge```
 2. ```$ cd node```
 3. ```$ npm install```
-3. ```$ npm start``` or ```$ node index.js```
+4. ```$ npm start``` or ```$ node index.js```
 
 ## How to build image and run container (Docker)
 1. ```$ sudo docker build -t weaponforge .```
