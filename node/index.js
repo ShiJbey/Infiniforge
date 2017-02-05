@@ -92,7 +92,7 @@ function StartRESTAPI() {
 
         var filename = GenerateFileName(req.ip);
 
-        blenderConnect.issueRenderRequest(filename, seed, templateData, forgeEmitter, req.params, res);
+        blenderConnect.issueRenderRequest(filename, req.params.seed, templateData, forgeEmitter, req.params, res);
     });
     
     // Handles errors
