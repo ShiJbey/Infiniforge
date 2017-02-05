@@ -4,6 +4,34 @@ import sys
 import bpy
 import bmesh
 from random import random, seed, uniform, randint, randrange
+import addon_utils
+
+# Calculate the slope given the x and y coords of two points
+def calculateSlope(x1, y1, x2, y2):
+    slope = 0
+    slope = (y2 - y1) / (x2 - x1)
+    return slope
+
+# Modify base egde div slopes
+def modifyEdgeWidths(bladeEdgeVertsL, bladeEdgeVertsR, baseBladeWidth, minBladeWidth, maxBladeWidth):
+    # Rules:
+    # The X value of the verts needs to be within the tolerance ratio
+    # with respect to bladeWidth/2
+    # Example: If blade has width .6 and tolerance ratio is .1, then
+    #          the x-values of the bladeEdgeVerts may not exceed
+    #          .3 +/- .06
+
+    divBladeWidth = baseBladeWidth
+    for i in range(len(bladeEdgeVertsL)):
+        #if i = 0:
+        # Randomly choose a value for the 1st vertex
+        #divBladeWidth = uniform(baseBladeWidth,maxBladeWidth)
+        divBladeWidth = baseBladeWidth + (random() * (maxBladeWidth - minBladeWidth))
+        # Set the x values for the verts s the width across is the div width
+        bladeEdgeVertsL[i].co.x = -(divBladeWidth / 2)
+        bladeEdgeVertsR[i].co.x = divBladeWidth / 2
+
+
 
 # Exports the mesh of the sword as a json file
 def exportSwordJson( path="", filen="", swordStyle="" ) :
@@ -12,50 +40,57 @@ def exportSwordJson( path="", filen="", swordStyle="" ) :
                         option_apply_modifiers=False,
                         option_geometry_type='geometry')
 
-# Clears the scene of all other objects
+# Clears the scene of all objects related to sword generation
 def clearScene():
     for obj in bpy.data.objects:
         if obj.name.startswith("Sword"):
             obj.select = True
-        if obj.name.startswith("Handle"):
+        elif obj.name.startswith("Handle"):
             obj.select = True
-        if obj.name.startswith("Guard"):
+        elif obj.name.startswith("Guard"):
+            obj.select = True
+        elif obj.name.startswith("Pommel"):
             obj.select = True
         else:
             obj.select = False
     bpy.ops.object.delete()
 
+
+# Returns the data for the sword object
 def getBladeObj():
     for obj in bpy.data.objects:
         if obj.name.startswith("Sword"):
             return obj
     return None
 
+# Returns data for the handle object
 def getHandleObj():
     for obj in bpy.data.objects:
         if obj.name.startswith("Handle"):
             return obj
     return None
 
+# Returns the data for the guard object
 def getGuardObj():
     for obj in bpy.data.objects:
         if obj.name.startswith("Guard"):
             return obj
     return None
 
+# Returns the data for the pommel object
 def getPommelObj():
     for obj in bpy.data.objects:
         if obj.name.startswith("Pommel"):
             return obj
     return None
 
+# Resets the 3D view cursor to the global origin
 def resetBCursor():
     bpy.context.scene.cursor_location = (0.0, 0.0, 0.0)
 
-# When we extrude using edges only, we are given back
-# a dictionary containing all the verts, edges, and
-# faces in a single array. This function extracts
-# the vertices
+
+# Extracts the BMVert objects from the array containing all
+# objects related to BMesh geometry
 def getVertsFromGeometry(bmGeometry):
     verts = []
     for i in range(len(bmGeometry)):
@@ -63,7 +98,8 @@ def getVertsFromGeometry(bmGeometry):
             verts.append(bmGeometry[i])
     return verts
 
-# Same as getVertsFromGeometry except for edges
+# Extracts the BMEdge objects from the array containing all
+# objects related to BMesh geometry
 def getEdgesFromGeometry(bmGeometry):
     edges = []
     for i in range(len(bmGeometry)):
@@ -71,21 +107,26 @@ def getEdgesFromGeometry(bmGeometry):
             edges.append(bmGeometry[i])
     return edges
 
-def generatePommel(bladeWidth=0.3,  bladeLength=2):
+# Generates a bmesh which will become the pommel of the sword
+# and moves it to the bottom of the handle
+def generatePommel(bladeWidth=0.6,  HandleLength=1.35, pommelBladeWidthRatio=0.66):
+    resetBCursor()
+    pommelWidth = pommelBladeWidthRatio * bladeWidth
     bm = bmesh.new()
-    sphereGeom = bmesh.ops.create_uvsphere(bm, u_segments=4, v_segments=4, diameter=(0.5 * bladeWidth))
+    sphereGeom = bmesh.ops.create_uvsphere(bm, u_segments=4, v_segments=4, diameter=(pommelWidth/2))
     sphereVerts = sphereGeom["verts"]
-    bmesh.ops.translate(bm, vec=(0.0, 0.0, bladeLength * -.25), verts=sphereVerts)
+    bmesh.ops.translate(bm, vec=(0.0, 0.0, -HandleLength), verts=sphereVerts)
     return bm
 
-
-def generateHandle(bladeWidth=0.3, bladeLength=2, handleLength=2.0, handleWidth=0.1):
+# Generates the handel and moves it below the blade
+def generateHandle(bladeWidth=0.6, bladeLength=7, handleLength=1.35, handleWidth=0.3):
     resetBCursor()
     bm = bmesh.new()
     allVerts = []
-    crossSectionVerts = bmesh.ops.create_circle(bm, segments=8, diameter=handleWidth, cap_ends=True)
+    crossSectionVerts = bmesh.ops.create_circle(bm, segments=8, diameter=(handleWidth/2), cap_ends=True)
     crossSectionVerts = crossSectionVerts["verts"]
     crossSectionEdges = bm.edges
+    # Keeps track of all the verteces in the cylinder
     for v in crossSectionVerts:
         allVerts.append(v)
     geom = bmesh.ops.extrude_edge_only(bm, edges=crossSectionEdges)
@@ -93,19 +134,26 @@ def generateHandle(bladeWidth=0.3, bladeLength=2, handleLength=2.0, handleWidth=
     geom = geom["geom"]
     crossSectionVerts = getVertsFromGeometry(geom)
     crossSectionEdges = getEdgesFromGeometry(geom)
+    # Keeps track of all the verteces in the cylinder
     for v in crossSectionVerts:
         allVerts.append(v)
-    bmesh.ops.translate(bm, vec=(0.0, 0.0, (bladeLength * .25)), verts=crossSectionVerts)
+    # Give the cylinder some height
+    bmesh.ops.translate(bm, vec=(0.0, 0.0, handleLength), verts=crossSectionVerts)
     # Moves the handle down
-    bmesh.ops.translate(bm, vec=(0.0, 0.0, 0.0 - ((bladeLength * .25) * .98)), verts=allVerts)
+    bmesh.ops.translate(bm, vec=(0.0, 0.0, -handleLength), verts=allVerts)
+    #bmesh.ops.bridge_loops(bm,edges=crossSectionEdges)
+    #bmesh.ops.holes_fill(bm, edges=crossSectionEdges, sides=1)
+    prepedEdges = bmesh.ops.edgenet_prepare(bm, edges=crossSectionEdges)
+    prepedEdges = prepedEdges["edges"]
+    bmesh.ops.edgenet_fill(bm, edges=prepedEdges)
     return bm
 
-def generateGuard(bladeWidth=0.3):
+def generateGuard(bladeWidth=0.3, guardThickness=1.0, guardBladeWidthRatio=4):
     resetBCursor()
     bm = bmesh.new()
     cubeVerts = bmesh.ops.create_cube(bm, size=bladeWidth)
     cubeVerts = cubeVerts["verts"]
-    bmesh.ops.scale(bm, vec=(2.5, 2.5, 0.2), verts=cubeVerts)
+    bmesh.ops.scale(bm, vec=(guardBladeWidthRatio + 2, guardThickness, 0.2), verts=cubeVerts)
     return bm
     
 # This function is where all the magic happens
@@ -115,15 +163,16 @@ def generateGuard(bladeWidth=0.3):
 def generateBlade(seedVal='',
                   numBaseDivsMax=3,
                   numMidDivsMax=3,
-                  numTipDivsMax=1,
+                  numTipDivsMax=2,
                   minDivHeight=0.2,
-                  bladeWidthMax=1,
-                  bladeWidthMin=0.1,
-                  bladeWidth=0.2,
-                  bladeLength=2,
+                  bladeWidthToleranceRatio=0.2,
+                  bladeWidth=0.6,
+                  bladeLength=7,
+                  bladeThickness=0.03,
+                  fullerWidthRatio=0.33,
                   applyBevel=True,
-                  equalBaseDivs=True,
-                  equalMidDivs=True,
+                  equalBaseDivs=False,
+                  equalMidDivs=False,
                   equalTipDivs=True):
 
     resetBCursor()
@@ -143,36 +192,43 @@ def generateBlade(seedVal='',
     # Now we need to save arrays that refer to the verts on
     # left and right edges. These will be appended to with
     # each round of extrusions in the Z direction
-    rightEdgeVerts = [crossSectionVerts[2]]
-    leftEdgeVerts = [crossSectionVerts[6]]
+    leftBaseEdgeVerts = [crossSectionVerts[2]]
+    rightBaseEdgeVerts = [crossSectionVerts[6]]
+    leftMidEdgeVerts = []
+    rightMidEdgeVerts = []
+    leftTipEdgeVerts = []
+    rightTipEdgeVerts = []
 
     # Now we are going to reposition the verts to give the circle
     # more of a blade cross section look
     # Lets start with moving the top vertex closer to the x-axis
-    bmesh.ops.translate(bm, vec=(0.0, (-0.5 * bladeWidth), 0.0), verts=[crossSectionVerts[0]])
+    crossSectionVerts[0].co.y = bladeThickness / 2
+    crossSectionVerts[0].co.x = 0
     # Now do the same with the bottom
-    bmesh.ops.translate(bm, vec=(0.0, (0.5 * bladeWidth), 0.0), verts=[crossSectionVerts[4]])
+    crossSectionVerts[4].co.y = -(bladeThickness / 2)
+    crossSectionVerts[4].co.x = 0
 
     # Finally we should move the remaining (except L/R Egde) verteces
     # closer to the x-axis
-    bmesh.ops.translate(bm, vec=((0.3 * bladeWidth), (-0.3 * bladeWidth), 0.0), verts=[crossSectionVerts[1]])
-    bmesh.ops.translate(bm, vec=((0.3 * bladeWidth), (0.3 * bladeWidth), 0.0), verts=[crossSectionVerts[3]])
-    bmesh.ops.translate(bm, vec=((-0.3 * bladeWidth), (0.3 * bladeWidth), 0.0), verts=[crossSectionVerts[5]])
-    bmesh.ops.translate(bm, vec=((-0.3 * bladeWidth), (-0.3 * bladeWidth), 0.0), verts=[crossSectionVerts[7]])
+    crossSectionVerts[1].co.y = bladeThickness / 2
+    crossSectionVerts[1].co.x = -((bladeWidth * fullerWidthRatio) / 1)
 
-    # We should now have a diamond shape
-    # DEBUG: return the bmesh to see what we have so far
-    #return bm
+    crossSectionVerts[3].co.y = -(bladeThickness / 2)
+    crossSectionVerts[3].co.x = -((bladeWidth * fullerWidthRatio) / 1)
+
+    crossSectionVerts[5].co.y = -(bladeThickness / 2)
+    crossSectionVerts[5].co.x = ((bladeWidth * fullerWidthRatio) / 1)
+
+    crossSectionVerts[7].co.y = bladeThickness / 2
+    crossSectionVerts[7].co.x = ((bladeWidth * fullerWidthRatio) / 1)
+
 
     # If we are applying a bevel then we should move verteces 0 and 4 closer
     # to the x
     if applyBevel:
-        bmesh.ops.translate(bm, vec=(0.0, (-0.3 * bladeWidth), 0.0), verts=[crossSectionVerts[0]])
-        bmesh.ops.translate(bm, vec=(0.0, (0.3 * bladeWidth), 0.0), verts=[crossSectionVerts[4]])
-    
-    # We should now have a finished cross-section for the blade
-    # DEBUG: return the bmesh to see what we have so far
-    #return bm
+        crossSectionVerts[0].co.y = crossSectionVerts[0].co.y * .5
+        crossSectionVerts[4].co.y = crossSectionVerts[0].co.y * .5
+   
 
     # Now we determine the number of divisions for each section
     numBaseDivs = randint(1, numBaseDivsMax)
@@ -184,6 +240,7 @@ def generateBlade(seedVal='',
     portionForBase = .25
     portionForMid = .65
     portionForTip = 1 - portionForBase - portionForMid
+
     # Now we need to determine the height of each section
     baseHeight = bladeLength * portionForBase
     midHeight = bladeLength * portionForMid
@@ -220,8 +277,9 @@ def generateBlade(seedVal='',
             crossSectionVerts = getVertsFromGeometry(geom)
             crossSectionEdges = getEdgesFromGeometry(geom)
             # Update the arrays containing edges
-            rightEdgeVerts.append(crossSectionVerts[2])
-            leftEdgeVerts.append(crossSectionVerts[6])
+            leftBaseEdgeVerts.append(crossSectionVerts[2])
+            rightBaseEdgeVerts.append(crossSectionVerts[6])
+            
             # Now we take the new verts created and translate them in the z direction
             # by equalBaseDivHeight
             bmesh.ops.translate(bm, vec=(0.0, 0.0, equalBaseDivHeight), verts=crossSectionVerts)
@@ -233,7 +291,7 @@ def generateBlade(seedVal='',
             else:
                 # Choose a number between minDivHeight and the amount of space left
                 maxDivHeight = spaceLeft - (minDivHeight * (numBaseDivs - i))
-                divHeight = random(minDivHeight, maxDivHeight)
+                divHeight = uniform(minDivHeight, maxDivHeight)
 
             spaceLeft = spaceLeft - divHeight
             #Extrude
@@ -242,11 +300,14 @@ def generateBlade(seedVal='',
             crossSectionVerts = getVertsFromGeometry(geom)
             crossSectionEdges = getEdgesFromGeometry(geom)
             # Update the arrays containing edges
-            rightEdgeVerts.append(crossSectionVerts[2])
-            leftEdgeVerts.append(crossSectionVerts[6])
+            leftBaseEdgeVerts.append(crossSectionVerts[2])
+            rightBaseEdgeVerts.append(crossSectionVerts[6])
             # Now we take the new verts created and translate them in the z direction
             # by divHeight
             bmesh.ops.translate(bm, vec=(0.0, 0.0, divHeight), verts=crossSectionVerts)
+        if i == numBaseDivs - 1:
+            leftMidEdgeVerts.append(leftBaseEdgeVerts[-1])
+            rightMidEdgeVerts.append(rightBaseEdgeVerts[-1])
             
     # Extrude once for every division within the mid
     spaceLeft = midHeight
@@ -257,6 +318,10 @@ def generateBlade(seedVal='',
             geom = geom["geom"]
             crossSectionVerts = getVertsFromGeometry(geom)
             crossSectionEdges = getEdgesFromGeometry(geom)
+            # Update the arrays containing edges
+            leftMidEdgeVerts.append(crossSectionVerts[2])
+            rightMidEdgeVerts.append(crossSectionVerts[6])
+            
             bmesh.ops.translate(bm, vec=(0.0, 0.0, equalMidDivHeight), verts=crossSectionVerts)
         else:
             # Choose a number between minDivHeight and the amount of space left
@@ -267,17 +332,20 @@ def generateBlade(seedVal='',
             else:
                 # Choose a number between minDivHeight and max
                 maxDivHeight = spaceLeft - (minDivHeight * (numMidDivs - i))
-                divHeight = random(minDivHeight, maxDivHeight)
+                divHeight = uniform(minDivHeight, maxDivHeight)
 
             spaceLeft = spaceLeft - divHeight
             geom = bmesh.ops.extrude_edge_only(bm, edges=crossSectionEdges)
             geom = geom["geom"]
             crossSectionVerts = getVertsFromGeometry(geom)
             crossSectionEdges = getEdgesFromGeometry(geom)
-            # Update the arrays containing edges
-            rightEdgeVerts.append(crossSectionVerts[2])
-            leftEdgeVerts.append(crossSectionVerts[6])
+            leftMidEdgeVerts.append(crossSectionVerts[2])
+            rightMidEdgeVerts.append(crossSectionVerts[6])
             bmesh.ops.translate(bm, vec=(0.0, 0.0, divHeight), verts=crossSectionVerts)
+        if i == numMidDivs - 1:
+            leftTipEdgeVerts.append(leftMidEdgeVerts[-1])
+            rightTipEdgeVerts.append(rightMidEdgeVerts[-1])
+
     # Extrude once for every division within the tip
     spaceLeft = tipHeight
     for i in range(numTipDivs):
@@ -288,8 +356,9 @@ def generateBlade(seedVal='',
             crossSectionVerts = getVertsFromGeometry(geom)
             crossSectionEdges = getEdgesFromGeometry(geom)
             # Update the arrays containing edges
-            rightEdgeVerts.append(crossSectionVerts[2])
-            leftEdgeVerts.append(crossSectionVerts[6])
+            leftTipEdgeVerts.append(crossSectionVerts[2])
+            rightTipEdgeVerts.append(crossSectionVerts[6])
+            
             bmesh.ops.translate(bm, vec=(0.0, 0.0, equalTipDivHeight), verts=crossSectionVerts)
         else:
             # Choose a number between minDivHeight and the amount of space left
@@ -300,7 +369,7 @@ def generateBlade(seedVal='',
             else:
                 # Choose a number between minDivHeight and max
                 maxDivHeight = spaceLeft - (minDivHeight * (numTipDivs - i))
-                divHeight = random(minDivHeight, maxDivHeight)
+                divHeight = uniform(minDivHeight, maxDivHeight)
 
             spaceLeft = spaceLeft - divHeight
             geom = bmesh.ops.extrude_edge_only(bm, edges=crossSectionEdges)
@@ -308,8 +377,8 @@ def generateBlade(seedVal='',
             crossSectionVerts = getVertsFromGeometry(geom)
             crossSectionEdges = getEdgesFromGeometry(geom)
             # Update the arrays containing edges
-            rightEdgeVerts.append(crossSectionVerts[2])
-            leftEdgeVerts.append(crossSectionVerts[6])
+            leftTipEdgeVerts.append(crossSectionVerts[2])
+            rightTipEdgeVerts.append(crossSectionVerts[6])
             bmesh.ops.translate(bm, vec=(0.0, 0.0, divHeight), verts=crossSectionVerts)
         
         # This should create the tip of the blade
@@ -317,6 +386,18 @@ def generateBlade(seedVal='',
             for v in crossSectionVerts:
                 v.co.x = 0
                 v.co.y = 0
+    
+    # Now we apply Modifications to the edges
+    minBladeWidth = bladeWidth - (bladeWidth * bladeWidthToleranceRatio)
+    maxBladeWidth = bladeWidth + (bladeWidth * bladeWidthToleranceRatio) + 1
+    
+    print(leftBaseEdgeVerts)
+    
+    modifyEdgeWidths(leftBaseEdgeVerts, rightBaseEdgeVerts, bladeWidth, minBladeWidth, maxBladeWidth)
+    modifyEdgeWidths(leftMidEdgeVerts, rightMidEdgeVerts, bladeWidth, minBladeWidth, maxBladeWidth)
+    
+    
+    
 
     return bm
 
@@ -347,8 +428,8 @@ class AddSword(bpy.types.Operator):
     length = FloatProperty(
         name="Max Length",
         description="Maximum length the blade may be",
-        min=2.0, max=2.5,
-        default=2.5,
+        min=2.0, max=10,
+        default=7,
         )
     
     width = FloatProperty(
@@ -385,6 +466,18 @@ class AddSword(bpy.types.Operator):
             min=1, max=5,
             default = 2,
         )
+    
+    scaleSword = BoolProperty(
+        name="Scale Sword?",
+        description="Do we scale thw sword or not",
+        default=True,
+    )
+    scaleFactor = FloatProperty(
+        name="Scale Factor",
+        description="Scales the x,y,z coords of the sword by a factor",
+        min=0.0, max=1.0,
+        default=1.0,
+    )
 
     layers = BoolVectorProperty(
             name="Layers",
@@ -417,8 +510,7 @@ class AddSword(bpy.types.Operator):
             seedVal=self.seedVal,
             bladeWidth=self.width,
             bladeLength=self.length,
-            bladeWidthMin=(self.width - (self.width * self.widthMarginRatio)),
-            bladeWidthMax=(self.width + (self.width * self.widthMarginRatio))
+            bladeWidthToleranceRatio=self.widthMarginRatio
         )
         # Set the mesh to the bmesh
         swordBM.to_mesh(mesh)
@@ -461,6 +553,12 @@ class AddSword(bpy.types.Operator):
         bpy.context.scene.objects.active = blade
         bpy.ops.object.join()
 
+        # Optional scale
+        if self.scaleSword:
+            bpy.context.object.scale[0] = self.scaleFactor
+            bpy.context.object.scale[1] = self.scaleFactor
+            bpy.context.object.scale[2] = self.scaleFactor
+
         return {'FINISHED'}
 
 
@@ -476,6 +574,8 @@ def unregister():
     bpy.types.INFO_MT_mesh_add.remove(menu_func)
 
 if __name__ == "__main__":
+    addon_utils.enable("io_three")
+
     register()
 
     # Get command line arguments
@@ -491,7 +591,7 @@ if __name__ == "__main__":
         widthMarginRatio = float(argv[4])
         length =  float(argv[5])
         # Create the sword
-        bpy.ops.mesh.sword_add(seedVal=seedVal, length=length, width=baseWidth, widthMarginRatio=widthMarginRatio)
+        bpy.ops.mesh.sword_add(seedVal=seedVal, width=baseWidth, widthMarginRatio=widthMarginRatio, scaleFactor=.25)
         # Export the sword
         exportSwordJson(path=savePath,filen=fileName)
     

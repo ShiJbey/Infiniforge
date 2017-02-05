@@ -76,8 +76,10 @@ function StartRESTAPI() {
             res.status(500).send("Invalid weapon type and/or style");
         }
         var filename = GenerateFileName(req.ip);
-
-        blenderConnect.issueRenderRequest(filename, "", templateData, forgeEmitter, req.params, res);
+        // No seed was given so we pass the current time
+        var cd = new Date();
+        seedVal = cd.toString();
+        blenderConnect.issueRenderRequest(filename, seedVal, templateData, forgeEmitter, req.params, res);
     });
 
     // Request for a weapon mesh, providing a seed value
