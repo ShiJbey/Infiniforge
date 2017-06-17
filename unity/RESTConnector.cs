@@ -32,7 +32,7 @@ public class RESTConnector : MonoBehaviour {
         public int[][] uvs = null;            // Stores Uv information
         public string weapon_type = null;   // Type of weapon represented by this mesh
         public string weapon_style = null;  // Style of the weapon type represented by this mesh
-        public float scale = -1f;    // Scale of the mesh given
+        public float scale = 1f;    // Scale of the mesh given
     }
 
     int GetNumUVLayers()
@@ -51,20 +51,7 @@ public class RESTConnector : MonoBehaviour {
         return nUvLayers;
     }
 
-    // Checks if a bit at a given position within the bit 
-    // representation of number is set to 1
-    public bool isBitSet(int value, int position)
-    {
-        int result = value & (1 << position);
-        if (result != 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    
 
     // If wMesh is not null then we generate a new mesh for this object
     public void GenerateMesh()
@@ -89,18 +76,53 @@ public class RESTConnector : MonoBehaviour {
         mesh.RecalculateNormals();
     }
 
+    // Checks if a bit at a given position within the binary 
+    // representation of number is set to 1
+    public bool isBitSet(int value, int position)
+    {
+        int result = value & (1 << position);
+        if (result != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void AssignVertices()
+    {
+        if (wMesh == null)
+        {
+            return;
+        }
+
+        if (wMesh.vertices.Length < 3 || wMesh.vertices.Length % 3 != 0)
+        {
+            return;
+        }
+
+        float scale = wMesh.scale;
+        
+        for (int i = 0; i < wMesh.vertices.Length; i+=3)
+        {
+            vertices.Add (new Vector3(wMesh.vertices[i] * scale, wMesh.vertices[i + 1] * scale, wMesh.vertices[i + 2] * scale));
+        }
+    }
+
 
     // Uses the faces array in wMesh to set the triangles
     void AssignTriangles()
     {
         int offset = 0;
         int zLength = wMesh.faces.Length;
+        
         int[] faces = wMesh.faces;
 
-        while (offset + 3 < zLength)
+        while (offset < zLength)
         {
-            int type = faces[offset];
-            offset += 1;
+            int type = faces[offset++];
 
             bool isQuad = isBitSet(type, 0);
             bool hasMaterial = isBitSet(type, 1);
@@ -123,6 +145,7 @@ public class RESTConnector : MonoBehaviour {
                     offset++;
                 }
                     
+               
                 if (hasFaceVertexUv)
                 {
                     int nUvLayers = GetNumUVLayers();
@@ -229,7 +252,7 @@ public class RESTConnector : MonoBehaviour {
 
     void Start()
     {
-        //StartCoroutine(GetJsonData());
+
     }
 
     void Update()
@@ -254,25 +277,6 @@ public class RESTConnector : MonoBehaviour {
             //Debug.Log(www.downloadHandler.text);
             wMesh = JsonUtility.FromJson<WeaponMesh> (www.downloadHandler.text);
             GenerateMesh();
-        }
-    }
-
-    void AssignVertices()
-    {
-        if (wMesh == null)
-        {
-            return;
-        }
-        if (wMesh.vertices.Length < 3 || wMesh.vertices.Length % 3 != 0)
-        {
-            return;
-        }
-
-        float scale = wMesh.scale;
-        
-        for (int i = 0; i < wMesh.vertices.Length; i+=3)
-        {
-            vertices.Add (new Vector3(wMesh.vertices[i] * scale, wMesh.vertices[i + 1] * scale, wMesh.vertices[i + 2] * scale));
         }
     }
 
