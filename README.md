@@ -1,6 +1,6 @@
-# Weapon Forge
+# Infiniforge Forge (Infinite Forge)
 
-Weapon Forge is designed to be a NodeJS RESTful API that returns JSON
+InfiniForge is designed to be a NodeJS RESTful API that returns JSON
 representations of procedurally generated 3D sword meshes.
 
 ## Dependencies when not using Docker
@@ -24,10 +24,6 @@ representations of procedurally generated 3D sword meshes.
 
 ## Notes/Warnings:
 * Unity currently does not support the importing of 2D arrays from JSON so I converted the 2D array of uv layer values for the mesh from a 2D array to a 1D array.
-
-## To Do:
-* Fix sandbox route so that users do not need unity to view swords
-* Add a REST param for desired platform so that the JSON may be tailored for a specific importer.
 
 This project was originally made as part of the August Reddit procedural generation challenge
 Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
