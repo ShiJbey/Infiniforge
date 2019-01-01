@@ -1,13 +1,10 @@
-# Infiniforge Forge (Infinite Forge)
+# Infiniforge (Deprecated)
 
 InfiniForge is designed to be a NodeJS RESTful API that returns JSON
 representations of procedurally generated 3D sword meshes.
 
-## Dependencies when not using Docker
-* Node 6.9.4 or newer
-
 ## How to install and run (not using Docker)
-1. Clone this repo and ```$ cd WeaponForge```
+1. Clone this repo and ```$ cd infiniforge```
 2. ```$ cd node```
 3. ```$ npm install```
 4. ```$ npm start``` or ```$ node index.js```
