@@ -4,6 +4,6 @@
 **/node_modules
 **/rd
 **/*.txt
-/.vscode
+**/.vscode
 **/*.stl
 **/mesh-templates/
