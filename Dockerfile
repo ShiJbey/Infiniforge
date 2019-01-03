@@ -1,4 +1,4 @@
-#This file builds weapon forge into a NodeJS docker image
+#This file builds Infiniforge into a NodeJS docker image
 FROM node:boron
 
 # Create app directory

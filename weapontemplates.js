@@ -1,4 +1,4 @@
-// JS Object that organizes the supported weapon types and styles
+// Defines what weapons are currently suppoted in the game
 const SupportedWeapons = {
     "sword":{
         "short": {"baseWidth":.2, "widthMarginRatio":.1, "length":5},
