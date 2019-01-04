@@ -1,0 +1,12 @@
+{
+    "comments": false,
+    "presets": [
+        "@babel/preset-env",
+        "@babel/preset-typescript",
+        "minify"
+    ],
+    "plugins": [
+        "@babel/proposal-class-properties",
+        "@babel/proposal-object-rest-spread"
+    ]
+}

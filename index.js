@@ -9,9 +9,11 @@ const colors = require('colors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const logger = require('./logmanager.js');
 const serveStatic = require('serve-static');
-const weaponTemplates = require('weapontemplates');
+
+const logger = require('./logmanager');
+const weaponTemplates = require('./weapontemplates');
+const SwordGenerator = require('./build/swordgenerator');
 
 // Configure the Express Application
 const app = express();
@@ -65,22 +67,20 @@ function StartRESTAPI() {
 
         // No seed was given so we pass the current time
         var cd = new Date();
-        seedVal = cd.toString();
+        var seed = cd.toString();
 
         // Create a new sword Generator for this request
-        //var generator = new SwordGen.SwordGenerator(seedVal, req.params.weaponStyle, templateData);
-        //var sword = generator.generateSword();
+        var generator = new SwordGenerator.SwordGenerator(seed);
+        var sword = generator.generateSword(templateData, SwordGenerator.DEFAULT_GEN_PARAMS);
 
         // Temporary print strings
         console.log("====FORGE REQUEST====\n" +
                     `From: ${req.ip}\n` +
                     `Weapon Type: ${req.params.weaponType}\n` +
                     `Weapon Style: ${req.params.weaponStyle}\n` +
-                    `Generated Seed: ${seedVal}`);
+                    `Generated Seed: ${seed}`);
         console.log("====FORGE REQUEST SATISFIED====");
-        res.write("Request Handled");
-        //res.json(sword.toJSON());
-
+        res.status(200).json(sword.export_to_gltf());
     });
 
     // Request for a weapon mesh, providing a seed value
@@ -104,7 +104,7 @@ function StartRESTAPI() {
                     `Weapon Style: ${req.params.weaponStyle}\n` +
                     `Seed: ${req.params.seed}`);
         console.log("====FORGE REQUEST SATISFIED====");
-        res.write("Request Handled");
+        res.status(200).json({server_status: "Handled"});
     });
 
     // Handles errors
