@@ -2,7 +2,7 @@
 const SupportedWeapons = {
     "sword":{
         "short": {"baseWidth":.2, "widthMarginRatio":.1, "length":5},
-        "long": {"baseWidth":.2, "widthMarginRatio":.1, "length":3},
+        "long": {"baseWidth":1.0, "widthMarginRatio":.1, "length":3},
         "great": {"baseWidth":.3, "widthMarginRatio":.1, "length":7}
     }
 }

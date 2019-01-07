@@ -48,6 +48,30 @@ class GeometryData {
         this.normals.push(y);
         this.normals.push(z);
     }
+
+    toString(property: string) : string {
+        property = property.toLocaleLowerCase();
+        var property_array : number[] = [];
+
+        if (property == "vertex" || property == "vertices") {
+            property_array = this.vertices;
+        } else if (property == "triangle" || property == "triangles") {
+            property_array = this.triangles;
+        } else if (property == "color" || property == "colors") {
+            property_array = this.colors;
+        } else if (property == "normal" || property == "normals") {
+            property_array = this.normals;
+        }
+
+        var ret = "";
+        var count = 0;
+        for (var i = 0; i < property_array.length - 2; /*Increments in loop body*/) {
+            ret = ret + ` (${count}) [${property_array[i]}, ${property_array[i + 1]}, ${property_array[i + 2]}]\n`;
+            i += 3;
+            count++;
+        }
+        return ret;
+    }
 }
 
 /**
@@ -176,11 +200,11 @@ export interface GenerationParameters {
 }
 
 export const DEFAULT_GEN_PARAMS : GenerationParameters = {
-    maxBaseDivs: 3,
-    maxMidDivs : 3,
-    maxTipDivs : 3,
+    maxBaseDivs: 10,
+    maxMidDivs : 10,
+    maxTipDivs : 5,
     bladeWidthToleranceRatio : 0.3,
-    bladeThickness : 0.3,
+    bladeThickness : 0.5,
     fullerWidthRatio : 0.5,
     equalBaseDivs : false,
     equalMidDivs : false,
@@ -240,6 +264,11 @@ export class SwordGenerator {
         var numTipDivs = Math.floor(this.randGenerator() * genParams.maxTipDivs) + 1;
         var totalBladeDivs = numBaseDivs + numMidDivs + numTipDivs;
 
+        //console.log(`DEBUG:: Number of Base Divisions: ${numBaseDivs}`);
+        //console.log(`DEBUG:: Number of Mid Divisions: ${numMidDivs}`);
+        //console.log(`DEBUG:: Number of Tip Divisions: ${numTipDivs}`);
+        //console.log(`DEBUG:: Total number of Divisions: ${totalBladeDivs}`);
+
         // Determine how much of the blade length is allocated to each section
         var baseSectionLength = bladeLength * genParams.bladeBaseProportion;
         var midSectionLength = bladeLength * genParams.bladeMidProportion;
@@ -253,11 +282,14 @@ export class SwordGenerator {
         // Create the blade cross section to start
         var crosssectionGeometry = SwordGenerator.createBladeCrossSection(template.baseWidth, fullerDepth, fullerWidth, genParams);
         sword.geometryData.vertices = sword.geometryData.vertices.concat(crosssectionGeometry.vertices);
+        //console.log(`DEBUG:: Vertices after creating cross-section:\n${sword.geometryData.toString("vertex")}`);
 
         // Extrude blade cross-section to full length with all the divisions present
-        var generatedGeometry = SwordGenerator.extrudeTopMultiple(sword.geometryData.vertices, new THREE.Vector3(0.0, bladeLength/totalBladeDivs, 0.0), totalBladeDivs);
+        var generatedGeometry = SwordGenerator.extrudeTopMultiple(sword.geometryData.vertices, new THREE.Vector3(0.0, 1.0, 0.0), 2);
         sword.geometryData.vertices = sword.geometryData.vertices.concat(generatedGeometry.vertices);
         sword.geometryData.triangles = sword.geometryData.triangles.concat(generatedGeometry.triangles);
+        //console.log(`DEBUG:: Vertices after creating cross-section:\n${sword.geometryData.toString("vertex")}`);
+        //console.log(`DEBUG:: Triangles after creating cross-section:\n${sword.geometryData.toString("triangle")}`);
 
         // Modify the vertices at each level to be a the desired heights
         var vertIndicesInLayers : number[][]= SwordGenerator.getAllVertsIndicesAsLayers(sword.geometryData.vertices, totalBladeDivs, bladeLength);
@@ -269,7 +301,7 @@ export class SwordGenerator {
         // Modify the edges to make the blade look unique
         var leftEdgeVertIndices: number[] = SwordGenerator.getLeftEdgeVertIndices(sword.geometryData.vertices, template.baseWidth);
         var rightEdgeVertIndices: number[] = SwordGenerator.getRightEdgeVertIndices(sword.geometryData.vertices, template.baseWidth);
-        sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this, sword.geometryData.vertices, leftEdgeVertIndices, rightEdgeVertIndices, template.baseWidth, genParams.bladeWidthToleranceRatio);
+        //sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this, sword.geometryData.vertices, leftEdgeVertIndices, rightEdgeVertIndices, template.baseWidth, genParams.bladeWidthToleranceRatio);
 
         // Place a point at the tip of the blade
         var topFaceVertIndices: number[] = SwordGenerator.getTopVertIndices(sword.geometryData.vertices);
@@ -312,13 +344,11 @@ export class SwordGenerator {
      */
     buildGuard(template : SwordTemplate, genParams : GenerationParameters,
         sword : Sword,
-        bladeWidth : number = 0.3,
-        bladethickness : number = 0.3,
-        guardThickness : number = 1.0,
-        guardBladeRatio : number = 4.0) : Sword {
+        guardThickness : number = 0.1,
+        guardBladeRatio : number = 1.25) : Sword {
 
         // Create a simple box
-        var guardGeometry = new THREE.BoxGeometry( guardBladeRatio * bladeWidth, .2, guardThickness);
+        var guardGeometry = new THREE.BoxGeometry(guardBladeRatio * template.baseWidth, guardThickness, genParams.bladeThickness * guardBladeRatio);
 
         // Convert the box to a buffer geometry
         var guardBufferGeometry = new THREE.BufferGeometry().fromGeometry(guardGeometry);
@@ -353,7 +383,7 @@ export class SwordGenerator {
             }
         } else {
             // We need to add index values based on the vertices being added
-            Assert.equal((vertices.length / 3) % 3, 0, "ERROR:: Verices are not organized into triangles");
+            Assert.equal(vertices.count % 3, 0, "ERROR:: Verices are not organized into triangles");
             for (var i = 0; i < vertices.count;) {
                 sword.geometryData.addTriangle(priorNumVertices + i, priorNumVertices + i + 1, priorNumVertices + i + 2);
                 i += 3;
@@ -410,7 +440,7 @@ export class SwordGenerator {
             }
         } else {
             // We need to add index values based on the vertices being added
-            Assert.equal((vertices.length / 3) % 3, 0, "ERROR:: Verices are not organized into triangles");
+            Assert.equal(vertices.count % 3, 0, "ERROR:: Verices are not organized into triangles");
             for (var i = 0; i < vertices.count;) {
                 sword.geometryData.addTriangle(priorNumVertices + i, priorNumVertices + i + 1, priorNumVertices + i + 2);
                 i += 3;
@@ -465,7 +495,7 @@ export class SwordGenerator {
             }
         } else {
             // We need to add index values based on the vertices being added
-            Assert.equal((vertices.length / 3) % 3, 0, "ERROR:: Verices are not organized into triangles");
+            Assert.equal(vertices.count % 3, 0, "ERROR:: Verices are not organized into triangles");
             for (var i = 0; i < vertices.count;) {
                 sword.geometryData.addTriangle(priorNumVertices + i, priorNumVertices + i + 1, priorNumVertices + i + 2);
                 i += 3;
@@ -486,23 +516,9 @@ export class SwordGenerator {
         var geometryData = new GeometryData();
 
         // Back side of the cross-section
-        geometryData.addVertex(bladeWidth / -2.0, 0.0, 0.0);
+        geometryData.addVertex(-(bladeWidth / 2.0), 0.0, 0.0);
 
-        geometryData.addVertex(fullerWidth / -2.0, 0.0, genParams.bladeThickness / 2.0);
-
-        if (genParams.applyFuller) {
-            geometryData.addVertex(0.0, 0.0, (genParams.bladeThickness / -2.0) + fullerDepth);
-        }
-        else {
-            geometryData.addVertex(0.0, 0.0, genParams.bladeThickness / -2.0);
-        }
-
-        geometryData.addVertex(fullerWidth / 2.0, 0.0, genParams.bladeThickness / -2.0);
-
-        geometryData.addVertex(bladeWidth / 2.0, 0.0, 0.0);
-
-        // Front side of cross-section
-        geometryData.addVertex(fullerWidth / 2.0, 0.0, genParams.bladeThickness / 2.0);
+        geometryData.addVertex(-(fullerWidth / 2.0), 0.0, genParams.bladeThickness / 2.0);
 
         if (genParams.applyFuller) {
             geometryData.addVertex(0.0, 0.0, (genParams.bladeThickness / 2.0) - fullerDepth);
@@ -511,7 +527,21 @@ export class SwordGenerator {
             geometryData.addVertex(0.0, 0.0, genParams.bladeThickness / 2.0);
         }
 
-        geometryData.addVertex(fullerWidth / -2.0, 0.0, genParams.bladeThickness / 2.0);
+        geometryData.addVertex(fullerWidth / 2.0, 0.0, genParams.bladeThickness / 2.0);
+
+        geometryData.addVertex(bladeWidth / 2.0, 0.0, 0.0);
+
+        // Front side of cross-section
+        geometryData.addVertex(fullerWidth / 2.0, 0.0, -(genParams.bladeThickness / 2.0));
+
+        if (genParams.applyFuller) {
+            geometryData.addVertex(0.0, 0.0, -(genParams.bladeThickness / 2.0) + fullerDepth);
+        }
+        else {
+            geometryData.addVertex(0.0, 0.0, -(genParams.bladeThickness / 2.0));
+        }
+
+        geometryData.addVertex(-(fullerWidth / 2.0), 0.0, -(genParams.bladeThickness / 2.0));
 
 
         // Check number of vertices
@@ -533,13 +563,16 @@ export class SwordGenerator {
      * Returns: The new vertices and the triangles created during extrusion
      */
     static extrudeTopMultiple(vertices: number[], direction : THREE.Vector3, numRepeat : number) : GeometryData {
+        // Make a copy just in case this is the actual array
+        vertices = vertices.slice()
 
         var generatedGeometry = new GeometryData();
 
         for (var i = 0; i < numRepeat; i++) {
-            var result : GeometryData = SwordGenerator.extrudeTop(vertices.slice(), direction);
+            var result : GeometryData = SwordGenerator.extrudeTop(vertices, direction);
+            vertices = vertices.concat(result.vertices);
             generatedGeometry.vertices = generatedGeometry.vertices.concat(result.vertices);
-            generatedGeometry.triangles = generatedGeometry.vertices.concat(result.triangles);
+            generatedGeometry.triangles = generatedGeometry.triangles.concat(result.triangles);
         }
 
         return generatedGeometry;
@@ -600,23 +633,30 @@ export class SwordGenerator {
             if (i == faceIndices.length - 1) {
                 // CW
                 // Bottom-left triangle
-                generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[0], faceIndices[i]);
+                //generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[0], faceIndices[i]);
+                generatedGeometry.addTriangle(faceIndices[i], faceIndices[0], newVertexIndices[j]);
 
                 // Top-right triangle
-                generatedGeometry.addTriangle(newVertexIndices[0], faceIndices[0], newVertexIndices[j]);
+                //generatedGeometry.addTriangle(newVertexIndices[0], faceIndices[0], newVertexIndices[j]);
+                generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[0], newVertexIndices[0]);
             }
             // Otherwise all other sides are done the same
             else {
                 // CW
                 // Bottom-left triangle
-                generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[i + 1], faceIndices[i]);
+                //generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[i + 1], faceIndices[i]);
+                generatedGeometry.addTriangle(faceIndices[i], faceIndices[i + 1], newVertexIndices[j]);
 
                 // Top-right triangle
-                generatedGeometry.addTriangle(newVertexIndices[j + 1], faceIndices[i + 1], newVertexIndices[j]);
+                //generatedGeometry.addTriangle(newVertexIndices[j + 1], faceIndices[i + 1], newVertexIndices[j]);
+                generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[i + 1], newVertexIndices[j + 1]);
             }
             i++;
             j++;
         }
+
+        console.log(`DEBUG:: Triangles after extruding cross-section:\n${generatedGeometry.toString("triangle")}`);
+
 
         return generatedGeometry;
     }
@@ -678,7 +718,7 @@ export class SwordGenerator {
     /**
      * Given: all the vertices in the model, the number of subdivision in the blade, and the blade length
      * Returns: a 2D array of the vertex indices, where each row is one layer containing vertices all at the same height
-     * ## Note: Assumes that all the blade divs are evenly spaced by 1 in the y-direction
+     * ## Note: Assumes that all the blade divs are evenly spaced by 1.0 in the y-direction
      */
     static getAllVertsIndicesAsLayers(vertices : number[], numDivs : number, bladeLength: number) : number[][] {
         var vertexIndices = [];
