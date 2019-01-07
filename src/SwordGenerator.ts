@@ -1,16 +1,53 @@
 /// <reference types="three" />
 /// <reference types="seedrandom" />
+/// <reference types="three/three-gltfexporter" />
 
 import * as THREE from "three";
 import * as seedrandom from "seedrandom";
-import { BinaryData } from "fs";
-
+//import GLTFExporter from 'three-gltf-exporter';
+import * as Assert from 'assert';
+const GLTFExporter = require('../lib/GLTFExporter');
 /**
- * Output object used when extruding faces
+ * Output object used when extruding faces or creating
+ * additional geometry
  */
-interface VerticesAndTriangles {
+class GeometryData {
+
     vertices : number[];
     triangles : number[];
+    colors : number[];
+    normals : number[];
+
+    constructor() {
+        this.vertices = [];
+        this.triangles = [];
+        this.colors = [];
+        this.normals = [];
+    }
+
+    addVertex(x: number, y: number, z:number) : void {
+        this.vertices.push(x);
+        this.vertices.push(y);
+        this.vertices.push(z);
+    }
+
+    addTriangle(x: number, y: number, z:number) : void {
+        this.triangles.push(x);
+        this.triangles.push(y);
+        this.triangles.push(z);
+    }
+
+    addColor(x: number, y: number, z:number) : void {
+        this.colors.push(x);
+        this.colors.push(y);
+        this.colors.push(z);
+    }
+
+    addNormal(x: number, y: number, z:number) : void {
+        this.normals.push(x);
+        this.normals.push(y);
+        this.normals.push(z);
+    }
 }
 
 /**
@@ -38,44 +75,80 @@ function getSlope(x1 : number,  y1 : number, x2 : number, y2 : number) : number 
 export class Sword {
 
     public style : string;
-    public geometry : THREE.BufferGeometry;
-    public triangles : number[];
-    public vertices : number[];
-    public colors : number[];
-    public normals : number[];
+    public geometry : THREE.BufferGeometry | undefined;
+    public mesh : THREE.Mesh | undefined;
+    public geometryData : GeometryData;
 
     constructor(style: string) {
         this.style = style;
-        this.geometry = new THREE.BufferGeometry();
-        this.triangles = [];
-        this.vertices = [];
-        this.colors = [];
-        this.normals = [];
+        this.geometryData = new GeometryData();
     }
 
-    export_to_gltf() {
+    export_to_gltf() : Promise<any> {
+
+        // Check number of vertices
+        if (this.geometryData.vertices != undefined) {
+            Assert.notEqual(this.geometryData.vertices.length, 0, "ERROR:: Model does not have any vertices defined");
+            Assert.equal(this.geometryData.vertices.length % 3, 0, "ERROR:: Model has the incorrect number of vertex components");
+        } else {
+            throw "ERROR:: Model does not have any vertices defined"
+        }
+
+        // Check the number of triangles
+        if (this.geometryData.triangles != undefined) {
+            Assert.notEqual(this.geometryData.triangles.length, "ERROR:: Model does not have any triangles defined");
+            Assert.equal(this.geometryData.triangles.length % 3, 0, "ERROR:: Model has the incorrect number of triangle components");
+        } else {
+            throw "ERROR:: Model does not have any triangles defined"
+        }
+
+        // Check number of colors
+        if (this.geometryData.colors != undefined) {
+            Assert.notEqual(this.geometryData.colors.length, 0, "ERROR:: Model does not have any colors defined");
+            Assert.equal(this.geometryData.colors.length % 3, 0, "ERROR:: Model has the incorrect number of color components");
+        } else {
+            throw "ERROR:: Model does not have any colors defined";
+        }
+
+        // Check number of normals
+        if (this.geometryData.normals != undefined) {
+            Assert.notEqual(this.geometryData.normals.length, 0, "ERROR:: Model does not have any normals defined");
+            Assert.equal(this.geometryData.normals.length % 3, 0, "ERROR:: Model has the incorrect number of normal components");
+        } else {
+            throw "ERROR:: Model does not have any normals defined"
+        }
+
+        // Print outs for server-side
+        console.log(`\tDEBUG:: Number of vertices ${this.geometryData.vertices.length / 3}`);
+        console.log(`\tDEBUG:: Number of triangles ${this.geometryData.triangles.length / 3}`);
+        console.log(`\tDEBUG:: Number of vertex colors ${this.geometryData.colors.length / 3}`);
+        console.log(`\tDEBUG:: Number of vertex normals ${this.geometryData.normals.length / 3}`);
+
+        // Construct the geometry
+        this.geometry = new THREE.BufferGeometry();
+        this.geometry.setIndex(this.geometryData.triangles);
+        this.geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(this.geometryData.vertices), 3));
+        this.geometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(this.geometryData.colors), 3));
+        this.geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(this.geometryData.normals), 3));
+        this.geometry.computeVertexNormals();
+
+        // Borrowed from: https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_indexed.html#L72
+        var material = new THREE.MeshStandardMaterial();
+        var mesh = new THREE.Mesh( this.geometry, material );
+        mesh.name = "Sword";
+
+        var sword_exporter : any = new GLTFExporter();
+
         var options = {
 
         };
 
-        this.geometry.setIndex(this.triangles);
-        this.geometry.addAttribute('position', new THREE.BufferAttribute(this.vertices, 3));
-        this.geometry.addAttribute('color', new THREE.BufferAttribute(this.colors, 3));
-        this.geometry.addAttribute('normal', new THREE.BufferAttribute(this.normals, 3));
-
-        // Borrowed from: https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_indexed.html#L72
-        var material = new THREE.MeshPhongMaterial({
-            specular: 0x111111, shininess: 250,
-            side: THREE.DoubleSide, vertexColors: THREE.VertexColors
+        return new Promise ((resolve, reject) => {
+            sword_exporter.parse(mesh, (gltf : any) => {
+                resolve(gltf);
+            },
+            options);
         });
-
-        var mesh = new THREE.Mesh( this.geometry, material );
-
-        var exporter = new THREE.GLTFExporter();
-
-        return exporter.parse(mesh, (gltf) => {
-            return gltf;
-        }, options);
     }
 
 }
@@ -136,10 +209,11 @@ export class SwordGenerator {
      * The factory method of this class that returns a new sword
      * instance with procedurally generated blade geometry
      */
-    generateSword(template : SwordTemplate, genParams : GenerationParameters) : Sword {
+    generateSword(template : SwordTemplate, options : Object) : Sword {
+        // Fill in any missing generation parameters with default values
+        var genParams : GenerationParameters = Object.assign(options, DEFAULT_GEN_PARAMS);
         // Create a new sword Object
         var sword = new Sword(template.style);
-
         // Generate the vertices for each level
         this.buildBlade(template, genParams, sword);
         this.buildGuard(template, genParams, sword);
@@ -177,47 +251,55 @@ export class SwordGenerator {
         var equalTipDivLength = tipSectionLength / numTipDivs;
 
         // Create the blade cross section to start
-        sword.vertices.concat(SwordGenerator.createBladeCrossSection(template.baseWidth, fullerDepth, fullerWidth, genParams));
+        var crosssectionGeometry = SwordGenerator.createBladeCrossSection(template.baseWidth, fullerDepth, fullerWidth, genParams);
+        sword.geometryData.vertices = sword.geometryData.vertices.concat(crosssectionGeometry.vertices);
 
         // Extrude blade cross-section to full length with all the divisions present
-        var generatedGeometry : VerticesAndTriangles = SwordGenerator.extrudeTopMultiple(sword.vertices, new THREE.Vector3(0.0, bladeLength/totalBladeDivs, 0.0), totalBladeDivs);
-        // Add the vertices and triangles to the sword
-        sword.vertices.concat(generatedGeometry.vertices);
-        sword.triangles.concat(generatedGeometry.triangles);
+        var generatedGeometry = SwordGenerator.extrudeTopMultiple(sword.geometryData.vertices, new THREE.Vector3(0.0, bladeLength/totalBladeDivs, 0.0), totalBladeDivs);
+        sword.geometryData.vertices = sword.geometryData.vertices.concat(generatedGeometry.vertices);
+        sword.geometryData.triangles = sword.geometryData.triangles.concat(generatedGeometry.triangles);
 
         // Modify the vertices at each level to be a the desired heights
-        var vertIndicesInLayers : number[][]= SwordGenerator.getAllVertsIndicesAsLayers(sword.vertices, totalBladeDivs, bladeLength);
+        var vertIndicesInLayers : number[][]= SwordGenerator.getAllVertsIndicesAsLayers(sword.geometryData.vertices, totalBladeDivs, bladeLength);
 
         var baseSpaceLeft = baseSectionLength;
         var midSpaceLeft = midSectionLength;
         var tipSpaceLeft = tipSectionLength;
 
         // Modify the edges to make the blade look unique
-        var leftEdgeVertIndices: number[] = SwordGenerator.getLeftEdgeVertIndices(sword.vertices, template.baseWidth);
-        var rightEdgeVertIndices: number[] = SwordGenerator.getRightEdgeVertIndices(sword.vertices, template.baseWidth);
-        sword.vertices = SwordGenerator.modifyEdgeWidth(this, sword.vertices, leftEdgeVertIndices, rightEdgeVertIndices, template.baseWidth, genParams.bladeWidthToleranceRatio);
+        var leftEdgeVertIndices: number[] = SwordGenerator.getLeftEdgeVertIndices(sword.geometryData.vertices, template.baseWidth);
+        var rightEdgeVertIndices: number[] = SwordGenerator.getRightEdgeVertIndices(sword.geometryData.vertices, template.baseWidth);
+        sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this, sword.geometryData.vertices, leftEdgeVertIndices, rightEdgeVertIndices, template.baseWidth, genParams.bladeWidthToleranceRatio);
 
         // Place a point at the tip of the blade
-        var topFaceVertIndices: number[] = SwordGenerator.getTopVertIndices(sword.vertices);
-        sword.vertices = SwordGenerator.createBladeTip(sword.vertices, topFaceVertIndices);
+        var topFaceVertIndices: number[] = SwordGenerator.getTopVertIndices(sword.geometryData.vertices);
+        sword.geometryData.vertices = SwordGenerator.createBladeTip(sword.geometryData.vertices, topFaceVertIndices);
 
+        // Check number of vertices
+        Assert.notEqual(sword.geometryData.vertices.length, 0, "ERROR:: Model does not have any vertices defined");
+        Assert.equal(sword.geometryData.vertices.length % 3, 0, "ERROR:: Model has the incorrect number of vertex components");
 
-        var numVertices = 0;
+        // Check the number of triangles
+        Assert.notEqual(sword.geometryData.triangles.length, "ERROR:: Model does not have any triangles defined");
+        Assert.equal(sword.geometryData.triangles.length % 3, 0, "ERROR:: Model has the incorrect number of triangle components");
 
-        // Double check that we have the proper number of vertices
-        if (sword.vertices.length % 3 == 0) {
-            numVertices = sword.vertices.length  / 3;
+        // Add colors for the sword blade
+        for (var i = 0; i < (sword.geometryData.vertices.length / 3); i++) {
+            sword.geometryData.addColor(200, 200, 200);
         }
-        else {
-            throw "Incorrect number of vertex values"
+
+        // Check number of colors
+        Assert.notEqual(sword.geometryData.colors.length, 0, "ERROR:: Model does not have any colors defined");
+        Assert.equal(sword.geometryData.colors.length % 3, 0, "ERROR:: Model has the incorrect number of color components");
+
+        // Add normals for the sword blade
+        for (var i = 0; i < (sword.geometryData.vertices.length / 3); i++) {
+            sword.geometryData.addNormal(1.0, 0.0, 0.0);
         }
 
-        // Modify the colors of the blade geometry
-        for (var i = 0; i < numVertices; i++) {
-            sword.colors.push(200);
-            sword.colors.push(200);
-            sword.colors.push(200);
-        }
+        // Check number of normals
+        Assert.notEqual(sword.geometryData.normals.length, 0, "ERROR:: Model does not have any normals defined");
+        Assert.equal(sword.geometryData.normals.length % 3, 0, "ERROR:: Model has the incorrect number of normal components");
 
         return sword;
     }
@@ -241,38 +323,43 @@ export class SwordGenerator {
         // Convert the box to a buffer geometry
         var guardBufferGeometry = new THREE.BufferGeometry().fromGeometry(guardGeometry);
 
+        // Number of vertices in the model prior to appending this geometry
+        var priorNumVertices = sword.geometryData.vertices.length / 3;
+
         // Append the vertices to the swords vertex array and add their indices to the vertex indices array
         var vertices = guardBufferGeometry.getAttribute("position");
         // Loop through all of the position attributes and add the XYZ values to the swords geometry
         for (var i = 0; i < vertices.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+            sword.geometryData.addVertex(vertices.getX(i), vertices.getY(i), vertices.getZ(i));
         }
 
         // Append the vertices to the swords vertex array and add their indices to the vertex indices array
-        var vertices = guardBufferGeometry.getAttribute("");
+        var normals = guardBufferGeometry.getAttribute("normal");
         // Loop through all of the position attributes and add the XYZ values to the swords geometry
         for (var i = 0; i < vertices.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+            sword.geometryData.addNormal(normals.getX(i), normals.getY(i), normals.getZ(i));
         }
 
         // Add a color for each vertex (Brown)
         for (var i = 0; i < vertices.count; i++) {
-            sword.colors.push(112);
-            sword.colors.push(82);
-            sword.colors.push(0);
+            sword.geometryData.addColor(112, 82, 0);
         }
 
         var triangles = guardBufferGeometry.getIndex();
-        // Loop through all of the triangles and add the values to the swords geometry
-        for (var i = 0; i < triangles.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+        if (triangles != undefined) {
+            // Loop through all of the triangles and add the values to the swords geometry
+            for (var i = 0; i < triangles.count; i++) {
+                sword.geometryData.addTriangle(triangles.getX(i), triangles.getY(i), triangles.getZ(i));
+            }
+        } else {
+            // We need to add index values based on the vertices being added
+            Assert.equal((vertices.length / 3) % 3, 0, "ERROR:: Verices are not organized into triangles");
+            for (var i = 0; i < vertices.count;) {
+                sword.geometryData.addTriangle(priorNumVertices + i, priorNumVertices + i + 1, priorNumVertices + i + 2);
+                i += 3;
+            }
         }
+
 
         return sword;
     }
@@ -293,37 +380,41 @@ export class SwordGenerator {
         // Convert the box to a buffer geometry
         var handleBufferGeometry = new THREE.BufferGeometry().fromGeometry(handleGeometry);
 
+        // Number of vertices in the model prior to appending this geometry
+        var priorNumVertices = sword.geometryData.vertices.length / 3;
+
         // Append the vertices to the swords vertex array and add their indices to the vertex indices array
         var vertices = handleBufferGeometry.getAttribute("position");
         // Loop through all of the position attributes and add the XYZ values to the swords geometry
         for (var i = 0; i < vertices.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+            sword.geometryData.addVertex(vertices.getX(i), vertices.getY(i), vertices.getZ(i));
         }
 
         // Append the vertices to the swords vertex array and add their indices to the vertex indices array
-        var vertices = handleBufferGeometry.getAttribute("");
+        var normals = handleBufferGeometry.getAttribute("normal");
         // Loop through all of the position attributes and add the XYZ values to the swords geometry
         for (var i = 0; i < vertices.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+            sword.geometryData.addNormal(normals.getX(i), normals.getY(i), normals.getZ(i));
         }
 
         // Add a color for each vertex (Brown)
         for (var i = 0; i < vertices.count; i++) {
-            sword.colors.push(112);
-            sword.colors.push(82);
-            sword.colors.push(0);
+            sword.geometryData.addColor(112, 82, 0);
         }
 
         var triangles = handleBufferGeometry.getIndex();
-        // Loop through all of the triangles and add the values to the swords geometry
-        for (var i = 0; i < triangles.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+        if (triangles != undefined) {
+            // Loop through all of the triangles and add the values to the swords geometry
+            for (var i = 0; i < triangles.count; i++) {
+                sword.geometryData.addTriangle(triangles.getX(i), triangles.getY(i), triangles.getZ(i));
+            }
+        } else {
+            // We need to add index values based on the vertices being added
+            Assert.equal((vertices.length / 3) % 3, 0, "ERROR:: Verices are not organized into triangles");
+            for (var i = 0; i < vertices.count;) {
+                sword.geometryData.addTriangle(priorNumVertices + i, priorNumVertices + i + 1, priorNumVertices + i + 2);
+                i += 3;
+            }
         }
 
         return sword;
@@ -344,37 +435,41 @@ export class SwordGenerator {
         // Convert the box to a buffer geometry
         var pommelBufferGeometry = new THREE.BufferGeometry().fromGeometry(pommelGeometry);
 
+        // Number of vertices in the model prior to appending this geometry
+        var priorNumVertices = sword.geometryData.vertices.length / 3;
+
         // Append the vertices to the swords vertex array and add their indices to the vertex indices array
         var vertices = pommelBufferGeometry.getAttribute("position");
         // Loop through all of the position attributes and add the XYZ values to the swords geometry
         for (var i = 0; i < vertices.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+            sword.geometryData.addVertex(vertices.getX(i), vertices.getY(i), vertices.getZ(i));
         }
 
         // Append the vertices to the swords vertex array and add their indices to the vertex indices array
-        var vertices = pommelBufferGeometry.getAttribute("");
+        var normals = pommelBufferGeometry.getAttribute("normal");
         // Loop through all of the position attributes and add the XYZ values to the swords geometry
         for (var i = 0; i < vertices.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+            sword.geometryData.addNormal(normals.getX(i), normals.getY(i), normals.getZ(i));
         }
 
         // Add a color for each vertex (Gold)
         for (var i = 0; i < vertices.count; i++) {
-            sword.colors.push(225);
-            sword.colors.push(200);
-            sword.colors.push(90);
+            sword.geometryData.addColor(225, 200, 90);
         }
 
         var triangles = pommelBufferGeometry.getIndex();
-        // Loop through all of the triangles and add the values to the swords geometry
-        for (var i = 0; i < triangles.count; i++) {
-            sword.vertices.push(vertices.getX(i));
-            sword.vertices.push(vertices.getY(i));
-            sword.vertices.push(vertices.getZ(i));
+        if (triangles != undefined) {
+            // Loop through all of the triangles and add the values to the swords geometry
+            for (var i = 0; i < triangles.count; i++) {
+                sword.geometryData.addTriangle(triangles.getX(i), triangles.getY(i), triangles.getZ(i));
+            }
+        } else {
+            // We need to add index values based on the vertices being added
+            Assert.equal((vertices.length / 3) % 3, 0, "ERROR:: Verices are not organized into triangles");
+            for (var i = 0; i < vertices.count;) {
+                sword.geometryData.addTriangle(priorNumVertices + i, priorNumVertices + i + 1, priorNumVertices + i + 2);
+                i += 3;
+            }
         }
 
         return sword;
@@ -386,58 +481,48 @@ export class SwordGenerator {
      * Returns: The vertices outlineing the starting cross section of the blade
      * ## Note: At the moment all cross sections are created using 8 vertices
      */
-    static createBladeCrossSection(bladeWidth : number, fullerDepth : number, fullerWidth : number, genParams : GenerationParameters) : number[] {
-        var vertices = [];
+    static createBladeCrossSection(bladeWidth : number, fullerDepth : number, fullerWidth : number, genParams : GenerationParameters) : GeometryData {
+
+        var geometryData = new GeometryData();
 
         // Back side of the cross-section
-        vertices.push(bladeWidth / -2.0);
-        vertices.push(0.0);
-        vertices.push(0.0);
+        geometryData.addVertex(bladeWidth / -2.0, 0.0, 0.0);
 
-        vertices.push(fullerWidth / -2.0);
-        vertices.push(0.0);
-        vertices.push(genParams.bladeThickness / 2.0);
+        geometryData.addVertex(fullerWidth / -2.0, 0.0, genParams.bladeThickness / 2.0);
 
         if (genParams.applyFuller) {
-            vertices.push(0.0);
-            vertices.push(0.0);
-            vertices.push((genParams.bladeThickness / -2.0) + fullerDepth);
+            geometryData.addVertex(0.0, 0.0, (genParams.bladeThickness / -2.0) + fullerDepth);
         }
         else {
-            vertices.push(0.0);
-            vertices.push(0.0);
-            vertices.push(genParams.bladeThickness / -2.0);
+            geometryData.addVertex(0.0, 0.0, genParams.bladeThickness / -2.0);
         }
 
-        vertices.push(fullerWidth / 2.0);
-        vertices.push(0.0);
-        vertices.push(genParams.bladeThickness / -2.0);
+        geometryData.addVertex(fullerWidth / 2.0, 0.0, genParams.bladeThickness / -2.0);
 
-        vertices.push(bladeWidth / 2.0);
-        vertices.push(0.0);
-        vertices.push(0.0);
+        geometryData.addVertex(bladeWidth / 2.0, 0.0, 0.0);
 
         // Front side of cross-section
-        vertices.push(fullerWidth / 2.0);
-        vertices.push(0.0);
-        vertices.push(genParams.bladeThickness / 2.0);
+        geometryData.addVertex(fullerWidth / 2.0, 0.0, genParams.bladeThickness / 2.0);
 
         if (genParams.applyFuller) {
-            vertices.push(0.0);
-            vertices.push(0.0);
-            vertices.push((genParams.bladeThickness / 2.0) - fullerDepth);
+            geometryData.addVertex(0.0, 0.0, (genParams.bladeThickness / 2.0) - fullerDepth);
         }
         else {
-            vertices.push(0.0);
-            vertices.push(0.0);
-            vertices.push(genParams.bladeThickness / 2.0);
+            geometryData.addVertex(0.0, 0.0, genParams.bladeThickness / 2.0);
         }
 
-        vertices.push(fullerWidth / -2.0);
-        vertices.push(0.0);
-        vertices.push(genParams.bladeThickness / 2.0);
+        geometryData.addVertex(fullerWidth / -2.0, 0.0, genParams.bladeThickness / 2.0);
 
-        return vertices;
+
+        // Check number of vertices
+        if (geometryData.vertices != undefined) {
+            Assert.notEqual(geometryData.vertices.length, 0, "ERROR:: Cross-Section has no vertices defined");
+            Assert.equal(geometryData.vertices.length % 3, 0, "ERROR:: Cross-Section has the incorrect number of vertex components");
+        } else {
+            throw "ERROR:: No vertices added for cross section";
+        }
+
+        return geometryData;
     }
 
     /**
@@ -447,19 +532,17 @@ export class SwordGenerator {
      * Given: All the vertices in the model, and a direction to extrude in, and a number of times to extrude
      * Returns: The new vertices and the triangles created during extrusion
      */
-    static extrudeTopMultiple(vertices: number[], direction : THREE.Vector3, numRepeat : number) : VerticesAndTriangles {
+    static extrudeTopMultiple(vertices: number[], direction : THREE.Vector3, numRepeat : number) : GeometryData {
 
-        var generatedGeometry : VerticesAndTriangles;
-        var bufferedVertices = vertices.slice();
-        var bufferedTriangles : number[] = [];
+        var generatedGeometry = new GeometryData();
 
         for (var i = 0; i < numRepeat; i++) {
-            generatedGeometry = SwordGenerator.extrudeTop(bufferedVertices, direction);
-            bufferedVertices.concat(generatedGeometry.vertices);
-            bufferedTriangles.concat(generatedGeometry.triangles);
+            var result : GeometryData = SwordGenerator.extrudeTop(vertices.slice(), direction);
+            generatedGeometry.vertices = generatedGeometry.vertices.concat(result.vertices);
+            generatedGeometry.triangles = generatedGeometry.vertices.concat(result.triangles);
         }
 
-        return { vertices: bufferedVertices, triangles: bufferedTriangles };
+        return generatedGeometry;
     }
 
     /**
@@ -468,11 +551,11 @@ export class SwordGenerator {
      * Returns: The new vertices and the triangles created during extrusion
      * ## Note: Assumes that the top is a flat, horizontal face
      */
-    static extrudeTop(vertices: number[], direction : THREE.Vector3) : VerticesAndTriangles {
+    static extrudeTop(vertices: number[], direction : THREE.Vector3) : GeometryData {
 
         var topVertIndices : number[] = SwordGenerator.getTopVertIndices(vertices);
 
-        var extrudedGeom : VerticesAndTriangles = SwordGenerator.extrudeFace(vertices, topVertIndices, direction);
+        var extrudedGeom : GeometryData = SwordGenerator.extrudeFace(vertices, topVertIndices, direction);
 
         return extrudedGeom;
     }
@@ -482,26 +565,17 @@ export class SwordGenerator {
      * Given: All the vertices in the model, the indices to extrude, and the direction to extrude in
      * Returns: The new vertices and the triangles created during extrusion
      */
-    static extrudeFace(vertices: number[], faceIndices : number[],  direction : THREE.Vector3) : VerticesAndTriangles {
+    static extrudeFace(vertices: number[], faceIndices : number[],  direction : THREE.Vector3) : GeometryData {
 
-        if (faceIndices.length == 0) {
-            throw "No vertices given to extrude";
-        }
+        Assert.notEqual(vertices.length, 0, "ERROR:: No vertices provided");
+        Assert.notEqual(faceIndices.length, 0, "ERROR:: No vertex indices given to extrude");
+        Assert.equal(vertices.length % 3, 0, "ERROR:: Incorrect number of vertex components");
 
-        // Create the new vertices
-        var numVertices = 0;
 
-        // Double check that we have the proper number of vertices
-        if (vertices.length % 3 == 0) {
-            numVertices = vertices.length  / 3;
-        }
-        else {
-            throw "Incorrect number of vertex values"
-        }
+        var generatedGeometry = new GeometryData();
 
-        var priorVertCount = numVertices;
+        var priorVertCount = vertices.length / 3;
         var newVertexIndices: number[] = [];
-        var newVertices : number[] = [];
 
         for (var i = 0; i < faceIndices.length; i++) {
             var oldVertexX = vertices[faceIndices[i] * 3];
@@ -512,9 +586,7 @@ export class SwordGenerator {
             var newVertexY = oldVertexY + direction.y;
             var newVertexZ = oldVertexZ + direction.z;
 
-            newVertices.push(newVertexX);
-            newVertices.push(newVertexY);
-            newVertices.push(newVertexZ);
+            generatedGeometry.addVertex(newVertexX, newVertexY, newVertexZ);
 
             newVertexIndices.push(priorVertCount + i);
         }
@@ -522,40 +594,31 @@ export class SwordGenerator {
         // Create new faces for the 3D mesh
         var i = 0;              // Index into the array of vertex indices on the extruded face
         var j = 0;              // Index into the array of indices for the new vertices created
-        var newTriangles : number[] = [];  // Array of triangles created during extrusion
 
         while (i < faceIndices.length) {
             // On the last iteration we use 0 instead of i+1 or j+1
             if (i == faceIndices.length - 1) {
                 // CW
                 // Bottom-left triangle
-                newTriangles.push(newVertexIndices[j]);
-                newTriangles.push(faceIndices[0]);
-                newTriangles.push(faceIndices[i]);
+                generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[0], faceIndices[i]);
 
                 // Top-right triangle
-                newTriangles.push(newVertexIndices[0]);
-                newTriangles.push(faceIndices[0]);
-                newTriangles.push(newVertexIndices[j]);
+                generatedGeometry.addTriangle(newVertexIndices[0], faceIndices[0], newVertexIndices[j]);
             }
             // Otherwise all other sides are done the same
             else {
                 // CW
                 // Bottom-left triangle
-                newTriangles.push(newVertexIndices[j]);
-                newTriangles.push(faceIndices[i + 1]);
-                newTriangles.push(faceIndices[i]);
+                generatedGeometry.addTriangle(newVertexIndices[j], faceIndices[i + 1], faceIndices[i]);
 
                 // Top-right triangle
-                newTriangles.push(newVertexIndices[j + 1]);
-                newTriangles.push(faceIndices[i + 1]);
-                newTriangles.push(newVertexIndices[j]);
+                generatedGeometry.addTriangle(newVertexIndices[j + 1], faceIndices[i + 1], newVertexIndices[j]);
             }
             i++;
             j++;
         }
 
-        return { vertices: newVertices, triangles: newTriangles };
+        return generatedGeometry;
     }
 
     /**

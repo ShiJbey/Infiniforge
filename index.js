@@ -5,12 +5,14 @@
  * To use the web version use rout '/sandbox/'
  */
 
+// Modules obtained from node_modules/
 const colors = require('colors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const serveStatic = require('serve-static');
 
+// Source code included with this project
 const logger = require('./logmanager');
 const weaponTemplates = require('./weapontemplates');
 const SwordGenerator = require('./build/swordgenerator');
@@ -31,6 +33,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
+// Allow Express to serve static files like a http server
 app.use(serveStatic(path.join(__dirname, 'www', 'views'), { 'index' : ['help.html']}));
 
 function StartRESTAPI() {
@@ -66,8 +69,7 @@ function StartRESTAPI() {
         }
 
         // No seed was given so we pass the current time
-        var cd = new Date();
-        var seed = cd.toString();
+        var seed = new Date().toString();
 
         // Create a new sword Generator for this request
         var generator = new SwordGenerator.SwordGenerator(seed);
@@ -75,12 +77,17 @@ function StartRESTAPI() {
 
         // Temporary print strings
         console.log("====FORGE REQUEST====\n" +
-                    `From: ${req.ip}\n` +
-                    `Weapon Type: ${req.params.weaponType}\n` +
-                    `Weapon Style: ${req.params.weaponStyle}\n` +
-                    `Generated Seed: ${seed}`);
+                    `\tFrom: ${req.ip}\n` +
+                    `\tWeapon Type: ${req.params.weaponType}\n` +
+                    `\tWeapon Style: ${req.params.weaponStyle}\n` +
+                    `\tGenerated Seed: ${seed}`);
         console.log("====FORGE REQUEST SATISFIED====");
-        res.status(200).json(sword.export_to_gltf());
+        sword.export_to_gltf().then((result) => {
+            res.status(200).json(result);
+        },
+        (err) => {
+            res.status(400).json({Error: "Error during generation"});
+        });
     });
 
     // Request for a weapon mesh, providing a seed value
@@ -94,17 +101,25 @@ function StartRESTAPI() {
         }
 
         // Create a new sword Generator for this request
-        //var generator = new SwordGen.SwordGenerator(req.params.seed, req.params.weaponStyle, templateData);
-        //var sword = generator.generateSword();
+        var generator = new SwordGenerator.SwordGenerator(req.params.seed);
+        var sword = generator.generateSword(templateData, SwordGenerator.DEFAULT_GEN_PARAMS);
 
         // Temporary print strings
         console.log("====FORGE REQUEST====\n" +
-                    `From: ${req.ip}\n` +
-                    `Weapon Type: ${req.params.weaponType}\n` +
-                    `Weapon Style: ${req.params.weaponStyle}\n` +
-                    `Seed: ${req.params.seed}`);
+                    `\tFrom: ${req.ip}\n` +
+                    `\tWeapon Type: ${req.params.weaponType}\n` +
+                    `\tWeapon Style: ${req.params.weaponStyle}\n` +
+                    `\tSeed: ${req.params.seed}`);
+
+        sword.export_to_gltf().then((result) => {
+            res.status(200).json(result);
+        },
+        (err) => {
+            res.status(400).json({Error: "Error during generation"});
+        });
+
         console.log("====FORGE REQUEST SATISFIED====");
-        res.status(200).json({server_status: "Handled"});
+
     });
 
     // Handles errors
