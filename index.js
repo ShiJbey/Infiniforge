@@ -11,6 +11,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const serveStatic = require('serve-static');
+const GLTFExporter = require('./lib/GLTFExporter')
 
 // Source code included with this project
 const logger = require('./logmanager');
@@ -26,6 +27,8 @@ app.use('/sandbox/', express.static(path.join(__dirname, 'www')));
 app.use('/sandbox/', express.static(path.join(__dirname, 'www', 'js')));
 app.use('/sandbox/', express.static(path.join(__dirname, 'www', 'style')));
 app.use('/sandbox/', express.static(path.join(__dirname, 'www', 'views')));
+app.use('/sandbox/', express.static(path.join(__dirname, 'node_modules', 'three', 'build')));
+app.use('/sandbox/', express.static(path.join(__dirname, 'node_modules', 'three', 'examples', 'js','exporters')));
 
 // Configure Express Middleware
 app.use(bodyParser.json());         // to support JSON-encoded bodies
@@ -61,7 +64,7 @@ function StartRESTAPI() {
 	// Request for a weapon mesh without providing a seed value
     app.get('/api/forge/:weaponType/:weaponStyle/', (req, res) => {
         // Load in the template data
-        var templateData = weaponTemplates.getWeaponTemplate(req.params.weaponType,req.params.weaponStyle)
+        var templateData = weaponTemplates.getWeaponTemplate(req.params.weaponType,req.params.weaponStyle);
 
         // Return an error if no template was found
         if (templateData == null) {
@@ -81,13 +84,28 @@ function StartRESTAPI() {
                     `\tWeapon Type: ${req.params.weaponType}\n` +
                     `\tWeapon Style: ${req.params.weaponStyle}\n` +
                     `\tGenerated Seed: ${seed}`);
-        console.log("====FORGE REQUEST SATISFIED====");
-        sword.export_to_gltf().then((result) => {
+
+        var sword_exporter = new GLTFExporter();
+
+        var options = {
+
+        };
+
+        var swordExportPromise = new Promise ((resolve, reject) => {
+            sword_exporter.parse(sword.getMesh(), (gltf) => {
+                resolve(gltf);
+            },
+            options);
+        });
+
+        swordExportPromise.then((result) => {
             res.status(200).json(result);
         },
         (err) => {
             res.status(400).json({Error: "Error during generation"});
         });
+
+        console.log("====FORGE REQUEST SATISFIED====");
     });
 
     // Request for a weapon mesh, providing a seed value
@@ -111,7 +129,20 @@ function StartRESTAPI() {
                     `\tWeapon Style: ${req.params.weaponStyle}\n` +
                     `\tSeed: ${req.params.seed}`);
 
-        sword.export_to_gltf().then((result) => {
+        var sword_exporter = new GLTFExporter();
+
+        var options = {
+
+        };
+
+        var swordExportPromise = new Promise ((resolve, reject) => {
+            sword_exporter.parse(sword.getMesh(), (gltf) => {
+                resolve(gltf);
+            },
+            options);
+        });
+
+        swordExportPromise.then((result) => {
             res.status(200).json(result);
         },
         (err) => {

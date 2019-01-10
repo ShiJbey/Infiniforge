@@ -1,12 +1,10 @@
 /// <reference types="three" />
 /// <reference types="seedrandom" />
-/// <reference types="three/three-gltfexporter" />
-
-import * as THREE from "three";
-import * as seedrandom from "seedrandom";
-//import GLTFExporter from 'three-gltf-exporter';
 import * as Assert from 'assert';
-const GLTFExporter = require('../lib/GLTFExporter');
+import * as THREE from "three";
+var seedrandom = require("seedrandom");
+
+
 /**
  * Output object used when extruding faces or creating
  * additional geometry
@@ -124,7 +122,7 @@ export class Sword {
         this.geometryData = new GeometryData();
     }
 
-    export_to_gltf() : Promise<any> {
+    getMesh(verbose?: boolean): THREE.Mesh {
 
         // Check number of vertices
         if (this.geometryData.vertices != undefined) {
@@ -159,10 +157,12 @@ export class Sword {
         }
 
         // Print outs for server-side
-        console.log(`\tDEBUG:: Number of vertices ${this.geometryData.vertices.length / 3}`);
-        console.log(`\tDEBUG:: Number of triangles ${this.geometryData.triangles.length / 3}`);
-        console.log(`\tDEBUG:: Number of vertex colors ${this.geometryData.colors.length / 3}`);
-        console.log(`\tDEBUG:: Number of vertex normals ${this.geometryData.normals.length / 3}`);
+        if (verbose == true) {
+            console.log(`\tDEBUG:: Number of vertices ${this.geometryData.vertices.length / 3}`);
+            console.log(`\tDEBUG:: Number of triangles ${this.geometryData.triangles.length / 3}`);
+            console.log(`\tDEBUG:: Number of vertex colors ${this.geometryData.colors.length / 3}`);
+            console.log(`\tDEBUG:: Number of vertex normals ${this.geometryData.normals.length / 3}`);
+        }
 
         // Construct the geometry
         this.geometry = new THREE.BufferGeometry();
@@ -177,20 +177,8 @@ export class Sword {
         var mesh = new THREE.Mesh( this.geometry, material );
         mesh.name = "Sword";
 
-        var sword_exporter : any = new GLTFExporter();
-
-        var options = {
-
-        };
-
-        return new Promise ((resolve, reject) => {
-            sword_exporter.parse(mesh, (gltf : any) => {
-                resolve(gltf);
-            },
-            options);
-        });
+        return mesh;
     }
-
 }
 
 export interface SwordTemplate {
@@ -242,11 +230,17 @@ export class SwordGenerator {
 
     public seed : string;
     public randGenerator : seedrandom.prng;
+    public verbose: boolean;
 
-    constructor(seed : string) {
+    constructor(seed : string, verbose: boolean) {
         // The generator only cares about its own seed value and its random number generator
         this.seed = seed;
-        this.randGenerator = (seed != '') ? seedrandom.default(seed) : seedrandom.default();
+        this.randGenerator = (seed != '') ? seedrandom(seed) : seedrandom();
+        if (verbose) {
+            this.verbose = verbose;
+        } else {
+            this.verbose = false
+        }
     }
 
     /**
@@ -258,7 +252,6 @@ export class SwordGenerator {
         var genParams : GenerationParameters = Object.assign(options, DEFAULT_GEN_PARAMS);
         // Create a new sword Object
         var sword = new Sword(template.style);
-        // Generate the vertices for each level
         this.buildBlade(template, genParams, sword);
         this.buildGuard(template, genParams, sword);
         this.buildHandle(template, genParams, sword);
@@ -284,29 +277,37 @@ export class SwordGenerator {
         var numTipDivs = getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxTipDivs + 1);
         var totalBladeDivs = numBaseDivs + numMidDivs + numTipDivs;
 
-        console.log(`DEBUG:: Number of Base Divisions: ${numBaseDivs}`);
-        console.log(`DEBUG:: Number of Mid Divisions: ${numMidDivs}`);
-        console.log(`DEBUG:: Number of Tip Divisions: ${numTipDivs}`);
-        console.log(`DEBUG:: Total number of Divisions: ${totalBladeDivs}`);
+        if (this.verbose) {
+            console.log(`DEBUG:: Number of Base Divisions: ${numBaseDivs}`);
+            console.log(`DEBUG:: Number of Mid Divisions: ${numMidDivs}`);
+            console.log(`DEBUG:: Number of Tip Divisions: ${numTipDivs}`);
+            console.log(`DEBUG:: Total number of Divisions: ${totalBladeDivs}`);
+        }
+
 
         // Determine how much of the blade length is allocated to each section
         var baseSectionLength = bladeLength * genParams.bladeBaseProportion;
         var midSectionLength = bladeLength * genParams.bladeMidProportion;
         var tipSectionLength = bladeLength * (1 - (genParams.bladeBaseProportion + genParams.bladeMidProportion));
 
-        console.log(`DEBUG:: Base section length: ${baseSectionLength}`);
-        console.log(`DEBUG:: Mid section length: ${midSectionLength}`);
-        console.log(`DEBUG:: Tip section length: ${tipSectionLength}`);
-        console.log(`DEBUG:: Total blade length: ${baseSectionLength + midSectionLength + tipSectionLength}`);
+        if (this.verbose) {
+            console.log(`DEBUG:: Base section length: ${baseSectionLength}`);
+            console.log(`DEBUG:: Mid section length: ${midSectionLength}`);
+            console.log(`DEBUG:: Tip section length: ${tipSectionLength}`);
+            console.log(`DEBUG:: Total blade length: ${baseSectionLength + midSectionLength + tipSectionLength}`);
+        }
+
 
         // Calculate how long equivalent divisions can be depending on the section
         var equalBaseDivLength = baseSectionLength / numBaseDivs;
         var equalMidDivLength = midSectionLength / numMidDivs;
         var equalTipDivLength = tipSectionLength / numTipDivs;
 
-        console.log(`DEBUG:: Equal base div length: ${equalBaseDivLength}`);
-        console.log(`DEBUG:: Equal Mid div length: ${equalMidDivLength}`);
-        console.log(`DEBUG:: Equal Tip div length: ${equalTipDivLength}`);
+        if (this.verbose) {
+            console.log(`DEBUG:: Equal base div length: ${equalBaseDivLength}`);
+            console.log(`DEBUG:: Equal Mid div length: ${equalMidDivLength}`);
+            console.log(`DEBUG:: Equal Tip div length: ${equalTipDivLength}`);
+        }
 
         // Create the blade cross section to start
         var crosssectionGeometry = SwordGenerator.createBladeCrossSection(template.baseWidth, fullerDepth, fullerWidth, genParams);
@@ -327,16 +328,6 @@ export class SwordGenerator {
         var rightEdgeVertIndices: number[] = SwordGenerator.getRightEdgeVertIndices(sword.geometryData.vertices, template.baseWidth);
         //console.log(`Right Edge Verts: ${rightEdgeVertIndices}`);
         sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this, sword.geometryData.vertices, leftEdgeVertIndices, rightEdgeVertIndices, template.baseWidth, genParams.bladeWidthToleranceRatio);
-
-        //console.log(`Vertices before base mod:\n${sword.geometryData.toString("vertex")}`);
-
-
-
-
-
-
-
-
 
         // Modify the height of the divs so the total height matches the template Sets the base divs
         if (genParams.equalBaseDivs) {
@@ -452,7 +443,9 @@ export class SwordGenerator {
             }
         }
 
-        console.log(`Vertices after height mod:\n${sword.geometryData.toString("vertex")}`);
+        if (this.verbose) {
+            console.log(`Vertices after height mod:\n${sword.geometryData.toString("vertex")}`);
+        }
 
         // Place a point at the tip of the blade
         var topFaceVertIndices: number[] = SwordGenerator.getTopVertIndices(sword.geometryData.vertices);
@@ -1008,4 +1001,3 @@ export class SwordGenerator {
     }
 
 }
-
