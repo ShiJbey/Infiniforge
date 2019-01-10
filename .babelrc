@@ -2,8 +2,7 @@
     "comments": false,
     "presets": [
         "@babel/preset-env",
-        "@babel/preset-typescript",
-        "minify"
+        "@babel/preset-typescript"
     ],
     "plugins": [
         "@babel/proposal-class-properties",

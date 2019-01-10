@@ -1,9 +1,9 @@
 // Defines what weapons are currently suppoted in the game
 const SupportedWeapons = {
     "sword":{
-        "short": {"baseWidth":.2, "widthMarginRatio":.1, "length":5},
-        "long": {"baseWidth":1.0, "widthMarginRatio":.1, "length":3},
-        "great": {"baseWidth":.3, "widthMarginRatio":.1, "length":7}
+        "short": {"baseWidth": 0.2, "widthMarginRatio":.1, "length":0.5},
+        "long": {"baseWidth": 0.3, "widthMarginRatio":.1, "length":2},
+        "great": {"baseWidth": 0.5, "widthMarginRatio":.1, "length":3}
     }
 }
 
