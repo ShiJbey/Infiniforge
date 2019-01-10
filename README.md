@@ -11,7 +11,7 @@ representations of procedurally generated 3D sword meshes.
 5. ```$ npm start```
 6. Open your web browser and go to localhost:8080 for further instructions
 
-## How to Run on Docker (Current not Supported)
+## How to Run on Docker (Currently not Supported)
 1. ```$ sudo docker build -t Infiniforge .```
 2. ```$ sudo docker run -dti -p 8080:8080 Infiniforge```
 3. Open your web browser and go to <ip of Docker Containter>:8080/api
