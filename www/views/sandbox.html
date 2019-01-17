@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Infiniforge</title>
+    <link rel="stylesheet" type="text/css" href="/sandbox/style.css"/>
+    <script src="/sandbox/three.min.js" type="text/javascript"></script>
+    <script src="/sandbox/GLTFExporter.js" type="text/javascript"></script>
+    <script src="/sandbox/weapontemplates.js"></script>
+    <script src="/sandbox/swordgenerator.bundle.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="options_pane">
+            <p>Sword Style:
+            <select id="sword-style" name="swordStyle">
+                <option value="short">Short</option>
+                <option value="long" selected="selected">Long</option>
+                <option value="great">Great</option>
+            </select>
+            </p>
+
+            <p>Seed:
+                <input type="text" id="seed-value" placeholder="RandomSeed" name="seed"/>
+            </p>
+
+            <input type="submit" value="Forge!" onclick="forgeSword()"/>
+        </div>
+
+        <div id="scene_pane">
+            <canvas id="threejs-canvas"></canvas>
+        </div>
+    </div>
+
+    <script type="module">
+        //import {SwordGenerator} from '/sandbox/swordgenerator.'
+    </script>
+
+    <script type="text/javascript">
+        var scene, camera, renderer;
+        var swordModel, material;
+
+        // Set the keyboard handlers
+        document.onkeyup = handle_keyboard_up;
+        document.onkeydown = handle_keyboard_down;
+
+        // Controls the rotation of the sword
+        var rotation = {
+            "left": false,
+            "right": false,
+            "up": false,
+            "down": false
+        };
+
+        function handle_keyboard_down(event) {
+            event = event || window.event;
+            if (event.which == 65) {
+                // LEFT
+                rotation["left"] = true;
+                rotation["right"] = false;
+            }
+            else if (event.which == 68) {
+                // RIGHT
+                rotation["right"] = true;
+                rotation["left"] = false;
+            }
+            else if (event.which == 87) {
+                // UP
+                rotation["up"] = true;
+                rotation["down"] = false;
+            }
+            else if (event.which == 83) {
+                // DOWN
+                rotation["down"] = true;
+                rotation["up"] = false;
+            }
+        }
+
+
+        function handle_keyboard_up(event) {
+            event = event || window.event;
+            if (event.which == 65) {
+                // LEFT
+                rotation["left"] = false;
+                rotation["right"] = false;
+            }
+            else if (event.which == 68) {
+                // RIGHT
+                rotation["right"] = false;
+                rotation["left"] = false;
+            }
+            else if (event.which == 87) {
+                // UP
+                rotation["up"] = false;
+                rotation["down"] = false;
+            }
+            else if (event.which == 83) {
+                // DOWN
+                rotation["down"] = false;
+                rotation["up"] = false;
+            }
+        }
+
+        // Borrowed from MDN Math.Random()
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        // Creates a rnadom seed using upper case, lowercase
+        // and numbers
+        function randomizeSeed(seedLength = 7) {
+            var seed = "";
+            numberAsciiOffset = 48;
+            lowercaseAsciiOffset = 97;
+            uppercaseAsciiOffset = 65;
+            for (var i = 0; i < seedLength; i++) {
+                var rand_num = Math.random();
+                if (rand_num <= 0.33) {
+                    seed += String.fromCharCode(numberAsciiOffset + getRandomInt(10));
+                }
+                else if (rand_num > 0.33 && rand_num <= 0.66) {
+                    seed += String.fromCharCode(lowercaseAsciiOffset + getRandomInt(25));
+                }
+                else {
+                    seed += String.fromCharCode(uppercaseAsciiOffset + getRandomInt(25));
+                }
+            }
+            document.getElementById('seed-value').value = seed;
+        }
+
+        function forgeSword() {
+
+            var style = document.getElementById('sword-style').value;
+
+            var seed = document.getElementById('seed-value').value;
+
+            //var basewidth = document.getElementById('base-width').value;
+
+            //var edgeWidthRatio = document.getElementById('edge-width-ratio').value;
+
+            //var bladeLength = document.getElementById('blade-length').value;
+            var swordTemplate = WeaponTemplates.getWeaponTemplate('sword', style);
+            console.log(swordTemplate);
+
+            var generator = new Infiniforge.SwordGenerator(seed);
+            sword = generator.generateSword(swordTemplate, Infiniforge.DEFAULT_GEN_PARAMS);
+            scene.remove(swordModel);
+            swordModel = sword.getMesh();
+            swordModel.position.y = -3;
+            scene.add(swordModel);
+        }
+
+        function init() {
+            var ThreeJSCanvas = document.getElementById("threejs-canvas");
+
+            renderer = new THREE.WebGLRenderer({ canvas: ThreeJSCanvas, antialias: true });
+            var renderer_rect = renderer.domElement.getBoundingClientRect();
+            renderer.setSize(renderer_rect.width, renderer_rect.height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            var aspect = renderer_rect.width / renderer_rect.height;
+            camera = new THREE.PerspectiveCamera(75, aspect, 1, 1000);
+            camera.position.z = 7;
+            camera.updateProjectionMatrix();
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0);
+
+            var light = new THREE.DirectionalLight(0xe6e6ff, 1);
+            light.position.set(1, 1, 1).normalize();
+            scene.add(light);
+
+            var geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+            material = new THREE.MeshLambertMaterial({ color: 0xffffff })
+            swordModel = new THREE.Mesh(geometry, material);
+            scene.add(swordModel);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (rotation["left"]) {
+                swordModel.rotation.y -= 0.05;
+            }
+            else if (rotation["right"]) {
+                swordModel.rotation.y += 0.05;
+            }
+
+            if (rotation["down"]) {
+                swordModel.rotation.x += 0.05;
+            }
+            else if (rotation["up"]) {
+                swordModel.rotation.x -= 0.05;
+            }
+
+            renderer.render(scene, camera);
+        };
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
