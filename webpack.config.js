@@ -9,7 +9,7 @@ module.exports = {
 
     output: {
         path: path.resolve(__dirname, 'www', 'js'),
-        filename: 'swordgenerator.bundle.js',
+        filename: 'infiniforge.bundle.js',
         libraryTarget: 'var',
         library: 'Infiniforge'
     },

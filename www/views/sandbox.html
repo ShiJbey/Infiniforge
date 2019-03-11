@@ -8,7 +8,7 @@
     <script src="/sandbox/three.min.js" type="text/javascript"></script>
     <script src="/sandbox/GLTFExporter.js" type="text/javascript"></script>
     <script src="/sandbox/weapontemplates.js"></script>
-    <script src="/sandbox/swordgenerator.bundle.js"></script>
+    <script src="/sandbox/infiniforge.bundle.js"></script>
 </head>
 <body>
     <div id="container">
@@ -32,10 +32,6 @@
             <canvas id="threejs-canvas"></canvas>
         </div>
     </div>
-
-    <script type="module">
-        //import {SwordGenerator} from '/sandbox/swordgenerator.'
-    </script>
 
     <script type="text/javascript">
         var scene, camera, renderer;
@@ -167,14 +163,14 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xf0f0f0);
 
-            var light = new THREE.DirectionalLight(0xe6e6ff, 1);
+            var light = new THREE.DirectionalLight(0xffffff, 1);
             light.position.set(1, 1, 1).normalize();
             scene.add(light);
 
-            var geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-            material = new THREE.MeshLambertMaterial({ color: 0xffffff })
-            swordModel = new THREE.Mesh(geometry, material);
-            scene.add(swordModel);
+            //var geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+            //material = new THREE.MeshLambertMaterial({ color: THREE.VertexColor  })
+            //swordModel = new THREE.Mesh(geometry, material);
+            //scene.add(swordModel);
         }
 
         function animate() {

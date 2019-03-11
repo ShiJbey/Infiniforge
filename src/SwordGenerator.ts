@@ -173,7 +173,10 @@ export class Sword {
         this.geometry.computeVertexNormals();
 
         // Borrowed from: https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_indexed.html#L72
-        var material = new THREE.MeshStandardMaterial();
+        var material = new THREE.MeshStandardMaterial({
+            vertexColors: THREE.VertexColors,
+            side: THREE.DoubleSide
+        });
         var mesh = new THREE.Mesh( this.geometry, material );
         mesh.name = "Sword";
 
@@ -207,8 +210,8 @@ export interface GenerationParameters {
 
 export const DEFAULT_GEN_PARAMS : GenerationParameters = {
     maxBaseDivs: 10,
-    maxMidDivs : 10,
-    maxTipDivs : 10,
+    maxMidDivs : 5,
+    maxTipDivs : 3,
     minNumDivs : 3,
     minDivLength: 0.125,
     bladeWidthToleranceRatio : 0.3,
@@ -218,7 +221,7 @@ export const DEFAULT_GEN_PARAMS : GenerationParameters = {
     equalMidDivs : false,
     equalTipDivs : true,
     bladeBaseProportion : 0.3,
-    bladeMidProportion : 0.4,
+    bladeMidProportion : 0.3,
     applyFuller : true
 }
 
@@ -327,7 +330,8 @@ export class SwordGenerator {
         //console.log(`Left Edge Verts: ${leftEdgeVertIndices}`);
         var rightEdgeVertIndices: number[] = SwordGenerator.getRightEdgeVertIndices(sword.geometryData.vertices, template.baseWidth);
         //console.log(`Right Edge Verts: ${rightEdgeVertIndices}`);
-        sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this, sword.geometryData.vertices, leftEdgeVertIndices, rightEdgeVertIndices, template.baseWidth, genParams.bladeWidthToleranceRatio);
+        sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this, sword.geometryData.vertices, leftEdgeVertIndices, rightEdgeVertIndices,
+            template.baseWidth, genParams.bladeWidthToleranceRatio, numBaseDivs, numMidDivs, numTipDivs);
 
         // Modify the height of the divs so the total height matches the template Sets the base divs
         if (genParams.equalBaseDivs) {
@@ -818,7 +822,9 @@ export class SwordGenerator {
      * Returns: All the vertices in the model after being modified
      * ## NOTE: Currently, this only creates symmetrical blades
      */
-    static modifyEdgeWidth(swordGenerator : SwordGenerator, vertices : number[], leftEdgeVertIndices : number[], rightEdgeVertIndices : number[], templateBladeWidth : number, widthToleranceRatio : number, symmetric=true) : number[] {
+    static modifyEdgeWidth(swordGenerator : SwordGenerator, vertices : number[], leftEdgeVertIndices : number[],
+        rightEdgeVertIndices : number[], templateBladeWidth : number, widthToleranceRatio : number,
+        numBaseDivs : number , numMidDivs : number, numTipDivs : number, symmetric=true) : number[] {
         // Rules:
         // The x-value of the vertices needs to be within
         // the tolerance ration with respect to templateBladeWidth / 2
@@ -829,17 +835,20 @@ export class SwordGenerator {
         var minBladeWidth = templateBladeWidth - (widthToleranceRatio * templateBladeWidth);
         var maxBladeWidth = templateBladeWidth + (widthToleranceRatio * templateBladeWidth);
         var divisionWidth = templateBladeWidth;
+        var totalDivs = numBaseDivs + numMidDivs + numTipDivs;
 
-        for (var i = 0; i < leftEdgeVertIndices.length; i++) {
-            // Randomly generate a width for this section of the blade
+        for (var i = 1; i < leftEdgeVertIndices.length; i++) {
+            // Randomly generate a width for this section of the blade]
             divisionWidth = templateBladeWidth + (swordGenerator.randGenerator() * (maxBladeWidth - minBladeWidth));
+            //divisionWidth = divisionWidth * (leftEdgeVertIndices.length - i) / (leftEdgeVertIndices.length);
             vertices[leftEdgeVertIndices[i] * 3 + 0] = -(divisionWidth / 2);
         }
 
-        for (var i = 0; i < rightEdgeVertIndices.length; i++) {
+        for (var i = 1; i < rightEdgeVertIndices.length; i++) {
             if (!symmetric) {
                 // Randomly generate a width for this section of the blade
                 divisionWidth = templateBladeWidth + (swordGenerator.randGenerator() * (maxBladeWidth - minBladeWidth));
+                //divisionWidth = divisionWidth * (leftEdgeVertIndices.length - i) / (leftEdgeVertIndices.length);
                 vertices[rightEdgeVertIndices[i] * 3 + 0] = (divisionWidth / 2);
             }
             else if (i < leftEdgeVertIndices.length) {
