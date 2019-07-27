@@ -167,10 +167,11 @@ function saveCrossSection() {
     var protocol = window.location.protocol;
     var host = window.location.host;
     var port = window.location.port;
-    console.log(`${protocol}//${host}/crosssection/`);
+    var requestString = `${protocol}//${host}/api/crosssection/${crossSectionNameDOM.value}/${JSON.stringify(csJson)}/`;
+    console.log(requestString);
     $.ajax({
         method: 'POST',
-        url: `${protocol}//${host}/crosssection/${crossSectionNameDOM.value}/${JSON.stringify(csJson)}/`
+        url: requestString
     }).then((res) => {
         console.log(res);
     });
@@ -180,10 +181,11 @@ function loadCrossSection() {
     var protocol = window.location.protocol;
     var host = window.location.host;
     var port = window.location.port;
-    console.log(`${protocol}//${host}/crosssection/${crossSectionNameDOM.value}`);
+    var requestString = `${protocol}//${host}/api/crosssection/${crossSectionNameDOM.value}`
+    console.log(requestString);
     $.ajax({
         method: 'GET',
-        url: `${protocol}//${host}/crosssection/${crossSectionNameDOM.value}/`
+        url: requestString
     }).then((res) => {
         console.log("success");
         // Set cross section

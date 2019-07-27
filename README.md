@@ -33,6 +33,11 @@ available from [Khronos Group](https://www.khronos.org/gltf/). As an example, th
 imports the .gltf into [Unity at runtime](https://github.com/KhronosGroup/UnityGLTF).
 glTF files can also be opened on windows 10 using the 3D Viewer application.
 
+## About
+
+These are measured in meters. Morphologies sourced from: [](https://en.wikipedia.org/wiki/Longsword)
+
+
 ## Misc
 
 This project was originally made as part of the August Reddit procedural generation challenge

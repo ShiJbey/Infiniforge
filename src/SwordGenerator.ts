@@ -3,7 +3,7 @@
 const assert = require('assert');
 const _ = require('lodash');
 import * as THREE from "three";
-import { BladeCrossSection, SupportedCrossSections, CrossSectionNames } from "./BladeCrossSections";
+import { BladeCrossSection, SupportedCrossSections } from "./BladeCrossSections";
 import { SwordTemplate } from "./SwordTemplates";
 var seedrandom = require("seedrandom");
 
@@ -109,8 +109,8 @@ function getSlope(x1 : number,  y1 : number, x2 : number, y2 : number) : number 
 }
 
 /**
- * Swords are the weapon type that has an associated
- * stye and THREE geometry object
+ * Swords are the core of this API and manage information about
+ * their 3D geometry
  */
 export class Sword {
 
@@ -342,11 +342,12 @@ export class SwordGenerator {
 
         // Create the blade cross section
         var result: [GeometryData, number[]];
-        var crossSectionTypeIndex: number = getRandomInt(this.randGenerator, 0, CrossSectionNames.length);
-        var crossSectionTemplate = SupportedCrossSections.get(CrossSectionNames[crossSectionTypeIndex]);
+        var crossSectionTypeIndex: number = getRandomInt(this.randGenerator, 0, Object.keys(SupportedCrossSections).length);
+        var crossSectionTemplate: BladeCrossSection = (<any>SupportedCrossSections)[Object.keys(SupportedCrossSections)[crossSectionTypeIndex]];
         if (crossSectionTemplate == undefined) {
             throw new Error("SwordGenerator::buildBlade(): No cross section found.");
         }
+        console.log(crossSectionTemplate.name);
         result = SwordGenerator.createBladeCrossSection(template, crossSectionTemplate, genParams);
         sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices);
 

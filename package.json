@@ -9,20 +9,19 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
     "build": "tsc",
-    "bundle": "webpack",
-    "build:web": "browserify weapontemplates.js --s WeaponTemplates -o ./www/js/weapontemplates.js"
+    "bundle": "webpack"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ShiJbey/Infiniforge.git"
   },
   "keywords": [
-    "weapon",
     "forge",
     "procedural",
     "generation",
     "sword",
-    "threejs"
+    "threejs",
+    "infiniforge"
   ],
   "author": "Shi Johnson-Bey",
   "license": "ISC",
@@ -61,7 +60,7 @@
     "browserify": "^16.2.3",
     "source-map-loader": "^0.2.1",
     "tslint": "^5.12.0",
-    "typescript": "^3.2.2",
+    "typescript": "^3.5.3",
     "webpack": "^2.3.3"
   }
 }
