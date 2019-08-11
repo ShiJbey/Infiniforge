@@ -3,18 +3,13 @@ div#container {
     height: 800px;
 }
 
-div#options_pane {
-    float: left;
-    text-align: center;
-    color: blue;
-}
-
-div#scene_pane {
-    float: left;
-}
-
 canvas {
-    padding: 10px;
     width: 100%;
-    height: 800px;
+    height: 100%;
+}
+
+#gui {
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }

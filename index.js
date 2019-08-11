@@ -133,7 +133,7 @@ function configureRoutes() {
     });
 
     // Request for a sword mesh without providing a seed value
-    app.get('/api/forge/sword/:style', (req, res) => {
+    app.get('/api/forge/sword/style/:style', (req, res) => {
         var seed = new Date().toDateString();
         var promise = generateAndExportSword(req.params.style, seed, {});
 
@@ -149,11 +149,35 @@ function configureRoutes() {
                     `\tSword Style: ${req.params.style}\n` +
                     `\tGenerated Seed: ${seed}\n` +
                     "=================================\n");
+    });
 
+    // Request for a sword mesh without providing a seed value
+    app.get('/api/forge/sword/style/:style/options/:options', (req, res) => {
+        try {
+            var optionsJson = JSON.parse(req.params.options);
+            var seed = new Date().toDateString();
+            var promise = generateAndExportSword(req.params.style, seed, optionsJson);
+
+            promise.then((result) => {
+                    res.status(200).json(result);
+                }, (err) => {
+                    res.status(400).json({Error: "Error during generation"});
+            });
+        } catch (err) {
+            res.status(400).json({Error: "options needs to be json format"});
+        }
+
+
+        // Temporary print strings
+        console.log("==== FORGE REQUEST SATISFIED ====\n" +
+                    `\tFrom: ${req.ip}\n` +
+                    `\tSword Style: ${req.params.style}\n` +
+                    `\tGenerated Seed: ${seed}\n` +
+                    "=================================\n");
     });
 
     // Request for a sword mesh, providing a seed value
-    app.get('/api/forge/sword/:style/:seed', (req, res) => {
+    app.get('/api/forge/sword/style/:style/seed/:seed', (req, res) => {
 
         var promise = generateAndExportSword(req.params.style, req.params.seed, {});
 
@@ -164,11 +188,37 @@ function configureRoutes() {
         });
 
         // Temporary print strings
-        console.log("==== FORGE REQUEST SATISFIED ====\n" +
-                    `\tFrom: ${req.ip}\n` +
-                    `\tSword Style: ${req.params.style}\n` +
-                    `\tGenerated Seed: ${req.params.seed}\n` +
-                    "=================================\n");
+        // console.log("==== FORGE REQUEST SATISFIED ====\n" +
+        //             `\tFrom: ${req.ip}\n` +
+        //             `\tSword Style: ${req.params.style}\n` +
+        //             `\tGenerated Seed: ${req.params.seed}\n` +
+        //             "=================================\n");
+    });
+
+    // Request for a sword mesh, providing a seed value
+    app.get('/api/forge/sword/style/:style/seed/:seed/options/:options', (req, res) => {
+        try {
+            var optionsJson = JSON.parse(req.params.options);
+            console.log(optionsJson);
+            var promise = generateAndExportSword(req.params.style, req.params.seed, optionsJson);
+
+            promise.then((result) => {
+                    res.status(200).json(result);
+                }, (err) => {
+
+            });
+
+        } catch (err) {
+            res.status(404).json({Error: "Options weren't sent as json string"});
+        }
+
+
+        // Temporary print strings
+        // console.log("==== FORGE REQUEST SATISFIED ====\n" +
+        //             `\tFrom: ${req.ip}\n` +
+        //             `\tSword Style: ${req.params.style}\n` +
+        //             `\tGenerated Seed: ${req.params.seed}\n` +
+        //             "=================================\n");
     });
 }
 
@@ -187,7 +237,7 @@ function generateAndExportSword(style, seed, options) {
     // Get template
     var template = infiniforge.Templates.getSwordTemplate(style);
     // Create a new sword Generator for this request
-    var generator = new infiniforge.Generator.SwordGenerator();
+    var generator = new infiniforge.Generator.SwordGenerator(infiniforgeConfig["generator"]["verbose"]);
     // Generate the sword using the template, default params and seed
     var sword = generator.generateSword(template, options, seed);
     // Create a new exported

@@ -2,5 +2,8 @@
     "server": {
         "port": 8080,
         "verbose": true
+    },
+    "generator": {
+        "verbose": true
     }
 }

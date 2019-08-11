@@ -1,190 +1,30 @@
 /// <reference types="three" />
 /// <reference types="seedrandom" />
+
 const assert = require('assert');
 const _ = require('lodash');
-import * as THREE from "three";
-import { BladeCrossSection, SupportedCrossSections } from "./BladeCrossSections";
-import { SwordTemplate } from "./SwordTemplates";
-var seedrandom = require("seedrandom");
+var seedrandom = require('seedrandom');
 
-/**
- * Output object used when extruding faces or creating
- * additional geometry
- */
-class GeometryData {
+import * as THREE from 'three';
 
-    vertices : number[];
-    triangles : number[];
-    colors : number[];
-    normals : number[];
+import { BladeCrossSection, SupportedCrossSections } from './BladeCrossSections';
+import { SwordTemplate } from './SwordTemplates';
+import { GeometryData, FaceData } from './GeometryData'
+import { Sword } from './Sword'
+import * as utils from './utils'
 
-    constructor() {
-        this.vertices = [];
-        this.triangles = [];
-        this.colors = [];
-        this.normals = [];
-    }
 
-    addVertex(x: number, y: number, z:number) : void {
-        this.vertices.push(x);
-        this.vertices.push(y);
-        this.vertices.push(z);
-    }
+export interface SwordMorphology {
+    baseDivs: number;
+    midDivs: number;
+    tipDivs: number;
 
-    addTriangle(x: number, y: number, z:number) : void {
-        this.triangles.push(x);
-        this.triangles.push(y);
-        this.triangles.push(z);
-    }
+    equalBaseDivs: boolean;
+    equalMidDivs: boolean;
+    equalTipDivs: boolean;
 
-    addColor(x: number, y: number, z:number) : void {
-        this.colors.push(x);
-        this.colors.push(y);
-        this.colors.push(z);
-    }
-
-    addNormal(x: number, y: number, z:number) : void {
-        this.normals.push(x);
-        this.normals.push(y);
-        this.normals.push(z);
-    }
-
-    getVertex(index: number) : number[] {
-        if (index >= 0 && index  < this.vertices.length) {
-            return [this.vertices[index * 3], this.vertices[(index * 3) + 1], this.vertices[(index * 3) + 2]];
-        } else {
-            throw "ERROR:: Vertex index out of bounds";
-        }
-    }
-
-    toString(property: string) : string {
-        property = property.toLocaleLowerCase();
-        var property_array : number[] = [];
-
-        if (property == "vertex" || property == "vertices") {
-            property_array = this.vertices;
-        } else if (property == "triangle" || property == "triangles") {
-            property_array = this.triangles;
-        } else if (property == "color" || property == "colors") {
-            property_array = this.colors;
-        } else if (property == "normal" || property == "normals") {
-            property_array = this.normals;
-        }
-
-        var ret = "";
-        var count = 0;
-        for (var i = 0; i < property_array.length - 2; /*Increments in loop body*/) {
-            ret = ret + ` (${count}) [${property_array[i]}, ${property_array[i + 1]}, ${property_array[i + 2]}]\n`;
-            i += 3;
-            count++;
-        }
-        return ret;
-    }
 }
 
-/**
- * Given a random number generator and a min and max value,
- * returns a random int that is in the range [min,max)
- */
-function getRandomInt(rand : seedrandom.prng, min : number, max : number) : number {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(rand() * (max - min)) + min;
-}
-
-/**
- * Given a random number generator and a min and max value,
- * returns a random float that is in the range [min,max)
- */
-function getRandomFloat(rand : seedrandom.prng, min : number, max : number) : number {
-    return rand() * (max - min) + min;
-}
-
-/**
- * Given the x and y coordinates of two points in 2D space,
- * Returns the slope between the two points
- */
-function getSlope(x1 : number,  y1 : number, x2 : number, y2 : number) : number {
-    return (y2 - y1) / (x2 - x1);
-}
-
-/**
- * Swords are the core of this API and manage information about
- * their 3D geometry
- */
-export class Sword {
-
-    style : string;
-    geometry : THREE.BufferGeometry | undefined;
-    mesh : THREE.Mesh | undefined;
-    geometryData : GeometryData;
-
-    constructor(style: string) {
-        this.style = style;
-        this.geometryData = new GeometryData();
-    }
-
-    getMesh(verbose?: boolean): THREE.Mesh {
-
-        // Check number of vertices
-        if (this.geometryData.vertices != undefined) {
-            assert(this.geometryData.vertices.length > 0, "ERROR:Sword.getMesh(): Model does not have any vertices defined");
-            assert(this.geometryData.vertices.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of vertex components");
-        } else {
-            throw "ERROR:Sword.getMesh(): Model does not have any vertices defined"
-        }
-
-        // Check the number of triangles
-        if (this.geometryData.triangles != undefined) {
-            assert(this.geometryData.triangles.length > 0, "ERROR:Sword.getMesh(): Model does not have any triangles defined");
-            assert(this.geometryData.triangles.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of triangle components");
-        } else {
-            throw "ERROR:Sword.getMesh(): Model does not have any triangles defined"
-        }
-
-        // Check number of colors
-        if (this.geometryData.colors != undefined) {
-            assert(this.geometryData.colors.length > 0, "ERROR:Sword.getMesh(): Model does not have any colors defined");
-            assert(this.geometryData.colors.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of color components");
-        } else {
-            throw "ERROR:Sword.getMesh(): Model does not have any colors defined";
-        }
-
-        // Check number of normals
-        if (this.geometryData.normals != undefined) {
-            assert(this.geometryData.normals.length > 0, "ERROR:Sword.getMesh(): Model does not have any normals defined");
-            assert(this.geometryData.normals.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of normal components");
-        } else {
-            throw "ERROR:Sword.getMesh(): Model does not have any normals defined"
-        }
-
-        // Print outs for server-side
-        if (verbose == true) {
-            console.log(`\tDEBUG:: Number of vertices ${this.geometryData.vertices.length / 3}`);
-            console.log(`\tDEBUG:: Number of triangles ${this.geometryData.triangles.length / 3}`);
-            console.log(`\tDEBUG:: Number of vertex colors ${this.geometryData.colors.length / 3}`);
-            console.log(`\tDEBUG:: Number of vertex normals ${this.geometryData.normals.length / 3}`);
-        }
-
-        // Construct the geometry
-        this.geometry = new THREE.BufferGeometry();
-        this.geometry.setIndex(this.geometryData.triangles);
-        this.geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(this.geometryData.vertices), 3));
-        this.geometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(this.geometryData.colors), 3));
-        this.geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(this.geometryData.normals), 3));
-        this.geometry.computeVertexNormals();
-
-        // Borrowed from: https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_indexed.html#L72
-        var material = new THREE.MeshStandardMaterial({
-            vertexColors: THREE.VertexColors,
-            side: THREE.DoubleSide
-        });
-        var mesh = new THREE.Mesh( this.geometry, material );
-        mesh.name = "Sword";
-
-        return mesh;
-    }
-}
 
 export interface GenerationParameters {
     maxBaseDivs : number;   // Number of vertices devoted to the base section of the blade
@@ -193,33 +33,27 @@ export interface GenerationParameters {
     minNumDivs : number;    // Minimum number of vertices devoted to any section of the blade
     minDivLength : number;  // Minimum vertical spacing between vertices on the edge of the blade based on
     bladeThickness : number;    // Thickness of the blade from one non-egde side to the other
-    fullerWidthRatio : number;  // For cross sections with a fuller, this determines its width with relation to blade width
     equalBaseDivs : boolean;    // When true all vertices in the base section of the blade are spaced evenly
     equalMidDivs : boolean;     // When true all vertices in the mid section of the blade are spaced evenly
     equalTipDivs : boolean;     // When true all vertices in the tip section of the blade are spaced evenly
     bladeBaseProportion : number;   // Portion of the blade [0.1, 0.4] devoted to the base of the blade
     bladeMidProportion : number;    // Portion of the blade [0.1, 0.4] devoted to the middle of the blade
     bladeWidthToleranceRatio : number;  // What is the max pertubation of the edge of the blade from its default width
-    // [Deprecated]
-    applyFuller: boolean;
 }
 
 export const DEFAULT_GEN_PARAMS : GenerationParameters = {
-    maxBaseDivs: 10,
+    maxBaseDivs: 4,
     maxMidDivs : 5,
-    maxTipDivs : 3,
+    maxTipDivs : 2,
     minNumDivs : 3,
     minDivLength: 0.01,
     bladeThickness : 0.1,
-    fullerWidthRatio : 0.5,
-    equalBaseDivs : false,
-    equalMidDivs : false,
+    equalBaseDivs : true,
+    equalMidDivs : true,
     equalTipDivs : true,
     bladeBaseProportion : 0.3,
-    bladeMidProportion : 0.3,
-    bladeWidthToleranceRatio: 0.1,
-    // [Deprecated]
-    applyFuller: true
+    bladeMidProportion : 0.5,
+    bladeWidthToleranceRatio: 0.1
 }
 
 /**
@@ -235,25 +69,29 @@ export class SwordGenerator {
 
     constructor(verbose?: boolean) {
         // The generator only cares about its own seed value and its random number generator
-        this.seed = ''
-        this.randGenerator = seedrandom();
+        this.seed = '';
+        this.randGenerator = seedrandom('');
         if (verbose) {
             this.verbose = verbose;
         } else {
-            this.verbose = false
+            this.verbose = false;
         }
     }
 
     /**
      * Seeds the random number generator
      * with a new seed
-     * @param seed
+     * @param seed (Optional) seed value for pseudo number generator
      */
     seedGenerator(seed?: string) {
         if (seed) {
             this.seed = seed;
+            this.randGenerator = seedrandom(seed);
         }
-        this.randGenerator = (seed == undefined) ? seedrandom(seed) : seedrandom();
+        else {
+            this.seed = '';
+            this.randGenerator = seedrandom();
+        }
     }
 
     /**
@@ -262,15 +100,16 @@ export class SwordGenerator {
      * @param template
      * @param options
      * @param seed
-     *
      * @return
      */
-    generateSword(template: SwordTemplate, options: Object, seed: string) : Sword {
+    generateSword(template: SwordTemplate, options: Object, seed?: string) : Sword {
         // Reset the random number generator
         this.seedGenerator(seed);
+        console.log(`Seed is '${seed}' first random number is: ${this.randGenerator()}`);
 
         // Fill in any missing generation parameters with default values
         var genParams : GenerationParameters = Object.assign(options, DEFAULT_GEN_PARAMS);
+        console.log(genParams);
 
         // Create a new sword Object
         var sword = new Sword(template.style);
@@ -294,14 +133,26 @@ export class SwordGenerator {
      */
     buildBlade(template : SwordTemplate, genParams : GenerationParameters, sword : Sword) : Sword {
 
+        /////////////////////////////////////////////////////////////////
+        //                        BLADE LENGTH                         //
+        /////////////////////////////////////////////////////////////////
+
         // Set the length of the blade
-        var bladeLength = getRandomFloat(this.randGenerator, template.minBladeLength, template.maxBladeLength);
-        bladeLength = Number.parseFloat(bladeLength.toFixed(2))
+        var bladeLength = utils.getRandomFloat(this.randGenerator, template.minBladeLength, template.maxBladeLength);
+        bladeLength = Number.parseFloat(bladeLength.toFixed(2));
+        // bladeLength = 1.0;
+
+        /////////////////////////////////////////////////////////////////
+        //                    BLADE SECTION SPECS                      //
+        /////////////////////////////////////////////////////////////////
 
         // Determine how many divisions each section has
-        var numBaseDivs = getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxBaseDivs + 1);
-        var numMidDivs = getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxMidDivs + 1);
-        var numTipDivs = getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxTipDivs + 1);
+        var numBaseDivs = utils.getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxBaseDivs + 1);
+        var numMidDivs = utils.getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxMidDivs + 1);
+        var numTipDivs = utils.getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxTipDivs + 1);
+        // var numBaseDivs = 3;
+        // var numMidDivs =  5;
+        // var numTipDivs =  2;
         var totalBladeDivs = numBaseDivs + numMidDivs + numTipDivs;
 
         if (this.verbose) {
@@ -329,193 +180,102 @@ export class SwordGenerator {
             console.log(`DEBUG:: Desired blade length: ${bladeLength}`);
         }
 
-        // Calculate how long equivalent divisions can be depending on the section
-        var equalBaseDivLength = baseSectionLength / numBaseDivs;
-        var equalMidDivLength = midSectionLength / numMidDivs;
-        var equalTipDivLength = tipSectionLength / numTipDivs;
+        /////////////////////////////////////////////////////////////////
+        //                   CREATING CROSS SECTION                    //
+        /////////////////////////////////////////////////////////////////
 
-        if (this.verbose) {
-            console.log(`DEBUG:: Equal base div length: ${equalBaseDivLength}`);
-            console.log(`DEBUG:: Equal Mid div length: ${equalMidDivLength}`);
-            console.log(`DEBUG:: Equal Tip div length: ${equalTipDivLength}`);
-        }
-
-        // Create the blade cross section
+        // Randomly select and create an available cross section
         var result: [GeometryData, number[]];
-        var crossSectionTypeIndex: number = getRandomInt(this.randGenerator, 0, Object.keys(SupportedCrossSections).length);
+        var crossSectionTypeIndex: number = utils.getRandomInt(this.randGenerator, 0, Object.keys(SupportedCrossSections).length - 1);
         var crossSectionTemplate: BladeCrossSection = (<any>SupportedCrossSections)[Object.keys(SupportedCrossSections)[crossSectionTypeIndex]];
         if (crossSectionTemplate == undefined) {
             throw new Error("SwordGenerator::buildBlade(): No cross section found.");
         }
-        console.log(crossSectionTemplate.name);
+        console.log(`Index(${crossSectionTypeIndex}): ${crossSectionTemplate.name}`);
         result = SwordGenerator.createBladeCrossSection(template, crossSectionTemplate, genParams);
         sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices);
 
+        // Save information on which vertices are on cutting edges
+        // only cutting edges will be modified later
         var edgeVertices: number[][] = [];
         for (var i = 0; i < result[1].length; i++) {
             edgeVertices.push([result[1][i]]);
         }
 
+        // Save a list of the vertex indices at the top of
+        // the sword geometry. At the moment this our blade
+        // is only a 2D cros section
         var topFaceVertIndices: number[] = _.range(0, sword.geometryData.vertices.length / 3);
-        console.log(topFaceVertIndices);
+        // console.log(`Cross section verts: ${topFaceVertIndices}`);
+
+        /////////////////////////////////////////////////////////////////
+        //                    EXTRUDING THE BLADE                      //
+        /////////////////////////////////////////////////////////////////
 
         // Extrude blade cross-section to full length with all the divisions present
+        var bladeLayers: FaceData[] = [new FaceData(topFaceVertIndices.slice())];
         for (var i = 0; i < totalBladeDivs; i++) {
             result = SwordGenerator.extrudeFace(sword.geometryData.vertices, topFaceVertIndices,  new THREE.Vector3(0.0, 1.0, 0.0));
-            // Update the vertices and triangles in the model
-            sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices)
+            // Add the new vertices and triangles in the model
+            sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices);
             sword.geometryData.triangles = sword.geometryData.triangles.concat(result[0].triangles);
-            // Save the indices to the vertices at the top of the model
-            topFaceVertIndices = result[1];
+            // Save the indices of the new vertices at the top of the model
+            topFaceVertIndices = result[1].slice();
             // Update the arrays of edge vertex indices
             for (var edge = 0; edge < edgeVertices.length; edge++) {
                 edgeVertices[edge].push(result[1][edgeVertices[edge][0]]);
             }
+            // Save the new vertices as face data
+            bladeLayers.push(new FaceData(result[1].slice()));
         }
+        console.log(bladeLayers.length);
 
-        // var generatedGeometry = SwordGenerator.extrudeTopMultiple(sword.geometryData.vertices, new THREE.Vector3(0.0, 1.0, 0.0), totalBladeDivs);
-        // sword.geometryData.vertices = sword.geometryData.vertices.concat(generatedGeometry.vertices);
-        // sword.geometryData.triangles = sword.geometryData.triangles.concat(generatedGeometry.triangles);
+        /////////////////////////////////////////////////////////////////
+        //                     Modify Div Heights                      //
+        /////////////////////////////////////////////////////////////////
 
-        // Modify the vertices at each level to be a the desired heights
-        var vertIndicesInLayers : number[][]= SwordGenerator.getAllVertsIndicesAsLayers(sword.geometryData.vertices, totalBladeDivs + 1, bladeLength);
-        console.log(`Number of layers: ${vertIndicesInLayers.length}`);
+        // Modify base section div heights
+        sword.geometryData.vertices = SwordGenerator.configureSectionHeight(sword.geometryData.vertices.slice(), bladeLayers, _.range(1, numBaseDivs + 1),
+            genParams.equalBaseDivs, baseSectionLength, 0, this.randGenerator, genParams);
 
-        // // Modify the edges to make the blade look unique
-        // var leftEdgeVertIndices: number[] = SwordGenerator.getLeftEdgeVertIndices(sword.geometryData.vertices, template.baseBladeWidth);
-        // //console.log(`Left Edge Verts: ${leftEdgeVertIndices}`);
-        // var rightEdgeVertIndices: number[] = SwordGenerator.getRightEdgeVertIndices(sword.geometryData.vertices, template.baseBladeWidth);
-        // //console.log(`Right Edge Verts: ${rightEdgeVertIndices}`);
-        // sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this, sword.geometryData.vertices, leftEdgeVertIndices, rightEdgeVertIndices,
-        //     template.baseBladeWidth, genParams.bladeWidthToleranceRatio, numBaseDivs, numMidDivs, numTipDivs);
+        // Modify mid section div heights
+        sword.geometryData.vertices = SwordGenerator.configureSectionHeight(sword.geometryData.vertices, bladeLayers, _.range(numBaseDivs + 1, numBaseDivs + numMidDivs + 1),
+            genParams.equalMidDivs, midSectionLength, baseSectionLength, this.randGenerator, genParams);
 
-        // // Modify the height of the divs so the total height matches the template Sets the base divs
-        // if (genParams.equalBaseDivs) {
-        //     // Change the y direction of the first n-layers (n = numBaseDivs)
-        //     for (var divIndex = 1; divIndex <= numBaseDivs; divIndex++) {
-        //         for(var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //             sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = equalBaseDivLength * divIndex;
-        //         }
-        //     }
-        // } else {
-        //     // Space left to work with in this div
-        //     var spaceLeft = baseSectionLength;
-
-        //     // Loop through each level in the division
-        //     // NOTE:: The first layer is skipped since we need the y values at zero
-        //     for (var divIndex = 1; divIndex <= numBaseDivs; divIndex++) {
-
-        //         if (divIndex == numBaseDivs) {
-        //             // This is the last layer so we set the verts to be at
-        //             // the max height of the div
-        //             for (var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //                 sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = baseSectionLength;
-        //             }
-
-        //         } else {
-        //             // randomly determine a height and modify the verts
-        //             var minDivLength = equalBaseDivLength * 0.5;
-        //             var maxDivLength = spaceLeft - (minDivLength * (numBaseDivs - divIndex));
-        //             var divLength =  getRandomFloat(this.randGenerator, minDivLength, maxDivLength);
-
-        //             // Change y value for all verts at this level
-        //             for(var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //                 sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = divLength + (baseSectionLength - spaceLeft);
-        //             }
-
-        //             spaceLeft = spaceLeft - divLength;
-        //         }
-        //     }
-        // }
-
-
-        // if (genParams.equalMidDivs) {
-        //     for (var divIndex = numBaseDivs + 1; divIndex <= numBaseDivs + numMidDivs; divIndex++) {
-        //         for(var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //             sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = (equalMidDivLength * Math.abs(divIndex - (numBaseDivs))) + baseSectionLength;
-        //         };
-        //     }
-        // } else {
-        //     // We need to loop through each layer in the base and set the height
-        //     // Space left to work with in this div
-        //     var spaceLeft = midSectionLength;
-
-        //     // Loop through each level in the division
-        //     for (var divIndex = numBaseDivs + 1; divIndex <= numBaseDivs + numMidDivs; divIndex++) {
-
-        //         if (divIndex == (numBaseDivs + numMidDivs)) {
-        //             // This is the last layer so we set thhe verts to be at
-        //             // the max height of the div
-        //             for (var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //                 sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = baseSectionLength + midSectionLength;
-        //             }
-        //             break;
-        //         } else {
-        //             // randomly determine a height and modify the verts
-        //             var minDivLength = equalMidDivLength * 0.5;
-        //             var maxDivLength = spaceLeft - (minDivLength * (numMidDivs - Math.abs(divIndex - (numBaseDivs))));
-        //             var divLength =  getRandomFloat(this.randGenerator, minDivLength, maxDivLength);
-
-        //             // Change y value for all verts at this level
-        //             for (var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //                 sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = divLength + (midSectionLength - spaceLeft) + baseSectionLength;
-        //             }
-
-        //             spaceLeft = spaceLeft - divLength;
-        //         }
-        //     }
-        // }
-
-
-        // if (genParams.equalTipDivs) {
-        //     for (var divIndex = numBaseDivs + numMidDivs + 1; divIndex <= totalBladeDivs; divIndex++) {
-        //         for(var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //             sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = (equalTipDivLength * Math.abs(divIndex - (numBaseDivs + numMidDivs))) + baseSectionLength + midSectionLength;
-        //         }
-        //     }
-        // } else {
-        //     // We need to loop through each layer in the base and set the height
-        //     // Space left to work with in this div
-        //     var spaceLeft = tipSectionLength;
-
-        //     // Loop through each level in the division
-        //     for (var divIndex = numBaseDivs + numMidDivs + 1; divIndex <= totalBladeDivs; divIndex++) {
-
-        //         if (divIndex == totalBladeDivs) {
-        //             // This is the last layer so we set thhe verts to be at
-        //             // the max height of the div
-        //             for(var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //                 sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = bladeLength;
-        //             }
-        //         } else {
-        //             // randomly determine a height and modify the verts
-        //             var minDivLength = equalTipDivLength * 0.5;
-        //             var maxDivLength = spaceLeft - (minDivLength * (numTipDivs - Math.abs(divIndex - (numBaseDivs + numMidDivs))));
-        //             var divLength =  getRandomFloat(this.randGenerator, minDivLength, maxDivLength);
-
-        //             // Change y value for all verts at this level
-        //             for (var i = 0; i < vertIndicesInLayers[divIndex].length; i++) {
-        //                 sword.geometryData.vertices[vertIndicesInLayers[divIndex][i] * 3 + 1] = divLength + (tipSectionLength - spaceLeft) + (baseSectionLength + midSectionLength);
-        //             }
-
-        //             spaceLeft = spaceLeft - divLength;
-        //         }
-        //     }
-        // }
-
-        // if (this.verbose) {
-        //     console.log(`Vertices after height mod:\n${sword.geometryData.toString("vertex")}`);
-        // }
-
-        // Place a point at the tip of the blade
-        var topFaceVertIndices: number[] = SwordGenerator.getTopVertIndices(sword.geometryData.vertices);
-        sword.geometryData.vertices = SwordGenerator.createBladeTip(sword.geometryData.vertices, topFaceVertIndices);
+        // Modify tip section div heights
+        sword.geometryData.vertices = SwordGenerator.configureSectionHeight(sword.geometryData.vertices, bladeLayers, _.range(numBaseDivs + numMidDivs + 1, totalBladeDivs + 1),
+            genParams.equalTipDivs, tipSectionLength, baseSectionLength + midSectionLength, this.randGenerator, genParams);
 
         // Ensure that the height of the blade matches the template
         // for (var i = 0; i < topFaceVertIndices.length; i++) {
         //     assert(sword.geometryData.vertices[topFaceVertIndices[i] * 3 + 1] == bladeLength,
         //         `ERROR:buildBlade(): Blade does not match template expected ${bladeLength} was ${sword.geometryData.vertices[topFaceVertIndices[i] * 3 + 1]}`);
         // }
+
+        /////////////////////////////////////////////////////////////////
+        //                     EDGE MODIFICATION                       //
+        /////////////////////////////////////////////////////////////////
+
+        // Modify the edges to make the blade look unique
+
+        sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this.randGenerator, sword.geometryData.vertices, edgeVertices[0],
+           template.baseBladeWidth, genParams.bladeWidthToleranceRatio, numBaseDivs, numMidDivs, numTipDivs);
+
+        sword.geometryData.vertices = SwordGenerator.modifyEdgeWidth(this.randGenerator, sword.geometryData.vertices, edgeVertices[1],
+            template.baseBladeWidth, genParams.bladeWidthToleranceRatio, numBaseDivs, numMidDivs, numTipDivs);
+
+
+        /////////////////////////////////////////////////////////////////
+        //                     CREATE BLADE TIP                        //
+        /////////////////////////////////////////////////////////////////
+
+        // Place a point at the tip of the blade
+        var topFaceVertIndices: number[] = SwordGenerator.getTopVertIndices(sword.geometryData.vertices);
+        sword.geometryData.vertices = SwordGenerator.createBladeTip(sword.geometryData.vertices, topFaceVertIndices);
+
+        /////////////////////////////////////////////////////////////////
+        //                     VERIFY GEOMETRY                         //
+        /////////////////////////////////////////////////////////////////
 
         // Check number of vertices
         assert(sword.geometryData.vertices.length > 0, "ERROR:buildBlade(): Model does not have any vertices defined");
@@ -529,6 +289,31 @@ export class SwordGenerator {
         for (var i = 0; i < (sword.geometryData.vertices.length / 3); i++) {
             sword.geometryData.addColor(0.5, 0.5, 0.5);
         }
+
+        // for (var layerIndex = 0; layerIndex <= totalBladeDivs; layerIndex++) {
+        //     var layer = bladeLayers[layerIndex];
+        //     var section = '';
+        //     if (layerIndex <= numBaseDivs) {
+        //         section = 'base';
+        //     }
+        //     else if(layerIndex > numBaseDivs && layerIndex <= numBaseDivs + numMidDivs) {
+        //         section = 'mid';
+        //     }
+        //     else {
+        //         section = 'tip';
+        //     }
+        //     for(var i = 0; i < layer.vertices.length; i++) {
+        //         if (section == 'base') {
+        //             sword.geometryData.addColor(1.0, 0.0, 0.0);
+        //         } else if (section == 'mid') {
+        //             sword.geometryData.addColor(1.0, 1.0, 0.5);
+        //         } else {
+        //             sword.geometryData.addColor(0.0, 0.0, 1.0);
+        //         }
+        //     }
+        // }
+
+
 
         // Check number of colors
         assert(sword.geometryData.colors.length > 0, "ERROR:buildBlade(): Model does not have any colors defined");
@@ -546,6 +331,79 @@ export class SwordGenerator {
         return sword;
     }
 
+    /**
+     *
+     * @param vertices
+     * @param bladeLayers
+     * @param layerIndices
+     * @param equalDivs
+     * @param sectionHeight
+     * @param heightOffset
+     * @param prng
+     */
+    static configureSectionHeight(vertices: number[], bladeLayers: FaceData[], layerIndices: number[], equalDivs: boolean,
+        sectionHeight: number, heightOffset: number, prng : seedrandom.prng, genParams: GenerationParameters): number[] {
+
+        var numDivs: number = layerIndices.length;
+        var equalDivHeight: number = sectionHeight / numDivs;
+        equalDivHeight = Number.parseFloat(equalDivHeight.toFixed(3));
+
+        console.log(`DEBUG:: equal div height: ${equalDivHeight}`);
+        console.log(`DEBUG:: Modifying : ${layerIndices}`);
+
+        if (equalDivs == true) {
+            console.log("Using equal divs");
+            for (var j = 0; j < layerIndices.length; j++) {
+                var layerIndex = layerIndices[j];
+                var layer = bladeLayers[layerIndex];
+                for (var i = 0; i < layer.vertices.length; i++) {
+                    vertices[layer.vertices[i] * 3 + 1] = ((j+1)*equalDivHeight) + heightOffset;
+                }
+            };
+        }
+
+
+        else {
+            // We keep track of how much height is left in this sections
+            var spaceLeft = sectionHeight;
+            var totalHeightOfDivs = 0.0;
+
+            // Loop through all the layers
+            for (var j = 0; j < layerIndices.length; j++) {
+                var layerIndex = layerIndices[j];
+                var layer = bladeLayers[layerIndex];
+
+                if (j == layerIndices.length - 1) {
+                    // Change the y value of all the vertices in this layer
+                    for (var vertexIndex = 0; vertexIndex < layer.vertices.length; vertexIndex++) {
+                        vertices[layer.vertices[vertexIndex] * 3 + 1] = sectionHeight + heightOffset;
+                    }
+                    break;
+                }
+
+                else {
+                    // randomly determine a height and modify the verts
+                    var minDivHeight = equalDivHeight * 0.5;
+                    var maxDivHeight = equalDivHeight;
+                    var randHeight =  utils.getRandomFloat(prng, minDivHeight, maxDivHeight);
+                    var heightCap = spaceLeft - (minDivHeight * (numDivs - layerIndex));
+                    var divHeight = Math.min(randHeight, heightCap);
+
+
+                    // Change the y value of all the vertices in this layer
+                    for (var vertexIndex = 0; vertexIndex < layer.vertices.length; vertexIndex++) {
+                        vertices[layer.vertices[vertexIndex] * 3 + 1] = divHeight + (totalHeightOfDivs) + heightOffset;
+                    }
+
+                    totalHeightOfDivs += divHeight;
+                    spaceLeft -= divHeight;
+                }
+            }
+        }
+
+        return vertices;
+    }
+
 
     /**
      * Creates a box-shapped guard and merges it with the swords geometry.
@@ -559,7 +417,7 @@ export class SwordGenerator {
         guardBladeRatio : number = 1.5) : Sword {
 
         // Create a simple box
-        var guardGeometry = new THREE.BoxGeometry(0.3 + template.baseBladeWidth, guardThickness, genParams.bladeThickness + 0.3);
+        var guardGeometry = new THREE.BoxGeometry(genParams.bladeThickness + 0.1, guardThickness, 0.3 + template.baseBladeWidth);
 
         // Convert the box to a buffer geometry
         var guardBufferGeometry = new THREE.BufferGeometry().fromGeometry(guardGeometry);
@@ -863,10 +721,10 @@ export class SwordGenerator {
      * @param scale
      * @returns vertices with given indices scaled
      */
-    static scaleFace(vertices: number[], faceIndices: number[], scale: number): number[] {
+    static scaleFace(vertices: number[], faceIndices: number[], scaleX: number, scaleZ: number): number[] {
         for (var i = 0; i < faceIndices.length; i++) {
-            vertices[faceIndices[i] * 3] *= scale;
-            vertices[faceIndices[i] * 3 + 2] *= scale;
+            vertices[faceIndices[i] * 3] *= scaleX;
+            vertices[faceIndices[i] * 3 + 2] *= scaleZ;
         }
         return vertices;
     }
@@ -894,8 +752,7 @@ export class SwordGenerator {
      * Returns: All the vertices in the model after being modified
      * ## NOTE: Currently, this only creates symmetrical blades
      */
-    static modifyEdgeWidth(swordGenerator : SwordGenerator, vertices : number[], leftEdgeVertIndices : number[],
-        rightEdgeVertIndices : number[], templateBladeWidth : number, widthToleranceRatio : number,
+    static modifyEdgeWidth(rng: seedrandom.prng, vertices : number[], edgeVertexIndices: number[], templateBladeWidth : number, widthToleranceRatio : number,
         numBaseDivs : number , numMidDivs : number, numTipDivs : number, symmetric=true) : number[] {
         // Rules:
         // The x-value of the vertices needs to be within
@@ -909,24 +766,30 @@ export class SwordGenerator {
         var divisionWidth = templateBladeWidth;
         var totalDivs = numBaseDivs + numMidDivs + numTipDivs;
 
-        for (var i = 1; i < leftEdgeVertIndices.length; i++) {
-            // Randomly generate a width for this section of the blade]
-            divisionWidth = templateBladeWidth + (swordGenerator.randGenerator() * (maxBladeWidth - minBladeWidth));
-            //divisionWidth = divisionWidth * (leftEdgeVertIndices.length - i) / (leftEdgeVertIndices.length);
-            vertices[leftEdgeVertIndices[i] * 3 + 0] = -(divisionWidth / 2);
+        for (var i = 1; i < edgeVertexIndices.length; i++) {
+            if (i > numBaseDivs + numMidDivs) {
+                vertices[edgeVertexIndices[i] * 3 + 2] = vertices[edgeVertexIndices[i - 1] * 3 + 2] * 0.75;
+            }
         }
 
-        for (var i = 1; i < rightEdgeVertIndices.length; i++) {
-            if (!symmetric) {
-                // Randomly generate a width for this section of the blade
-                divisionWidth = templateBladeWidth + (swordGenerator.randGenerator() * (maxBladeWidth - minBladeWidth));
-                //divisionWidth = divisionWidth * (leftEdgeVertIndices.length - i) / (leftEdgeVertIndices.length);
-                vertices[rightEdgeVertIndices[i] * 3 + 0] = (divisionWidth / 2);
-            }
-            else if (i < leftEdgeVertIndices.length) {
-                vertices[rightEdgeVertIndices[i] * 3 + 0] = -(vertices[leftEdgeVertIndices[i] * 3]);
-            }
-        }
+        // for (var i = 1; i < leftEdgeVertIndices.length; i++) {
+        //     // Randomly generate a width for this section of the blade]
+        //     divisionWidth = templateBladeWidth + (swordGenerator.randGenerator() * (maxBladeWidth - minBladeWidth));
+        //     //divisionWidth = divisionWidth * (leftEdgeVertIndices.length - i) / (leftEdgeVertIndices.length);
+        //     vertices[leftEdgeVertIndices[i] * 3 + 0] = -(divisionWidth / 2);
+        // }
+
+        // for (var i = 1; i < rightEdgeVertIndices.length; i++) {
+        //     if (!symmetric) {
+        //         // Randomly generate a width for this section of the blade
+        //         divisionWidth = templateBladeWidth + (swordGenerator.randGenerator() * (maxBladeWidth - minBladeWidth));
+        //         //divisionWidth = divisionWidth * (leftEdgeVertIndices.length - i) / (leftEdgeVertIndices.length);
+        //         vertices[rightEdgeVertIndices[i] * 3 + 0] = (divisionWidth / 2);
+        //     }
+        //     else if (i < leftEdgeVertIndices.length) {
+        //         vertices[rightEdgeVertIndices[i] * 3 + 0] = -(vertices[leftEdgeVertIndices[i] * 3]);
+        //     }
+        // }
 
         return vertices;
     }
