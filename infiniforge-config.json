@@ -4,6 +4,7 @@
         "verbose": true
     },
     "generator": {
-        "verbose": true
+        "verbose": true,
+        "verbosityLevel": "all"
     }
 }

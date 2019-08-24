@@ -15,13 +15,21 @@ import * as utils from './utils'
 
 
 export interface SwordMorphology {
+    // Blade divisions
     baseDivs: number;
     midDivs: number;
     tipDivs: number;
-
     equalBaseDivs: boolean;
     equalMidDivs: boolean;
     equalTipDivs: boolean;
+
+    // Geometry colors
+    bladeColor: number;
+    guardColor: number;
+    handleColor: number;
+    pommelColor: number;
+
+    bladeThickness : number;    // Thickness of the blade from one non-egde side to the other
 
 }
 
@@ -32,10 +40,6 @@ export interface GenerationParameters {
     maxTipDivs : number;    // Number of vertices devoted to the tip section of the blade
     minNumDivs : number;    // Minimum number of vertices devoted to any section of the blade
     minDivLength : number;  // Minimum vertical spacing between vertices on the edge of the blade based on
-    bladeThickness : number;    // Thickness of the blade from one non-egde side to the other
-    equalBaseDivs : boolean;    // When true all vertices in the base section of the blade are spaced evenly
-    equalMidDivs : boolean;     // When true all vertices in the mid section of the blade are spaced evenly
-    equalTipDivs : boolean;     // When true all vertices in the tip section of the blade are spaced evenly
     bladeBaseProportion : number;   // Portion of the blade [0.1, 0.4] devoted to the base of the blade
     bladeMidProportion : number;    // Portion of the blade [0.1, 0.4] devoted to the middle of the blade
     bladeWidthToleranceRatio : number;  // What is the max pertubation of the edge of the blade from its default width
