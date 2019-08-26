@@ -14,42 +14,70 @@ import { Sword } from './Sword'
 import * as utils from './utils'
 
 
-export interface SwordMorphology {
-    // Blade divisions
-    baseDivs: number;
-    midDivs: number;
-    tipDivs: number;
-    equalBaseDivs: boolean;
-    equalMidDivs: boolean;
-    equalTipDivs: boolean;
-
-    // Geometry colors
-    bladeColor: number;
-    guardColor: number;
-    handleColor: number;
-    pommelColor: number;
-
-    bladeThickness : number;    // Thickness of the blade from one non-egde side to the other
-
-}
-
-
 export interface GenerationParameters {
-    maxBaseDivs : number;   // Number of vertices devoted to the base section of the blade
-    maxMidDivs : number;    // Number of vertices devoted to the mid section of the blade
-    maxTipDivs : number;    // Number of vertices devoted to the tip section of the blade
-    minNumDivs : number;    // Minimum number of vertices devoted to any section of the blade
-    minDivLength : number;  // Minimum vertical spacing between vertices on the edge of the blade based on
-    bladeBaseProportion : number;   // Portion of the blade [0.1, 0.4] devoted to the base of the blade
-    bladeMidProportion : number;    // Portion of the blade [0.1, 0.4] devoted to the middle of the blade
-    bladeWidthToleranceRatio : number;  // What is the max pertubation of the edge of the blade from its default width
+    // Number of control points for the splines defining
+    // the edge geometries of the base, middle, and tip of
+    // the blade
+    nBaseCPs: number;
+    nMidCPs: number;
+    nTipCps: number;
+
+    // How many points should we sample along the spline of
+    // each section of the blade
+    nBaseSplinePoints: number;
+    nMidSplinePoints: number;
+    nTipSplinePoints: number;
+
+    // Should the control points be spaced evenly along
+    // the length of their respective sections of the blade
+    evenSpacedBaseCPs: boolean;
+    evenSpacedMidCPs: boolean;
+    evenSpacedTipCPs: boolean;
+
+    bladeLength: number;    // Final length of the blade
+
+    bladeColor: number;     // Hex color of the blade metal
+    guardColor: number;     // Hex color of the guard between the handle and blade
+    handleColor: number;    // Hex color of the handle
+    pommelColor: number;    // Hex color of the pommel at the end of the handle
+
+    maxCps: number;       // Number of vertices devoted to the base section of the blade
+    minCps: number;       // Minimum number of vertices devoted to any section of the blade
+    randomizeNumCps: boolean;  // If true then, the number of divs in each section will be determined randomly
+
+    minCPSpacing: number;  // Minimum vertical spacing between vertices on the edge of the blade based on
+    maxCPSpacing: number;  // Minimum vertical spacing between vertices on the edge of the blade based on
+    
+
+    bladeThickness: number;        // Thickness of the blade from one non-egde side to the other
+    bladeBaseProportion: number;   // Portion of the blade [0.1, 0.4] devoted to the base of the blade
+    bladeMidProportion: number;    // Portion of the blade [0.1, 0.4] devoted to the middle of the blade
+    bladeWidthToleranceRatio: number;  // What is the max pertubation of the edge of the blade from its default width
 }
+
 
 export const DEFAULT_GEN_PARAMS : GenerationParameters = {
-    maxBaseDivs: 4,
-    maxMidDivs : 5,
-    maxTipDivs : 2,
-    minNumDivs : 3,
+
+    nBaseCps: 3,
+    nMidCps: 5,
+    nTipCps: 2,
+
+    nBaseSplinePoints: 10,
+    nMidSplinePoints: 10,
+    nTipSplinePoints: 10,
+
+    evenSpacedBaseCPs: true,
+    evenSpacedMidCPs: true,
+    evenSpacedTipCPs: true,
+
+    bladeLength: 1,
+
+    bladeColor: 0x2727272;
+
+
+    
+    maxCPs: 4,
+    minCps : 2,
     minDivLength: 0.01,
     bladeThickness : 0.1,
     equalBaseDivs : true,
@@ -57,8 +85,24 @@ export const DEFAULT_GEN_PARAMS : GenerationParameters = {
     equalTipDivs : true,
     bladeBaseProportion : 0.3,
     bladeMidProportion : 0.5,
-    bladeWidthToleranceRatio: 0.1
+    bladeWidthToleranceRatio: 0.1,
+
+    
+};
+
+export const DEFAULT_RANDOM_PARAMS : RandomizationParameters = {
+    
+};
+
+
+/**
+ * Fills any missing parameters with randomly generated values
+ * Note: height is always set by the template
+ */
+function ConfigureParameters(genParams: GenerationParameters, template: SwordTemplate) {
+
 }
+
 
 /**
  * Factory class that produces instances of
@@ -70,16 +114,16 @@ export class SwordGenerator {
     public randGenerator : seedrandom.prng;
     public verbose: boolean;
 
-
+    /**
+     * Constructs a new SwordGenerator object with its own pseudo random
+     * number generator
+     * @param verbose Print intermediate output from generation process
+     */
     constructor(verbose?: boolean) {
         // The generator only cares about its own seed value and its random number generator
         this.seed = '';
         this.randGenerator = seedrandom('');
-        if (verbose) {
-            this.verbose = verbose;
-        } else {
-            this.verbose = false;
-        }
+        this.verbose = (verbose != undefined) ? verbose : false;
     }
 
     /**
@@ -104,12 +148,11 @@ export class SwordGenerator {
      * @param template
      * @param options
      * @param seed
-     * @return
+     * @return A sword object containing the final gerated mesh of the sword
      */
     generateSword(template: SwordTemplate, options: Object, seed?: string) : Sword {
         // Reset the random number generator
         this.seedGenerator(seed);
-        console.log(`Seed is '${seed}' first random number is: ${this.randGenerator()}`);
 
         // Fill in any missing generation parameters with default values
         var genParams : GenerationParameters = Object.assign(options, DEFAULT_GEN_PARAMS);
@@ -119,7 +162,7 @@ export class SwordGenerator {
         var sword = new Sword(template.style);
 
         //Build each of the components of the blade
-        this.buildBlade(template, genParams, sword);
+        this.buildBlade(template, genParams, DEFAULT_RANDOM_PARAMS, sword);
         this.buildGuard(template, genParams, sword);
         this.buildHandle(template, genParams, sword);
         this.buildPommel(template, genParams, sword);
@@ -135,15 +178,16 @@ export class SwordGenerator {
      * @param sword
      * @returns
      */
-    buildBlade(template : SwordTemplate, genParams : GenerationParameters, sword : Sword) : Sword {
+    buildBlade(template : SwordTemplate, genParams : GenerationParameters, randParams: RandomizationParameters, sword : Sword) : Sword {
 
         /////////////////////////////////////////////////////////////////
         //                        BLADE LENGTH                         //
         /////////////////////////////////////////////////////////////////
 
         // Set the length of the blade
-        var bladeLength = utils.getRandomFloat(this.randGenerator, template.minBladeLength, template.maxBladeLength);
-        bladeLength = Number.parseFloat(bladeLength.toFixed(2));
+        var bladeLength = utils.setPrecision(
+            utils.getRandomFloat(this.randGenerator, template.minBladeLength, template.maxBladeLength),
+            2);
         // bladeLength = 1.0;
 
         /////////////////////////////////////////////////////////////////
@@ -151,12 +195,10 @@ export class SwordGenerator {
         /////////////////////////////////////////////////////////////////
 
         // Determine how many divisions each section has
-        var numBaseDivs = utils.getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxBaseDivs + 1);
-        var numMidDivs = utils.getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxMidDivs + 1);
-        var numTipDivs = utils.getRandomInt(this.randGenerator, genParams.minNumDivs, genParams.maxTipDivs + 1);
-        // var numBaseDivs = 3;
-        // var numMidDivs =  5;
-        // var numTipDivs =  2;
+        var numBaseDivs = utils.getRandomInt(this.randGenerator, randParams.minNumDivs, randParams.maxBaseDivs + 1);
+        var numMidDivs = utils.getRandomInt(this.randGenerator, randParams.minNumDivs, randParams.maxMidDivs + 1);
+        var numTipDivs = utils.getRandomInt(this.randGenerator, randParams.minNumDivs, randParams.maxTipDivs + 1);
+        
         var totalBladeDivs = numBaseDivs + numMidDivs + numTipDivs;
 
         if (this.verbose) {
@@ -168,13 +210,13 @@ export class SwordGenerator {
 
         // Determine how much of the blade length is allocated to each section
         var baseSectionLength = bladeLength * genParams.bladeBaseProportion;
-        baseSectionLength = Number.parseFloat(baseSectionLength.toFixed(2));
+        baseSectionLength = utils.setPrecision(baseSectionLength, 2);
 
         var midSectionLength = bladeLength * genParams.bladeMidProportion;
-        midSectionLength = Number.parseFloat(midSectionLength.toFixed(2));
+        midSectionLength = utils.setPrecision(midSectionLength, 2);
 
         var tipSectionLength = bladeLength - (baseSectionLength + midSectionLength);
-        tipSectionLength = Number.parseFloat(tipSectionLength.toFixed(2));
+        tipSectionLength = utils.setPrecision(tipSectionLength, 2);
 
         if (this.verbose) {
             console.log(`DEBUG:: Base section length: ${baseSectionLength}`);

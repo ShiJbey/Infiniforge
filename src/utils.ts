@@ -45,7 +45,20 @@ function getSlope(x1 : number,  y1 : number, x2 : number, y2 : number) : number 
     return (y2 - y1) / (x2 - x1);
 }
 
+/////////////////////////////////////////////////////////////////
+//                       MISC FUNCTIONS                        //
+/////////////////////////////////////////////////////////////////
+
+/**
+ * Sets the number of digits after the decimal place
+ * @param n
+ * @param digits
+ */
+function setPrecision(value: number, digits: number) {
+    return Number.parseFloat(value.toFixed(digits));
+}
 
 
-export { getRandomInt, getRandomFloat, getSlope };
+
+export { getRandomInt, getRandomFloat, getSlope, setPrecision };
 
