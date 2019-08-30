@@ -199,7 +199,6 @@ function configureRoutes() {
     // Request for a sword mesh, providing a seed value
     app.get('/api/forge/sword/style/:style/seed/:seed/options/:options', (req, res) => {
         try {
-            console.log(req.body);
             var optionsJson = JSON.parse(req.params.options);
             var promise = generateAndExportSword(req.params.style, req.params.seed, optionsJson);
 

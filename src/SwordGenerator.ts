@@ -23,6 +23,10 @@ export interface GenerationParameters {
     nMidCPs: number;
     nTipCPs: number;
 
+    maxCPs: number;             // Number of vertices devoted to the base section of the blade
+    minCPs: number;             // Minimum number of vertices devoted to any section of the blade
+    randomizeNumCps: boolean;   // If true then, the number of divs in each section will be determined randomly
+
     // How many points should we sample along the spline of
     // each section of the blade
     nBaseSplinePoints: number;
@@ -37,21 +41,19 @@ export interface GenerationParameters {
     evenSpacedMidCPs: boolean;
     evenSpacedTipCPs: boolean;
 
-    bladeColor: number[];     // Hex color of the blade metal
-    guardColor: number[];     // Hex color of the guard between the handle and blade
-    handleColor: number[];    // Hex color of the handle
-    pommelColor: number[];    // Hex color of the pommel at the end of the handle
-
-    maxCPs: number;       // Number of vertices devoted to the base section of the blade
-    minCPs: number;       // Minimum number of vertices devoted to any section of the blade
-    randomizeNumCps: boolean;  // If true then, the number of divs in each section will be determined randomly
+    bladeColor: number[];     // RGB color of the blade metal
+    guardColor: number[];     // RGB color of the guard between the handle and blade
+    handleColor: number[];    // RGB color of the handle
+    pommelColor: number[];    // RGB color of the pommel at the end of the handle
 
     minCPSpacing: number;  // Minimum vertical spacing (percentage of section height) between control points on the edge of the blade
     maxCPSpacing: number;  // Maximum vertical spacing (percentage of section height) between control points on the edge of the blade
 
     bladeThickness: number;        // Thickness of the blade from one non-egde side to the other
-    bladeBaseProportion: number;   // Portion of the blade [0.1, 0.4] devoted to the base of the blade
-    bladeMidProportion: number;    // Portion of the blade [0.1, 0.4] devoted to the middle of the blade
+
+    bladeBaseProportion: number;   // Portion of the blade devoted to the base of the blade
+    bladeMidProportion: number;    // Portion of the blade devoted to the middle of the blade
+
     bladeWidthToleranceRatio: number;  // What is the max pertubation of the edge of the blade from its default width
 }
 
@@ -60,30 +62,22 @@ export const DEFAULT_GEN_PARAMS : GenerationParameters = {
     nBaseCPs: 3,
     nMidCPs: 5,
     nTipCPs: 2,
-
+    maxCPs: 7,
+    minCPs: 2,
+    randomizeNumCps: true,
     nBaseSplinePoints: 5,
     nMidSplinePoints: 5,
     nTipSplinePoints: 2,
-
     evenSpacedBaseCPs: true,
     evenSpacedMidCPs: true,
     evenSpacedTipCPs: true,
-
     bladeLength: -1,
-
     bladeColor: [127, 127, 127],
     guardColor: [127, 81, 0],
     handleColor: [204, 81, 0],
     pommelColor: [229, 204, 89],
-
-    maxCPs: 7,
-    minCPs: 2,
-    randomizeNumCps: true,
-
     minCPSpacing: 0.20,
     maxCPSpacing: 0.40,
-
-
     bladeThickness : 0.1,
     bladeBaseProportion : 0.3,
     bladeMidProportion : 0.5,
@@ -178,7 +172,6 @@ export class SwordGenerator {
 
         // Fill in any missing generation parameters with default values
         var genParams : GenerationParameters = this.configureParameters(options,template);
-        //console.log(genParams);
 
         // Create a new sword Object
         var sword = new Sword(template.style);
@@ -249,7 +242,6 @@ export class SwordGenerator {
             edgePositions.push(new Spline.Point2D(v[0], v[2]));
             edgeVertices.push([vertexIndex]);
         }
-        console.log(edgePositions);
 
         // Save a list of the vertex indices at the top of
         // the sword geometry. At the moment this our blade
@@ -413,7 +405,6 @@ export class SwordGenerator {
     static setEdgeToSpline(vertices: number[], edgeVertices: number[][], numLayers: number, edgeSplines: Spline.Spline[], baseSectionLength:number,
         midSectionLength: number, tipSectionLength: number, genParams: GenerationParameters): number[] {
 
-        console.log("Setting base section");
         var totalCps = genParams.nBaseCPs + genParams.nMidCPs + genParams.nMidCPs;
         var baseDivHeight = utils.setPrecision(baseSectionLength / genParams.nBaseSplinePoints, 3);
         for (var edge = 0; edge < edgeVertices.length; edge++) {
@@ -427,12 +418,9 @@ export class SwordGenerator {
                 else {
                     vertices[vertexIndex * 3 + 2] =  utils.setPrecision(edgeSplines[edge].getSplinePoint(t, false).x, 2);
                 }
-
-                console.log(`vertex ${vertexIndex}: (x: ${vertices[vertexIndex * 3]}, y:${vertices[vertexIndex * 3 + 1]}, z: ${vertices[vertexIndex * 3 + 2]})`)
             }
         }
 
-        console.log("Setting mid section");
         var midDivHeight = utils.setPrecision(midSectionLength / genParams.nMidSplinePoints, 3);
         for (var edge = 0; edge < edgeVertices.length; edge++) {
             for (var i = 0; i < genParams.nMidSplinePoints; i++) {
@@ -448,7 +436,6 @@ export class SwordGenerator {
             }
         }
 
-        console.log("Setting tip section");
         var tipDivHeight = utils.setPrecision(tipSectionLength / genParams.nTipSplinePoints, 3);
         for (var edge = 0; edge < edgeVertices.length; edge++) {
             for (var i = 0; i < genParams.nTipSplinePoints; i++) {
@@ -476,16 +463,12 @@ export class SwordGenerator {
         for (var i = 0; i < cPIndices.length; i++) {
             var layer = cPIndices[i];
             var scale = utils.getRandomFloat(prng, 1, 1 + genParams.bladeWidthToleranceRatio);
-            console.log(scale);
             for (var edge = 0; edge < edgeSplines.length; edge++) {
                 edgeSplines[edge].points[layer].x *= scale;
-                // console.log( edgeSplines[edge].points[layer]);
             }
         }
-        console.log("Printing spline")
         for (var t = 0; t < edgeSplines[0].points.length - 1; t+=0.5) {
             var pos = edgeSplines[0].getSplinePoint(t, true);
-            console.log(pos);
         }
         return edgeSplines;
     }
@@ -505,8 +488,6 @@ export class SwordGenerator {
                         utils.setPrecision(edgePositions[i].x, 2) : utils.setPrecision(edgePositions[i].y, 2);
 
                     edgeSplines[i].points[layerIndex].y = utils.setPrecision(((j+1)*equalCPSpacing) + heightOffset, 2);
-
-                    console.log(`Spline position for edge(${i}) @ CP#${layerIndex}: (z/x: ${edgeSplines[i].points[layerIndex].x}, y:${edgeSplines[i].points[layerIndex].y})`);
                 }
             }
         }
@@ -568,11 +549,7 @@ export class SwordGenerator {
         var equalDivHeight: number = sectionHeight / numDivs;
         equalDivHeight = Number.parseFloat(equalDivHeight.toFixed(3));
 
-        // console.log(`DEBUG:: equal div height: ${equalDivHeight}`);
-        // console.log(`DEBUG:: Modifying : ${layerIndices}`);
-
         if (equalDivs == true) {
-            // console.log("Using equal divs");
             for (var j = 0; j < layerIndices.length; j++) {
                 var layerIndex = layerIndices[j];
                 var layer = bladeLayers[layerIndex];

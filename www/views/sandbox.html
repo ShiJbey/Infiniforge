@@ -309,8 +309,12 @@
             this.bladeBaseProportion = 0.3;
             this.bladeMidProportion = 0.5;
             this.bladeWidthToleranceRatio = 0.2;
-            this.forge = () => {
-                forgeSword(false);
+            this.Forge = () => {
+                forgeSword();
+            }
+            this.ForgeRandom = () => {
+                seedController.setValue(randomSeed());
+                forgeSword()
             }
             this.wireframe = false;
 
@@ -378,7 +382,8 @@
 
         gui.remember(generationParams);
 
-        gui.add(generationParams, 'forge');
+        gui.add(generationParams, 'ForgeRandom');
+        gui.add(generationParams, 'Forge');
 
         seedController = gui.add(generationParams, 'seed');
 
