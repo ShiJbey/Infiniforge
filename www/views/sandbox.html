@@ -376,10 +376,10 @@
         var edgeSplineOptions = gui.addFolder("Edge Spline Options");
 
         var numControlPointsOptions = edgeSplineOptions.addFolder("Number of Control Points");
-        edgeSplineOptions.add(generationParams, "nBaseCPs");
-        edgeSplineOptions.add(generationParams, "nMidCPs");
-        edgeSplineOptions.add(generationParams, "nTipCPs");
-        edgeSplineOptions.add(generationParams, "randomizeNumCps");
+        numControlPointsOptions.add(generationParams, "nBaseCPs");
+        numControlPointsOptions.add(generationParams, "nMidCPs");
+        numControlPointsOptions.add(generationParams, "nTipCPs");
+        numControlPointsOptions.add(generationParams, "randomizeNumCps");
 
         var splineSamplingOptions = edgeSplineOptions.addFolder("Spline Sampling");
         splineSamplingOptions.add(generationParams, "nBaseSplinePoints");

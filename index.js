@@ -74,17 +74,14 @@ function configureRoutes() {
 
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'www', 'views', 'help.html'));
-        console.log("Help page served...");
     });
 
     app.get('/api', (req, res) => {
         res.sendFile(path.join(__dirname, 'www', 'views', 'help.html'));
-        console.log("Help page served...");
     });
 
     app.get('/help', (req, res) => {
         res.sendFile(path.join(__dirname, 'www', 'views', 'help.html'));
-        console.log("Help page served...");
     });
 
     ////////////////////////////////////////////////////////
@@ -95,13 +92,11 @@ function configureRoutes() {
     // importing the models into an external program
     app.get('/tools/sandbox', (req, res) => {
         res.sendFile(path.join(__dirname, 'www', 'views', 'sandbox.html'));
-        console.log("Sandox page served...");
     });
 
     // Return html GUI for editing cross section JSON
     app.get('/tools/crosssection', (req, res) => {
         res.sendFile(path.join(__dirname, 'www', 'views', 'crosssectiontool.html'));
-        console.log("Cross Section Tool page served...");
     });
 
     ////////////////////////////////////////////////////////
@@ -109,12 +104,12 @@ function configureRoutes() {
     ////////////////////////////////////////////////////////
 
     app.post('/api/crosssection/:name/:jsonData', (req, res) => {
-        console.log("Saved cross section");
         var crossSection = JSON.parse(req.params.jsonData);
         var allCrossSections = JSON.parse(fs.readFileSync("./src/json/cross-sections.json"));
         res.send({result: "done"});
         allCrossSections[crossSection.name] = crossSection;
         fs.writeFileSync("./src/json/cross-sections.json", JSON.stringify(allCrossSections));
+        console.log("Saved cross section");
     });
 
     ////////////////////////////////////////////////////////
@@ -125,7 +120,6 @@ function configureRoutes() {
         var allCrossSections = JSON.parse(fs.readFileSync("./src/json/cross-sections.json"));
         if (req.params.name in allCrossSections) {
             res.send(allCrossSections[req.params.name]);
-            console.log("Served cross section.");
         }
         else {
             res.status(404).send("Cant find cross section");
@@ -144,12 +138,12 @@ function configureRoutes() {
                 res.status(400).json({Error: "Error during generation"});
         });
 
-        // Temporary print strings
-        console.log("==== FORGE REQUEST SATISFIED ====\n" +
-                    `\tFrom: ${req.ip}\n` +
-                    `\tSword Style: ${req.params.style}\n` +
-                    `\tGenerated Seed: ${seed}\n` +
-                    "=================================\n");
+        if (infiniforgeConfig["server"]["verbose"]) {
+            var now = new Date();
+            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
+                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
+                `> Forge Request Satisfied`);
+        }
     });
 
     // Request for a sword mesh without providing a seed value
@@ -168,13 +162,12 @@ function configureRoutes() {
             res.status(400).json({Error: "options needs to be json format"});
         }
 
-
-        // Temporary print strings
-        console.log("==== FORGE REQUEST SATISFIED ====\n" +
-                    `\tFrom: ${req.ip}\n` +
-                    `\tSword Style: ${req.params.style}\n` +
-                    `\tGenerated Seed: ${seed}\n` +
-                    "=================================\n");
+        if (infiniforgeConfig["server"]["verbose"]) {
+            var now = new Date();
+            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
+                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
+                `> Forge Request Satisfied`);
+        }
     });
 
     // Request for a sword mesh, providing a seed value
@@ -188,12 +181,12 @@ function configureRoutes() {
                 res.status(400).json({Error: "Error during generation"});
         });
 
-        // Temporary print strings
-        // console.log("==== FORGE REQUEST SATISFIED ====\n" +
-        //             `\tFrom: ${req.ip}\n` +
-        //             `\tSword Style: ${req.params.style}\n` +
-        //             `\tGenerated Seed: ${req.params.seed}\n` +
-        //             "=================================\n");
+        if (infiniforgeConfig["server"]["verbose"]) {
+            var now = new Date();
+            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
+                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
+                `> Forge Request Satisfied`);
+        }
     });
 
     // Request for a sword mesh, providing a seed value
@@ -213,13 +206,12 @@ function configureRoutes() {
             res.status(404).json({Error: "Options weren't sent as json string"});
         }
 
-
-        // Temporary print strings
-        // console.log("==== FORGE REQUEST SATISFIED ====\n" +
-        //             `\tFrom: ${req.ip}\n` +
-        //             `\tSword Style: ${req.params.style}\n` +
-        //             `\tGenerated Seed: ${req.params.seed}\n` +
-        //             "=================================\n");
+        if (infiniforgeConfig["server"]["verbose"]) {
+            var now = new Date();
+            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
+                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
+                `> Forge Request Satisfied`);
+        }
     });
 }
 

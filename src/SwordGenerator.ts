@@ -228,7 +228,11 @@ export class SwordGenerator {
         if (crossSectionTemplate == undefined) {
             throw new Error("SwordGenerator::buildBlade(): No cross section found.");
         }
-        console.log(`Index(${crossSectionTypeIndex}): ${crossSectionTemplate.name}`);
+
+        if (this.verbose) {
+            console.log(`Index(${crossSectionTypeIndex}): ${crossSectionTemplate.name}`);
+        }
+
         result = SwordGenerator.createBladeCrossSection(template, crossSectionTemplate, genParams);
         sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices);
 
