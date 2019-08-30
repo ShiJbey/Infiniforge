@@ -4,6 +4,6 @@
         "verbose": true
     },
     "generator": {
-        "verbose": true
+        "verbose": false
     }
 }

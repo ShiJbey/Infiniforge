@@ -37,10 +37,10 @@ export interface GenerationParameters {
     evenSpacedMidCPs: boolean;
     evenSpacedTipCPs: boolean;
 
-    bladeColor: string;     // Hex color of the blade metal
-    guardColor: string;     // Hex color of the guard between the handle and blade
-    handleColor: string;    // Hex color of the handle
-    pommelColor: string;    // Hex color of the pommel at the end of the handle
+    bladeColor: number[];     // Hex color of the blade metal
+    guardColor: number[];     // Hex color of the guard between the handle and blade
+    handleColor: number[];    // Hex color of the handle
+    pommelColor: number[];    // Hex color of the pommel at the end of the handle
 
     maxCPs: number;       // Number of vertices devoted to the base section of the blade
     minCPs: number;       // Minimum number of vertices devoted to any section of the blade
@@ -71,10 +71,10 @@ export const DEFAULT_GEN_PARAMS : GenerationParameters = {
 
     bladeLength: -1,
 
-    bladeColor: '#7F7F7F',
-    guardColor: '#7F5100',
-    handleColor: '#CC5100',
-    pommelColor: '#E5CC59',
+    bladeColor: [127, 127, 127],
+    guardColor: [127, 81, 0],
+    handleColor: [204, 81, 0],
+    pommelColor: [229, 204, 89],
 
     maxCPs: 7,
     minCPs: 2,
@@ -366,7 +366,7 @@ export class SwordGenerator {
         assert(sword.geometryData.triangles.length % 3 == 0, "ERROR:buildBlade(): Model has the incorrect number of triangle components");
 
         // Add colors for the sword blade
-        var bladeColor = utils.toRGB(utils.parseHexColorString(genParams.bladeColor));
+        var bladeColor = utils.normalizeRGB(genParams.bladeColor);
         for (var i = 0; i < (sword.geometryData.vertices.length / 3); i++) {
             sword.geometryData.addColor(bladeColor[0], bladeColor[1], bladeColor[2]);
         }
@@ -659,9 +659,10 @@ export class SwordGenerator {
             sword.geometryData.addNormal(normals.getX(i), normals.getY(i), normals.getZ(i));
         }
 
-        // Add a color for each vertex (Brown)
+        // Add a color for each vertex
+        var color = utils.normalizeRGB(genParams.guardColor);
         for (var i = 0; i < vertices.count; i++) {
-            sword.geometryData.addColor(0.5, .32, 0.0);
+            sword.geometryData.addColor(color[0], color[1], color[2]);
         }
 
         var triangles = guardBufferGeometry.getIndex();
@@ -717,9 +718,10 @@ export class SwordGenerator {
             sword.geometryData.addNormal(normals.getX(i), normals.getY(i), normals.getZ(i));
         }
 
-        // Add a color for each vertex (Brown)
+        // Add a color for each vertex
+        var color = utils.normalizeRGB(genParams.handleColor);
         for (var i = 0; i < vertices.count; i++) {
-            sword.geometryData.addColor(0.8, 0.32, 0.0);
+            sword.geometryData.addColor(color[0], color[1], color[2]);
         }
 
         var triangles = handleBufferGeometry.getIndex();
@@ -773,9 +775,10 @@ export class SwordGenerator {
             sword.geometryData.addNormal(normals.getX(i), normals.getY(i), normals.getZ(i));
         }
 
-        // Add a color for each vertex (Gold)
+        // Add a color for each vertex
+        var color = utils.normalizeRGB(genParams.pommelColor);
         for (var i = 0; i < vertices.count; i++) {
-            sword.geometryData.addColor(0.9, 0.8, 0.35);
+            sword.geometryData.addColor(color[0], color[1], color[2]);
         }
 
         var triangles = pommelBufferGeometry.getIndex();

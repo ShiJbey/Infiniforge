@@ -178,9 +178,8 @@
             var weaponStyle = generationParams['swordStyle'];
             var seed = generationParams['seed'];
             var options = generationParams.getGenerationParams();
-            var requestString = `${protocol}//${host}/api/forge/${weaponType}/style/${weaponStyle}/seed/${seed}/options/${options}`
+            var requestString = `${protocol}//${host}/api/forge/${weaponType}/style/${weaponStyle}/seed/${seed}/options/${options}`;
 
-            console.log(requestString);
             $.ajax({
                 method: 'GET',
                 url: requestString,
@@ -208,7 +207,7 @@
                     );
                 },
                 error: (XMLHttpRequest, textStatus, err) => {
-                    setGlTFDownload(true);
+                    setGlTFDownload(false);
                     alert(err);
                 }
             });
@@ -286,13 +285,30 @@
         var SandboxManager = function () {
             this.seed = 'pizza';
             this.randomizeSeed = () => {},
-            this.equalBaseDivs = true,
-            this.equalMidDivs = true,
-            this.equalTipDivs = true,
+            this.bladeColor = [127, 127, 127],
+            this.guardColor = [127, 81, 0],
+            this.handleColor = [204, 81, 0],
+            this.pommelColor = [229, 204, 89],
+            this.nBaseCPs = 3,
+            this.nMidCPs = 5,
+            this.nTipCPs = 2,
+            this.nBaseSplinePoints = 5,
+            this.nMidSplinePoints = 5,
+            this.nTipSplinePoints = 2,
+            this.randomizeNumCps = true,
+            this.maxCPs = 7,
+            this.minCPs = 2,
+            this.evenSpacedBaseCPs = true,
+            this.evenSpacedMidCPs = true,
+            this.evenSpacedTipCPs = true,
+
             this.bladeThickness = 0.1,
             this.swordStyle = 'long'
             this.baseWidth = 0.3;
-            this.edgeWidthRatio = 0.2;
+
+            this.bladeBaseProportion = 0.3;
+            this.bladeMidProportion = 0.5;
+            this.bladeWidthToleranceRatio = 0.2;
             this.forge = () => {
                 forgeSword(false);
             }
@@ -300,43 +316,108 @@
 
             this.getGenerationParams = () => {
                 return JSON.stringify({
-                    "equalBaseDivs": this.equalBaseDivs,
-                    "equalMidDivs": this.equalMidDivs,
-                    "equalTipDivs": this.equalTipDivs,
+                    "bladeColor": this.bladeColor,
+                    "guardColor": this.guardColor,
+                    "handleColor": this.handleColor,
+                    "pommelColor": this.pommelColor,
+                    "nBaseCPs": this.nBaseCPs,
+                    "nMidCPs": this.nMidCPs,
+                    "nTipCPs": this.nTipCPs,
+                    "nBaseSPlinePoints": this.nBaseSplinePoints,
+                    "nMidSplinePoints": this.nMidSplinePoints,
+                    "nTipSplinePoints": this.nTipSplinePoints,
+                    "randomizeNumCps": this.randomizeNumCps,
+                    "maxCPs": this.maxCPs,
+                    "minCPs": this.minCPs,
+                    "evenSpacedBaseCPs": this.evenSpacedBaseCPs,
+                    "evenSpacedMidCPs": this.evenSpacedMidCPs,
+                    "evenSpacedTipCPs": this.evenSpacedTipCPs,
+
+
+                    "bladeBaseProportion":this.bladeBaseProportion,
+                    "bladeMidProportion":this.bladeMidProportion,
+                    "bladeWidthToleranceRatio": this.bladeWidthToleranceRatio,
+
                     "bladeThickness": this.bladeThickness,
-                    "baseWidth": this.baseWidth,
-                    "edgeWidthRatio": this.edgeWidthRatio
+                    "baseWidth": this.baseWidth
                 });
             }
         };
 
         generationParams = new SandboxManager();
 
-        var FunctionParams = {
-            seed: 'pizza',
-            swordStyle: 'long',
-            equalBaseDivs: true,
-            equalMidDivs: true,
-            equalTipDivs: true,
-            bladeThickness: 0.1,
-            baseWidth: 0.3,
-            edgeWidthRatio: 0.2
-        };
+        // var FunctionParams = {
+        //     seed: 'pizza',
+        //     swordStyle: 'long',
+        //     bladeColor : "#7f7f7f",
+        //     guardColor : "#7f5100",
+        //     handleColor : "#cc5100",
+        //     pommelColor : "#e5cc59",
+        //     nBaseCPs : 3,
+        //     nMidCPs : 5,
+        //     nTipCPs : 2,
+        //     nBaseSplinePoints : 5,
+        //     nMidSplinePoints : 5,
+        //     nTipSplinePoints : 2,
+        //     randomizeNumCps : true,
+        //     maxCPs : 7,
+        //     minCPs : 2,
+        //     evenSpacedBaseCPs : true,
+        //     evenSpacedMidCPs : true,
+        //     evenSpacedTipCPs : true,
+        //     bladeThickness : 0.1,
+        //     baseWidth : 0.3,
+        //     bladeBaseProportion : 0.3,
+        //     bladeMidProportion : 0.5,
+        //     bladeWidthToleranceRatio : 0.2,
+        // };
 
         gui = new dat.GUI({autoPlace: false});
+
         gui.domElement.id = 'gui';
 
+        gui.remember(generationParams);
+
+        gui.add(generationParams, 'forge');
+
         seedController = gui.add(generationParams, 'seed');
+
         gui.add(generationParams, 'randomizeSeed').setValue(() => {
             seedController.setValue(randomSeed());
         });
+
         gui.add(generationParams, 'swordStyle', {'Short': 'short', 'Long':'long', 'Great':'great'}).onChange((val) => {});
-        gui.add(generationParams, 'equalBaseDivs');
-        gui.add(generationParams, 'equalMidDivs');
-        gui.add(generationParams, 'equalTipDivs');
-        gui.add(generationParams, 'baseWidth', 0.1, 0.5);
-        gui.add(generationParams, 'edgeWidthRatio', 0.1, 1.0);
-        gui.add(generationParams, 'forge');
+
+        var colorOptions = gui.addFolder("Color Options");
+        colorOptions.addColor(generationParams, "bladeColor");
+        colorOptions.addColor(generationParams, "guardColor");
+        colorOptions.addColor(generationParams, "handleColor");
+        colorOptions.addColor(generationParams, "pommelColor");
+
+        var edgeSplineOptions = gui.addFolder("Edge Spline Options");
+
+        var numControlPointsOptions = edgeSplineOptions.addFolder("Number of Control Points");
+        edgeSplineOptions.add(generationParams, "nBaseCPs");
+        edgeSplineOptions.add(generationParams, "nMidCPs");
+        edgeSplineOptions.add(generationParams, "nTipCPs");
+        edgeSplineOptions.add(generationParams, "randomizeNumCps");
+
+        var splineSamplingOptions = edgeSplineOptions.addFolder("Spline Sampling");
+        splineSamplingOptions.add(generationParams, "nBaseSplinePoints");
+        splineSamplingOptions.add(generationParams, "nMidSplinePoints");
+        splineSamplingOptions.add(generationParams, "nTipSplinePoints");
+
+        var controlPointSpacing = edgeSplineOptions.addFolder("Control Point Spacing");
+        controlPointSpacing.add(generationParams, "evenSpacedBaseCPs");
+        controlPointSpacing.add(generationParams, "evenSpacedMidCPs");
+        controlPointSpacing.add(generationParams, "evenSpacedTipCPs");
+
+
+        gui.add(generationParams, 'baseWidth', 0.08, 0.3);
+        gui.add(generationParams, 'bladeWidthToleranceRatio', 0.1, 1.0);
+        gui.add(generationParams, 'bladeBaseProportion', 0.1, 0.3);
+        gui.add(generationParams, 'bladeMidProportion', 0.1, 0.5);
+
         gui.add(generationParams, 'wireframe').onChange((enabled) => {
             if (enabled) {
                 swordModel.material = wireframeMaterial;

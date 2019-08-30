@@ -76,6 +76,17 @@ function parseHexColorString(color: string): number {
     return colorHex;
 }
 
+function normalizeRGB(rgbColor: number[]): [number, number, number] {
+    if (rgbColor.length < 3 ) {
+        throw Error("Invalid RBG color Given. Too few values");
+    }
+    rgbColor[0] = (rgbColor[0] > 1.0) ? rgbColor[0] / 255.0 : rgbColor[0];
+    rgbColor[1] = (rgbColor[1] > 1.0) ? rgbColor[1] / 255.0 : rgbColor[1];
+    rgbColor[2] = (rgbColor[2] > 1.0) ? rgbColor[2] / 255.0 : rgbColor[2];
+
+    return [ rgbColor[0], rgbColor[1], rgbColor[2] ];
+}
+
 function toRGB(hexColor: number) : [number, number, number] {
     const RED_MASK = 0xFF0000;
     const GREEN_MASK = 0x00FF00;
@@ -88,5 +99,5 @@ function toRGB(hexColor: number) : [number, number, number] {
     return [ red / 255.0 , green / 255.0 , blue / 255.0 ];
 }
 
-export { getRandomInt, getRandomFloat, getSlope, setPrecision, parseHexColorString, toRGB };
+export { getRandomInt, getRandomFloat, getSlope, setPrecision, parseHexColorString, toRGB, normalizeRGB };
 

@@ -16,6 +16,7 @@ const GLTFExporter = require('./lib/GLTFExporter');
 const fs = require('fs');
 const process = require('process');
 
+
 // Source code included with this project
 var infiniforge = require('./build/Infiniforge');
 
@@ -198,6 +199,7 @@ function configureRoutes() {
     // Request for a sword mesh, providing a seed value
     app.get('/api/forge/sword/style/:style/seed/:seed/options/:options', (req, res) => {
         try {
+            console.log(req.body);
             var optionsJson = JSON.parse(req.params.options);
             var promise = generateAndExportSword(req.params.style, req.params.seed, optionsJson);
 
@@ -208,6 +210,7 @@ function configureRoutes() {
             });
 
         } catch (err) {
+            console.log(err);
             res.status(404).json({Error: "Options weren't sent as json string"});
         }
 
