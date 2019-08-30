@@ -10,7 +10,7 @@
         },
         "long": {
             "style": "long",
-            "baseBladeWidth": 0.3,
+            "baseBladeWidth": 0.2,
             "minBladeLength": 0.85,
             "maxBladeLength": 1.1,
             "minHandleLength": 0.16,

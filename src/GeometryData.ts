@@ -101,10 +101,10 @@ class GeometryData {
 }
 
 /**
- * FaceData is used to keep track of the vertices on a face of
+ * LayerData is used to keep track of the vertices on a face of
  * a geometry as well as the collective normal of that face
  */
-class FaceData {
+class LayerData {
 
     private _vertices: number[];
     private _normal: THREE.Euler;
@@ -132,4 +132,4 @@ class FaceData {
 
 }
 
-export { GeometryData, FaceData };
+export { GeometryData, LayerData };
