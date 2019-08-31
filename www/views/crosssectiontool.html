@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <!--<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">-->
+    <title>Infiniforge - Cross Section Tool</title>
+    <style>
+    canvas {
+        width: 400;
+        height: 400;
+    }
+    </style>
+    <script src="sandbox/jquery.min.js"></script>
+</head>
+<body>
+<h1>Infiniforge Cross Section Tool</h1>
+<h2>Create and modify blade cross sections</h2>
+<div>
+<h3>Cross Section</h3>
+<p>Name: <input id="crossSectionName" type="text"></input></p>
+<button id="saveButton" onclick="saveCrossSection()">Save</button>
+<button id="loadButton" onclick="loadCrossSection()">Load</button>
+<h3>Selected Vertex</h3>
+<table>
+    <tr>
+        <th>X: <input id="selectedVertexX" type="number" step="0.001" min="-1.0" max="1.0"/></th>
+        <th>Y: <input id="selectedVertexY" type="number" step="0.001" min="-1.0" max="1.0"/></th>
+    </tr>
+    <tr>
+        <th>Edge:<input type="checkbox" id="selectedVertexIsEdge"></th>
+    </tr>
+</table>
+</div>
+</br>
+<canvas id="canvas" width="400" height="400"></canvas>
+</br>
+<button id="clearButton" onclick="clearCrossSection()">Clear</button>
+<button id="centerButton" onclick="centerCrossSection()">Center Cross Section</button>
+</br>
+<h3>Help:</h3>
+<ul>
+    <li>Click on the canvas to make or select a new vertex</li>
+    <li>Click and drag to move vertices</li>
+    <li>Selected vertices are highlighted and can be edited above</li>
+    <li>Press 'e' or check box while a vertex is selected to make it an edge</li>
+    <li>Hold 'ctrl' and click an additional vertex to make a new edge</li>
+</ul>
+<script>
+
+const VERTEX_RADIUS = 7;      // Radius to draw vertices
+const VERTEX_COLOR = 'green'; // Color to draw vertices
+const BLADE_EDGE_VERTEX_COLOR = 'red' // Color of vertices on blade's cutting edge
+const SELECTED_VERTEX_HIGHLIGHT = 'yellow' // Color to make selected vertices
+
+const EGDELINE_WIDTH = 3;         // Width of the lines to draw between vertices
+const EDGELINE_COLOR = 'white';   // Color to draw edges between vertices
+
+const GRIDLINE_WIDTH = 1;         // Width of gridlines
+const GRIDLINE_COLOR = 'gray';    // Color of gridlines
+
+const BACKGROUND_COLOR = 'rgb(150, 150, 150)';    // Color of canvas background
+
+let canvas;                 // Reference to the canvas DOM element
+let ctx;                    // Canvas context
+let down = false;           // Is the left moust button currently down
+let moved = false;          // Has the mouse moved while holding down left button
+let ctrlDown = false;       // Is the control button down
+let selectedVertex = -1;    // Index of a single selected vertex being repositioned
+let selectedVertexXDOM;     // Reference to selectedVertexX DOM element
+let selectedVertexYDOM;     // Reference to selectedVertexY DOM element
+let selectedVertexIsEdgeDOM;// Reference to selectedVertexY DOM element
+let crossSectionNameDOM;    // Reference to crossSectionName DOM element
+let currentCossSection;     // Cross Section JSON object
+let vertices = [];          // Array of vertices (treated like a circular linked list)
+
+// Set a default cross section
+const TEST_CROSS_SECTION = {
+    "name": "Test Cross Section",
+    "vertices": [
+        -0.5, 0.0,
+        0.0, 0.5,
+        0.5, 0.0,
+        0.0, -0.5
+    ],
+    "edgeVertices": [
+        0, 2
+    ],
+    "width": 1.0,
+    "thickness": 1.0
+};
+
+const EMPTY_CROSS_SECTION = {
+    "name": "Empty Cross Section",
+    "vertices": [
+    ],
+    "edgeVertices": [
+    ],
+    "width": 0.0,
+    "thickness": 0.0
+}
+
+/**
+ * The tool creates and modifies a linked list of
+ * Vertex objects which whos positions are used to
+ * design cross sections to be used during procedural
+ * generation
+ */
+var Vertex = function(x, y){
+    this.x = x;             // X-position
+    this.y = y;             // Y-position
+    this.selected = false;  // Is this vertex currently being modified
+    this.isEdge = false;    // Is this vertex on a cutting edge
+};
+
+/**
+ * Initializes the tool for use
+ */
+ function init() {
+    // Retrieve DOM elements
+    canvas = document.getElementById("canvas");
+    selectedVertexXDOM = document.getElementById("selectedVertexX");
+    selectedVertexYDOM = document.getElementById("selectedVertexY");
+    crossSectionNameDOM = document.getElementById("crossSectionName");
+    selectedVertexIsEdgeDOM = document.getElementById("selectedVertexIsEdge");
+
+    // Attach event handlers
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+    canvas.addEventListener('click', handleClick);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    crossSectionNameDOM.addEventListener('change', handleNameChange);
+    selectedVertexXDOM.addEventListener('change', handleVertexChange);
+    selectedVertexYDOM.addEventListener('change', handleVertexChange);
+    selectedVertexIsEdgeDOM.addEventListener('change', handleVertexChange);
+
+    // Retrieve canvas
+    ctx = canvas.getContext('2d');
+
+    // Set a default cross section
+    currentCossSection = Object.assign({}, EMPTY_CROSS_SECTION);
+
+    // Set the cross section name
+    crossSectionNameDOM.value = currentCossSection.name;
+    selectedVertexXDOM.value = '';
+    selectedVertexYDOM.value = '';
+    selectedVertexIsEdgeDOM.checked = false;
+}
+
+/**
+ * Clears which vertex is currently selected
+ */
+function clearSelection() {
+    if (selectedVertex != -1) {
+        vertices[selectedVertex].selected = false;
+    }
+    selectedVertex = -1;
+}
+
+/**
+ * Creates a POST call to the server updating the cross section
+ * JSON file
+ */
+function saveCrossSection() {
+    var csJson = getCrossSectionJSON();
+    var protocol = window.location.protocol;
+    var host = window.location.host;
+    var port = window.location.port;
+    var requestString = `${protocol}//${host}/api/crosssection/${crossSectionNameDOM.value}/${JSON.stringify(csJson)}/`;
+    console.log(requestString);
+    $.ajax({
+        method: 'POST',
+        url: requestString
+    }).then((res) => {
+        console.log(res);
+    });
+}
+
+function loadCrossSection() {
+    var protocol = window.location.protocol;
+    var host = window.location.host;
+    var port = window.location.port;
+    var requestString = `${protocol}//${host}/api/crosssection/${crossSectionNameDOM.value}`
+    console.log(requestString);
+    $.ajax({
+        method: 'GET',
+        url: requestString
+    }).then((res) => {
+        console.log("success");
+        // Set cross section
+        console.log(res);
+        currentCossSection = Object.assign({}, res);
+
+        vertices.length = 0;
+
+        // Load Vertices
+        for (var i = 0; i < currentCossSection.vertices.length; i+=2) {
+            var x = Math.round(((parseFloat(currentCossSection.vertices[i]) + 1.0) / 2) * canvas.width);
+            var y = Math.round(((parseFloat(currentCossSection.vertices[i + 1]) + 1.0) / 2) * canvas.width);
+            var v = new Vertex(x, y);
+            if (currentCossSection.edgeVertices.includes(i/2)) {
+                v.isEdge = true;
+            }
+            vertices.push(v);
+        }
+
+        crossSectionNameDOM.value = currentCossSection.name;
+    });
+}
+
+function clearCrossSection() {
+    currentCossSection = Object.assign({}, EMPTY_CROSS_SECTION);
+    // Set the cross section name
+    crossSectionNameDOM.value = currentCossSection.name;
+    selectedVertexXDOM.value = '';
+    selectedVertexYDOM.value = '';
+    selectedVertexIsEdgeDOM.checked = false;
+
+    clearSelection();
+    vertices.length = 0;
+}
+
+/**
+ * Selects a vertex to highlight
+ */
+function selectVertex(index) {
+    if (index >= 0 && index < vertices.length) {
+        selectedVertex = index;
+        vertices[index].selected = true;
+    }
+}
+
+function isVertexSelected() {
+    return selectedVertex > -1;
+}
+
+/**
+ * Removes vertex from the cross section and handles
+ * removing and adjusting edges.
+ */
+function removeVertex(index) {
+    if (index >= 0 && index < vertices.length) {
+        vertices.splice(index, 1);
+    }
+}
+
+function centerCrossSection() {
+    var sumX = 0;
+    var sumY = 0;
+
+    // Sum all the X and y values across the vertices
+    for(let i = 0; i < vertices.length; i++) {
+        var v = vertices[i];
+        sumX += v.x;
+        sumY += v.y;
+    }
+
+    // determine the "center point"
+    var avgX = sumX / vertices.length;
+    var avgY = sumY / vertices.length;
+
+    // get the difference from the center
+    var diffX = avgX - (canvas.width / 2);
+    var diffY = avgY- (canvas.height / 2);
+
+    // Subtract the difference from the vertex positions
+    for(let i = 0; i < vertices.length; i++) {
+        vertices[i].x -= diffX;
+        vertices[i].y -= diffY;
+    }
+}
+
+/**
+ * Updates the gui with information about this vertex
+ */
+function fillSelectedVertexInfo() {
+    selectedVertexXDOM.value = (2.0 * (vertices[selectedVertex].x / canvas.width)) - 1.0;
+    selectedVertexYDOM.value = -((2.0 * (vertices[selectedVertex].y / canvas.height)) - 1.0);
+    selectedVertexIsEdgeDOM.checked = vertices[selectedVertex].isEdge;
+}
+
+/**
+ * Updates the vertex with the information in the gui
+ */
+function handleVertexChange() {
+    if (parseFloat(selectedVertexXDOM.value) > 1.0 || parseFloat(selectedVertexXDOM.value) < -1.0 ||
+        parseFloat(selectedVertexYDOM.value) > 1.0 || parseFloat(selectedVertexYDOM.value) < -1.0) {
+            return;
+    }
+
+    if (selectedVertex > -1) {
+        vertices[selectedVertex].x = Math.round(((parseFloat(selectedVertexXDOM.value) + 1.0) / 2) * canvas.width);
+        vertices[selectedVertex].y = Math.round(((-parseFloat(selectedVertexYDOM.value) + 1.0) / 2.0) * canvas.height);
+        vertices[selectedVertex].isEdge = selectedVertexIsEdgeDOM.checked;
+        console.log("New position: " + vertices[selectedVertex].x + ", " + vertices[selectedVertex].y);
+    }
+}
+
+/**
+ * Returns a JSON representation of the current cross section
+ */
+function getCrossSectionJSON() {
+    currentCossSection = Object.assign({}, EMPTY_CROSS_SECTION);
+    currentCossSection.name = crossSectionNameDOM.value
+
+    for (var i = 0; i < vertices.length; i++) {
+        var vert = vertices[i];
+        var x = (2.0 * (vert.x / canvas.width)) - 1.0;
+        var y = -((2.0 * (vert.y / canvas.height)) - 1.0);
+        currentCossSection.vertices.push(x);
+        currentCossSection.vertices.push(y);
+
+        if (vert.isEdge) {
+            currentCossSection.edgeVertices.push(i);
+        }
+    }
+    currentCossSection.thickness = getCrossSectionThickness();
+    currentCossSection.width = getCrossSectionWidth();
+    return currentCossSection;
+}
+
+function getCrossSectionThickness() {
+    var maxX = -Infinity;
+    var minX = Infinity;
+
+    for (var i = 0; i < vertices.length; i++) {
+        if (vertices[i].x > maxX) {
+            maxX = vertices[i].x;
+        }
+
+        if (vertices[i].x < minX) {
+            minX = vertices[i].x;
+        }
+    }
+
+    var maxXScaled = (2.0 * (maxX / canvas.width)) - 1.0;
+    var minXScaled = (2.0 * (minX / canvas.width)) - 1.0;
+    return maxXScaled - minXScaled;
+}
+
+function getCrossSectionWidth() {
+    var maxY = -Infinity;
+    var minY = Infinity;
+
+    for (var i = 0; i < vertices.length; i++) {
+        if (vertices[i].y > maxY) {
+            maxY = vertices[i].y;
+        }
+
+        if (vertices[i].y < minY) {
+            minY = vertices[i].y;
+        }
+    }
+
+    var maxYScaled = (2.0 * (maxY / canvas.height)) - 1.0;
+    var minYScaled = (2.0 * (minY / canvas.height)) - 1.0;
+    return maxYScaled - minYScaled;
+}
+
+/////////////////////////////////////////////////////
+//                DRAW FUNCTIONS                   //
+/////////////////////////////////////////////////////
+
+/**
+ * Draws all the vertices in the vertices array
+ */
+function drawVertices(ctx) {
+    // Draw all of the edges first
+    for (var i = 0; i < vertices.length; i++) {
+        if (i < vertices.length - 1) {
+            drawEdge(ctx, vertices[i], vertices[i + 1]);
+        }
+        else if (i == vertices.length - 1) {
+            drawEdge(ctx, vertices[i], vertices[0]);
+        }
+    }
+    // Then draw all of the vertices
+    vertices.forEach(function(vert) {
+        drawVertex(ctx, vert);
+    });
+}
+
+/**
+ * Draws a single vertex to the canvas
+ */
+function drawVertex(ctx, vert) {
+    if (vert.selected) {
+        ctx.beginPath();
+        ctx.fillStyle = SELECTED_VERTEX_HIGHLIGHT;
+        ctx.arc(vert.x, vert.y, VERTEX_RADIUS + 3, 0, 2 * Math.PI, false);
+        ctx.fill();
+    }
+    ctx.beginPath();
+    ctx.fillStyle = (vert.isEdge) ? BLADE_EDGE_VERTEX_COLOR : VERTEX_COLOR;
+    ctx.arc(vert.x, vert.y, VERTEX_RADIUS, 0, 2 * Math.PI, false);
+    ctx.fill();
+}
+
+/**
+ * Draws an edge from one vertex to another
+ */
+function drawEdge(ctx, v1, v2) {
+    ctx.beginPath();
+    ctx.strokeStyle = EDGELINE_COLOR;
+    ctx.lineWidth = EGDELINE_WIDTH;
+    ctx.moveTo(v1.x, v1.y);
+    ctx.lineTo(v2.x, v2.y);
+    ctx.stroke();
+}
+
+/**
+ * Draw the background of the canvas as a solid color
+ */
+function drawBackground(ctx, width, height) {
+    ctx.fillStyle = BACKGROUND_COLOR;
+    ctx.fillRect(0, 0, width, height);
+}
+
+/**
+ * Draws grid lines over the background for reference
+ */
+function drawGridlines(ctx, width, height) {
+    // Draw horizontal lines
+    for (var i = 0; i < height; i+=20) {
+        ctx.beginPath();
+        ctx.strokeStyle = GRIDLINE_COLOR;
+        ctx.lineWidth = (i == height/2) ? GRIDLINE_WIDTH + 2 : GRIDLINE_WIDTH;
+        ctx.moveTo(0, i);
+        ctx.lineTo(width, i);
+        ctx.stroke();
+    }
+
+    for (var i = 0; i < height; i+=20) {
+        // Draw vertical lines
+        ctx.beginPath();
+        ctx.strokeStyle = GRIDLINE_COLOR;
+        ctx.lineWidth = (i == width/2) ? GRIDLINE_WIDTH + 2 : GRIDLINE_WIDTH;
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, height);
+        ctx.stroke();
+    }
+}
+
+/**
+ * Draws the background, gridlines, and cross section vertices
+ */
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground(ctx, canvas.width, canvas.height);
+    drawGridlines(ctx, canvas.width, canvas.height);
+    drawVertices(ctx);
+    requestAnimationFrame(draw);
+}
+
+/////////////////////////////////////////////////////
+//                EVENT HANDLERS                   //
+/////////////////////////////////////////////////////
+
+function handleClick(event) {
+    if (!moved) {
+
+        var x = event.pageX - canvas.offsetLeft;
+        var y = event.pageY - canvas.offsetTop;
+
+        var clickedVertex = checkVertexClick(x, y);
+        //console.log("Clicked vertex: " + clickedVertex);
+
+        // Create and select a new vertex
+        if (clickedVertex == -1) {
+            // Create vertex
+            var v = new Vertex(x, y);
+            vertices.push(v);
+
+            clearSelection();
+            selectVertex(vertices.length - 1);
+            fillSelectedVertexInfo();
+            console.log("vertex added at position (" + x + ", " + y + ")");
+        }
+        // Select and existing vertex
+        else {
+
+            clearSelection();
+            selectVertex(clickedVertex);
+            fillSelectedVertexInfo();
+            console.log("Existing vertex selected");
+        }
+    }
+}
+
+function handleKeyDown(event) {
+    if (event.ctrlKey && !ctrlDown) {
+        console.log("Control key down.");
+        ctrlDown = true;
+    }
+}
+
+function handleKeyUp(event) {
+    if (event.keyCode == 17 || event.code == 'ControlLeft' || event.code == 'ContolRight') {
+        console.log('Control key up.')
+        ctrlDown = false;
+    }
+    else if (event.code == 'Delete') {
+        if (selectedVertex > -1) {
+            var oldSelection = selectedVertex;
+            clearSelection();
+            removeVertex(oldSelection);
+            selectedVertexXDOM.value = '';
+            selectedVertexYDOM.value = '';
+            selectedVertexIsEdgeDOM.checked = false;
+        }
+    }
+}
+
+function handleMouseMove(event) {
+    if (down) {
+        var x = event.pageX - canvas.offsetLeft;
+        var y = event.pageY - canvas.offsetTop;
+
+        moved = true;
+
+        if (selectedVertex != -1) {
+            if (!ctrlDown) {
+                vertices[selectedVertex].x = x;
+                vertices[selectedVertex].y = y;
+                fillSelectedVertexInfo();
+            }
+        }
+    }
+}
+
+function handleMouseDown(event) {
+    moved = false;
+    down = true;
+    var x = event.pageX - canvas.offsetLeft;
+    var y = event.pageY - canvas.offsetTop;
+    var clickedVertex = checkVertexClick(x, y);
+    if (clickedVertex != -1 && !ctrlDown) {
+        clearSelection();
+        selectVertex(clickedVertex);
+    }
+}
+
+function handleMouseUp(event) {
+    down = false;
+}
+
+function handleNameChange(event) {
+    centerCrossSection.name = crossSectionNameDOM.value;
+}
+
+/**
+ * Performs collisions detection between the click
+ * and all the vertices to see if one was clicked.
+ * If one was clicked, then return it. Else, return null
+ */
+function checkVertexClick(clickX, clickY){
+    for (var i = 0; i < vertices.length; i++) {
+        var v = vertices[i];
+        if ((clickX >= v.x - VERTEX_RADIUS && clickX <= v.x + VERTEX_RADIUS) &&
+            (clickY >= v.y - VERTEX_RADIUS && clickY <= v.y + VERTEX_RADIUS)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+init();
+draw();
+</script>
+</body>
+</html>

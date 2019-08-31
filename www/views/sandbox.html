@@ -3,45 +3,35 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Infiniforge</title>
+    <title>Infiniforge Sandbox</title>
     <link rel="stylesheet" type="text/css" href="/sandbox/style.css"/>
     <script src="/sandbox/three.min.js" type="text/javascript"></script>
-    <script src="/sandbox/GLTFExporter.js" type="text/javascript"></script>
-    <script src="/sandbox/weapontemplates.js"></script>
-    <script src="/sandbox/infiniforge.bundle.js"></script>
+    <script src="/sandbox/GLTFLoader.js" type="text/javascript"></script>
+    <script src="/sandbox/dat.gui.min.js"></script>
+    <script src="/sandbox/jquery.min.js"></script>
 </head>
 <body>
     <div id="container">
-        <div id="options_pane">
-            <p>Sword Style:
-            <select id="sword-style" name="swordStyle">
-                <option value="short">Short</option>
-                <option value="long" selected="selected">Long</option>
-                <option value="great">Great</option>
-            </select>
-            </p>
 
-            <p>Seed:
-                <input type="text" id="seed-value" placeholder="RandomSeed" name="seed"/>
-            </p>
-
-            <input type="submit" value="Forge!" onclick="forgeSword()"/>
-        </div>
-
-        <div id="scene_pane">
-            <canvas id="threejs-canvas"></canvas>
-        </div>
+        <canvas id="threejs-canvas"></canvas>
+        <a id="gltf-download" href="javascript: void(0)" download="sword.gltf">Download glTF</a>
     </div>
 
     <script type="text/javascript">
         var scene, camera, renderer;
-        var swordModel, material;
+        var swordModel, material, importedMaterial;
+        var useWireFrame;
+        var generationParams;
+        var gui;
+        var seedController, baseWidthController;
+        var edgeWidthRatioController, swordStyleController;
+        var swordglTF;
 
-        // Set the keyboard handlers
-        document.onkeyup = handle_keyboard_up;
-        document.onkeydown = handle_keyboard_down;
+        const wireframeMaterial = new THREE.MeshBasicMaterial( {
+            color: 0x050505,
+            wireframe: true
+        });
 
-        // Controls the rotation of the sword
         var rotation = {
             "left": false,
             "right": false,
@@ -49,30 +39,66 @@
             "down": false
         };
 
+        var translation = {
+            "up": false,
+            "down": false
+        };
+
+        var zoom = {
+            "in": false,
+            "out": false
+        };
+
+
+        // Set the keyboard handlers
+        document.onkeyup = handle_keyboard_up;
+        document.onkeydown = handle_keyboard_down;
+
         function handle_keyboard_down(event) {
             event = event || window.event;
             if (event.which == 65) {
-                // LEFT
+                // W
                 rotation["left"] = true;
                 rotation["right"] = false;
             }
             else if (event.which == 68) {
-                // RIGHT
+                // D
                 rotation["right"] = true;
                 rotation["left"] = false;
             }
             else if (event.which == 87) {
-                // UP
+                // A
                 rotation["up"] = true;
                 rotation["down"] = false;
             }
             else if (event.which == 83) {
-                // DOWN
+                // S
                 rotation["down"] = true;
                 rotation["up"] = false;
             }
-        }
 
+            else if (event.which == 81) {
+                // Q
+                translation["up"] = true;
+                translation["down"] = false;
+            }
+            else if (event.which == 69) {
+                // E
+                translation["up"] = false;
+                translation["down"] = true;
+            }
+
+            else if (event.which == 49) {
+                // 1
+                zoom["in"] = true;
+                zoom["out"] = false;
+            }
+            else if(event.which == 50) {
+                // 2
+                zoom["in"] = false;
+                zoom["out"] = true;
+            }
+        }
 
         function handle_keyboard_up(event) {
             event = event || window.event;
@@ -96,6 +122,24 @@
                 rotation["down"] = false;
                 rotation["up"] = false;
             }
+            else if (event.which == 81) {
+                // Q
+                translation["up"] = false;
+                translation["down"] = false;
+            }
+            else if (event.which == 69) {
+                // E
+                translation["up"] = false;
+                translation["down"] = false;
+            }
+            else if (event.which == 49) {
+                zoom["in"] = false;
+                zoom["out"] = false;
+            }
+            else if(event.which == 50) {
+                zoom["in"] = false;
+                zoom["out"] = false;
+            }
         }
 
         // Borrowed from MDN Math.Random()
@@ -105,7 +149,7 @@
 
         // Creates a rnadom seed using upper case, lowercase
         // and numbers
-        function randomizeSeed(seedLength = 7) {
+        function randomSeed(seedLength = 7) {
             var seed = "";
             numberAsciiOffset = 48;
             lowercaseAsciiOffset = 97;
@@ -122,29 +166,51 @@
                     seed += String.fromCharCode(uppercaseAsciiOffset + getRandomInt(25));
                 }
             }
-            document.getElementById('seed-value').value = seed;
+            return seed;
         }
 
         function forgeSword() {
 
-            var style = document.getElementById('sword-style').value;
+            var protocol = window.location.protocol;
+            var host = window.location.host;
+            var port = window.location.port;
+            var weaponType = 'sword';
+            var weaponStyle = generationParams['swordStyle'];
+            var seed = generationParams['seed'];
+            var options = generationParams.getGenerationParams();
+            var requestString = `${protocol}//${host}/api/forge/${weaponType}/style/${weaponStyle}/seed/${seed}/options/${options}`;
 
-            var seed = document.getElementById('seed-value').value;
+            $.ajax({
+                method: 'GET',
+                url: requestString,
+                success: (res) => {
+                    // Load Model
+                    var loader = new THREE.GLTFLoader();
+                    loader.parse(
+                        JSON.stringify(res),
+                        '',
+                        (gltf) => {
+                            scene.remove(swordModel);
+                            swordModel = gltf.scene.children[0];
+                            swordModel.rotation.y += Math.PI / 2;
+                            importedMaterial = swordModel.material;
+                            scene.add(swordModel);
+                            // Save the json
+                            swordglTF = res;
+                            // Toggle the download
+                            setGlTFDownload(true);
+                        },
+                        (err) => {
+                            alert(err);
 
-            //var basewidth = document.getElementById('base-width').value;
-
-            //var edgeWidthRatio = document.getElementById('edge-width-ratio').value;
-
-            //var bladeLength = document.getElementById('blade-length').value;
-            var swordTemplate = WeaponTemplates.getWeaponTemplate('sword', style);
-            console.log(swordTemplate);
-
-            var generator = new Infiniforge.SwordGenerator(seed);
-            sword = generator.generateSword(swordTemplate, Infiniforge.DEFAULT_GEN_PARAMS);
-            scene.remove(swordModel);
-            swordModel = sword.getMesh();
-            swordModel.position.y = -3;
-            scene.add(swordModel);
+                        }
+                    );
+                },
+                error: (XMLHttpRequest, textStatus, err) => {
+                    setGlTFDownload(false);
+                    alert(err);
+                }
+            });
         }
 
         function init() {
@@ -157,7 +223,7 @@
 
             var aspect = renderer_rect.width / renderer_rect.height;
             camera = new THREE.PerspectiveCamera(75, aspect, 1, 1000);
-            camera.position.z = 7;
+            camera.position.z = 2;
             camera.updateProjectionMatrix();
 
             scene = new THREE.Scene();
@@ -166,11 +232,6 @@
             var light = new THREE.DirectionalLight(0xffffff, 1);
             light.position.set(1, 1, 1).normalize();
             scene.add(light);
-
-            //var geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-            //material = new THREE.MeshLambertMaterial({ color: THREE.VertexColor  })
-            //swordModel = new THREE.Mesh(geometry, material);
-            //scene.add(swordModel);
         }
 
         function animate() {
@@ -190,8 +251,166 @@
                 swordModel.rotation.x -= 0.05;
             }
 
+            if (translation["down"]) {
+                swordModel.position.y -= 0.05;
+            }
+            else if (translation["up"]) {
+                swordModel.position.y += 0.05;
+            }
+
+            if (zoom["in"]) {
+                swordModel.position.z += 0.05;
+            }
+            else if (zoom["out"]) {
+                swordModel.position.z -= 0.05;
+            }
+
             renderer.render(scene, camera);
         };
+
+        function setGlTFDownload(enable) {
+            var downloadLink = document.getElementById('gltf-download');
+            if (enable) {
+                downloadLink.href = "data:text/json," + encodeURIComponent(JSON.stringify(swordglTF));
+            }
+            else {
+                downloadLink.href = "javascript: void(0)"
+            }
+        }
+
+        ///////////////////////////////////////////////////////////
+        //                    GUI CONTROLS                       //
+        ///////////////////////////////////////////////////////////
+
+        var SandboxManager = function () {
+            this.seed = 'pizza';
+            this.randomizeSeed = () => {},
+            this.bladeColor = [127, 127, 127],
+            this.guardColor = [127, 81, 0],
+            this.handleColor = [204, 81, 0],
+            this.pommelColor = [229, 204, 89],
+            this.nBaseCPs = 3,
+            this.nMidCPs = 5,
+            this.nTipCPs = 2,
+            this.nBaseSplinePoints = 5,
+            this.nMidSplinePoints = 5,
+            this.nTipSplinePoints = 2,
+            this.randomizeNumCps = true,
+            this.maxCPs = 7,
+            this.minCPs = 2,
+            this.evenSpacedBaseCPs = true,
+            this.evenSpacedMidCPs = true,
+            this.evenSpacedTipCPs = true,
+
+            this.bladeThickness = 0.1,
+            this.swordStyle = 'long'
+            this.baseWidth = 0.3;
+
+            this.bladeBaseProportion = 0.3;
+            this.bladeMidProportion = 0.5;
+            this.bladeWidthToleranceRatio = 0.6;
+            this.Forge = () => {
+                forgeSword();
+            }
+            this.ForgeRandom = () => {
+                seedController.setValue(randomSeed());
+                forgeSword()
+            }
+            this.wireframe = false;
+
+            this.getGenerationParams = () => {
+                return JSON.stringify({
+                    "bladeColor": this.bladeColor,
+                    "guardColor": this.guardColor,
+                    "handleColor": this.handleColor,
+                    "pommelColor": this.pommelColor,
+                    "nBaseCPs": this.nBaseCPs,
+                    "nMidCPs": this.nMidCPs,
+                    "nTipCPs": this.nTipCPs,
+                    "nBaseSPlinePoints": this.nBaseSplinePoints,
+                    "nMidSplinePoints": this.nMidSplinePoints,
+                    "nTipSplinePoints": this.nTipSplinePoints,
+                    "randomizeNumCps": this.randomizeNumCps,
+                    "maxCPs": this.maxCPs,
+                    "minCPs": this.minCPs,
+                    "evenSpacedBaseCPs": this.evenSpacedBaseCPs,
+                    "evenSpacedMidCPs": this.evenSpacedMidCPs,
+                    "evenSpacedTipCPs": this.evenSpacedTipCPs,
+
+
+                    "bladeBaseProportion":this.bladeBaseProportion,
+                    "bladeMidProportion":this.bladeMidProportion,
+                    "bladeWidthToleranceRatio": this.bladeWidthToleranceRatio,
+
+                    "bladeThickness": this.bladeThickness,
+                    "baseWidth": this.baseWidth
+                });
+            }
+        };
+
+        generationParams = new SandboxManager();
+
+        gui = new dat.GUI({autoPlace: false});
+
+        gui.domElement.id = 'gui';
+
+        gui.remember(generationParams);
+
+        gui.add(generationParams, 'ForgeRandom');
+        gui.add(generationParams, 'Forge');
+
+        seedController = gui.add(generationParams, 'seed');
+
+        gui.add(generationParams, 'randomizeSeed').setValue(() => {
+            seedController.setValue(randomSeed());
+        });
+
+        gui.add(generationParams, 'swordStyle', {'Short': 'short', 'Long':'long', 'Great':'great'}).onChange((val) => {});
+
+        var colorOptions = gui.addFolder("Color Options");
+        colorOptions.addColor(generationParams, "bladeColor");
+        colorOptions.addColor(generationParams, "guardColor");
+        colorOptions.addColor(generationParams, "handleColor");
+        colorOptions.addColor(generationParams, "pommelColor");
+
+        var edgeSplineOptions = gui.addFolder("Edge Spline Options");
+
+        var numControlPointsOptions = edgeSplineOptions.addFolder("Number of Control Points");
+        numControlPointsOptions.add(generationParams, "nBaseCPs");
+        numControlPointsOptions.add(generationParams, "nMidCPs");
+        numControlPointsOptions.add(generationParams, "nTipCPs");
+        numControlPointsOptions.add(generationParams, "randomizeNumCps");
+
+        var splineSamplingOptions = edgeSplineOptions.addFolder("Spline Sampling");
+        splineSamplingOptions.add(generationParams, "nBaseSplinePoints");
+        splineSamplingOptions.add(generationParams, "nMidSplinePoints");
+        splineSamplingOptions.add(generationParams, "nTipSplinePoints");
+
+        var controlPointSpacing = edgeSplineOptions.addFolder("Control Point Spacing");
+        controlPointSpacing.add(generationParams, "evenSpacedBaseCPs");
+        controlPointSpacing.add(generationParams, "evenSpacedMidCPs");
+        controlPointSpacing.add(generationParams, "evenSpacedTipCPs");
+
+
+        gui.add(generationParams, 'baseWidth', 0.08, 0.3);
+        gui.add(generationParams, 'bladeWidthToleranceRatio', 0.1, 1.0);
+        gui.add(generationParams, 'bladeBaseProportion', 0.1, 0.3);
+        gui.add(generationParams, 'bladeMidProportion', 0.1, 0.5);
+
+        gui.add(generationParams, 'wireframe').onChange((enabled) => {
+            if (enabled) {
+                swordModel.material = wireframeMaterial;
+            }else {
+                swordModel.material = importedMaterial;
+            }
+        });
+
+
+        document.body.appendChild(gui.domElement );
+
+        ///////////////////////////////////////////////////////////
+        //                 INITIALIZE GAME                       //
+        ///////////////////////////////////////////////////////////
 
         init();
         animate();

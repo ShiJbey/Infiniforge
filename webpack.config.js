@@ -2,23 +2,20 @@
 
 var path = require('path');
 const webpack = require('webpack');
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+const MinifyPlugin = require('babel-minify-webpack-plugin');
 
 module.exports = {
-    entry: './src/SwordGenerator.ts',
+
+    // I think I can get away with just specifying the
+    // file name without the extension
+    entry: './src/Infiniforge',
 
     output: {
-        path: path.resolve(__dirname, 'www', 'js'),
+        path: path.resolve(__dirname, 'build', 'web'),
         filename: 'infiniforge.bundle.js',
         libraryTarget: 'var',
         library: 'Infiniforge'
     },
-
-
-    resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.json']
-    },
-
 
     module: {
         rules: [{
@@ -29,9 +26,18 @@ module.exports = {
 
         }],
     },
+
+    resolve: {
+        modules: [
+            'node_modules'
+        ],
+        extensions: ['.ts', '.tsx', '.js', '.json']
+    },
+
+    target: 'web',
+
     plugins: [
         new MinifyPlugin()
-    ],
-
+    ]
 
 };
