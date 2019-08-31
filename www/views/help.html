@@ -7,20 +7,60 @@
     <h1>Infiniforge REST API</h1>
 
     <h2>Routes</h2>
-    <h3>/sandbox/</h3>
+    <h3>GET: /help</h3>
     <p>
-        Opens a page with a ThreeJs canvas for displaying swords
+        Opens this page with information about available routes
     </p>
-    <h3>/api/</h3>
+
+    </br>
+
+    <h3>GET: /tools/sandbox</h3>
     <p>
-        Opens this help page with instructions for
-        how to use the node server
+        Opens the live web GUI that interacts with the active server
     </p>
-    <h3>/api/forge/weaponType/weaponStyle/[seed]</h3>
+
+    <h3>GET: /tools/crosssection/ &lt; name &gt;</h3>
     <p>
-        Returns a JSON representation of the mesh
-        that was generated. The seed value is optional.
+        Returns the json json representation of the cross section
+        with the given name
     </p>
+
+    <h3>GET: /tools/crosssection</h3>
+    <p>
+        Opens the live web GUI for editing and saving blade cross secetions
+    </p>
+
+    </br>
+
+    <h3>POST: /api/crosssection/ &lt; name &gt; / &lt; jsonData &gt;</h3>
+    <p>
+        Saves the json representation of the cross section to the json file
+        with all the cross sections.
+    </p>
+
+    <h3>GET: /api/forge/sword/style/ &lt; style &gt;</h3>
+    <p>
+        Forge a sword with the given style
+    </p>
+
+    <h3>GET: /api/forge/sword/style/ &lt; style &gt;/options/ &lt; options &gt;</h3>
+    <p>
+        Forge a sword with the given style and with the additional options passed.
+        (See GenerationParameters in docs.)
+    </p>
+
+    <h3>GET: /api/forge/sword/style/ &lt; style &gt;/seed/ &lt; seed &gt;</h3>
+    <p>
+        Forge a sword with the given style and seed
+    </p>
+
+    <h3>GET: /api/forge/sword/style/ &lt; style &gt;/seed/ &lt; seed &gt;/options/ &lt; options &gt;</h3>
+    <p>
+        Forge a sword with the given style and seed and options. (See GenerationParameters in docs.)
+    </p>
+
+    </br>
+
     <h4>Supported Weapon Types and Styles
     <ul>
         <li>

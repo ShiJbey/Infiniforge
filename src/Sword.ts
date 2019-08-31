@@ -1,6 +1,6 @@
 /// <reference types="three" />
 
-import assert = require('assert');
+const assert = require('assert');
 import * as THREE from 'three';
 import { GeometryData } from './GeometryData'
 

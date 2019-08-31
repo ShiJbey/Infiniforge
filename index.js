@@ -15,6 +15,7 @@ const serveStatic = require('serve-static');
 const GLTFExporter = require('./lib/GLTFExporter');
 const fs = require('fs');
 const process = require('process');
+const favicon = require('express-favicon');
 
 
 // Source code included with this project
@@ -27,6 +28,9 @@ const infiniforgeConfig = require('./infiniforge-config.json');
 let server;
 const app = express();
 const API_PORT = infiniforgeConfig["server"]["port"];
+
+// Set favicon
+app.use(favicon(path.join(__dirname, 'anvil.ico')));
 
 // Configure routes to static files
 app.use('/sandbox/', express.static(path.join(__dirname, 'build')));
@@ -272,7 +276,5 @@ function StartRESTAPI() {
         logger.writeToLog(path.join(__dirname, 'log.txt'), err);
     });
 }
-
-
 
 StartRESTAPI();

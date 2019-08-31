@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BladeCrossSection | infiniforge</title>
+	<title>Sword | infiniforge</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_bladecrosssections_.html">&quot;BladeCrossSections&quot;</a>
+					<a href="../modules/_sword_.html">&quot;Sword&quot;</a>
 				</li>
 				<li>
-					<a href="_bladecrosssections_.bladecrosssection.html">BladeCrossSection</a>
+					<a href="_sword_.sword.html">Sword</a>
 				</li>
 			</ul>
-			<h1>Interface BladeCrossSection</h1>
+			<h1>Class Sword</h1>
 		</div>
 	</div>
 </header>
@@ -72,8 +72,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Cross sections are the starting point for generating
-						blade geometry.</p>
+						<p>Swords are the core of this API and manage information about
+						their 3D geometry</p>
 					</div>
 				</div>
 			</section>
@@ -81,7 +81,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">BladeCrossSection</span>
+						<span class="target">Sword</span>
 					</li>
 				</ul>
 			</section>
@@ -89,70 +89,123 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="_sword_.sword.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_bladecrosssections_.bladecrosssection.html#edgevertices" class="tsd-kind-icon">edge<wbr>Vertices</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_bladecrosssections_.bladecrosssection.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_bladecrosssections_.bladecrosssection.html#thickness" class="tsd-kind-icon">thickness</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_bladecrosssections_.bladecrosssection.html#vertices" class="tsd-kind-icon">vertices</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_bladecrosssections_.bladecrosssection.html#width" class="tsd-kind-icon">width</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sword_.sword.html#geometry" class="tsd-kind-icon">geometry</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sword_.sword.html#geometrydata" class="tsd-kind-icon">geometry<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sword_.sword.html#mesh" class="tsd-kind-icon">mesh</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sword_.sword.html#style" class="tsd-kind-icon">style</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sword_.sword.html#getmesh" class="tsd-kind-icon">get<wbr>Mesh</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Sword<span class="tsd-signature-symbol">(</span>style<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Sword.ts#L16">Sword.ts:16</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>style: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="edgevertices" class="tsd-anchor"></a>
-					<h3>edge<wbr>Vertices</h3>
-					<div class="tsd-signature tsd-kind-icon">edge<wbr>Vertices<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="geometry" class="tsd-anchor"></a>
+					<h3>geometry</h3>
+					<div class="tsd-signature tsd-kind-icon">geometry<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BufferGeometry</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/BladeCrossSections.ts#L8">BladeCrossSections.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Sword.ts#L14">Sword.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="geometrydata" class="tsd-anchor"></a>
+					<h3>geometry<wbr>Data</h3>
+					<div class="tsd-signature tsd-kind-icon">geometry<wbr>Data<span class="tsd-signature-symbol">:</span> <a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/BladeCrossSections.ts#L6">BladeCrossSections.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Sword.ts#L16">Sword.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="thickness" class="tsd-anchor"></a>
-					<h3>thickness</h3>
-					<div class="tsd-signature tsd-kind-icon">thickness<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="mesh" class="tsd-anchor"></a>
+					<h3>mesh</h3>
+					<div class="tsd-signature tsd-kind-icon">mesh<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Mesh</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/BladeCrossSections.ts#L10">BladeCrossSections.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Sword.ts#L15">Sword.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="vertices" class="tsd-anchor"></a>
-					<h3>vertices</h3>
-					<div class="tsd-signature tsd-kind-icon">vertices<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="style" class="tsd-anchor"></a>
+					<h3>style</h3>
+					<div class="tsd-signature tsd-kind-icon">style<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/BladeCrossSections.ts#L7">BladeCrossSections.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Sword.ts#L13">Sword.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="width" class="tsd-anchor"></a>
-					<h3>width</h3>
-					<div class="tsd-signature tsd-kind-icon">width<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/BladeCrossSections.ts#L9">BladeCrossSections.ts:9</a></li>
-						</ul>
-					</aside>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="getmesh" class="tsd-anchor"></a>
+					<h3>get<wbr>Mesh</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Mesh<span class="tsd-signature-symbol">(</span>verbose<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Mesh</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Sword.ts#L23">Sword.ts:23</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> verbose: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Mesh</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -165,7 +218,7 @@
 					<li class="label tsd-is-external">
 						<span>Internals</span>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_bladecrosssections_.html">"<wbr>Blade<wbr>Cross<wbr>Sections"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -177,7 +230,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_spline_.html">"<wbr>Spline"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_sword_.html">"<wbr>Sword"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -204,28 +257,34 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_bladecrosssections_.bladecrosssection.html" class="tsd-kind-icon">Blade<wbr>Cross<wbr>Section</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_sword_.sword.html" class="tsd-kind-icon">Sword</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_bladecrosssections_.bladecrosssection.html#edgevertices" class="tsd-kind-icon">edge<wbr>Vertices</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sword_.sword.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_bladecrosssections_.bladecrosssection.html#name" class="tsd-kind-icon">name</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sword_.sword.html#geometry" class="tsd-kind-icon">geometry</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_bladecrosssections_.bladecrosssection.html#thickness" class="tsd-kind-icon">thickness</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sword_.sword.html#geometrydata" class="tsd-kind-icon">geometry<wbr>Data</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_bladecrosssections_.bladecrosssection.html#vertices" class="tsd-kind-icon">vertices</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sword_.sword.html#mesh" class="tsd-kind-icon">mesh</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_bladecrosssections_.bladecrosssection.html#width" class="tsd-kind-icon">width</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sword_.sword.html#style" class="tsd-kind-icon">style</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sword_.sword.html#getmesh" class="tsd-kind-icon">get<wbr>Mesh</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_sword_.html#assert" class="tsd-kind-icon">assert</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

@@ -110,8 +110,13 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.swordgenerator.html#buildguard" class="tsd-kind-icon">build<wbr>Guard</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.swordgenerator.html#buildhandle" class="tsd-kind-icon">build<wbr>Handle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.swordgenerator.html#buildpommel" class="tsd-kind-icon">build<wbr>Pommel</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.swordgenerator.html#configurebladeparameters" class="tsd-kind-icon">configure<wbr>Blade<wbr>Parameters</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.swordgenerator.html#configureparameters" class="tsd-kind-icon">configure<wbr>Parameters</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.swordgenerator.html#generatesword" class="tsd-kind-icon">generate<wbr>Sword</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.swordgenerator.html#seedgenerator" class="tsd-kind-icon">seed<wbr>Generator</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#configuresplinepointspacing" class="tsd-kind-icon">Configure<wbr>Spline<wbr>Point<wbr>Spacing</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#modifyedgespline" class="tsd-kind-icon">Modify<wbr>Edge<wbr>Spline</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#configuresectionheight" class="tsd-kind-icon">configure<wbr>Section<wbr>Height</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#createbladecrosssection" class="tsd-kind-icon">create<wbr>Blade<wbr>Cross<wbr>Section</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#createbladetip" class="tsd-kind-icon">create<wbr>Blade<wbr>Tip</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#extrudeface" class="tsd-kind-icon">extrude<wbr>Face</a></li>
@@ -122,6 +127,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#getrightedgevertindices" class="tsd-kind-icon">get<wbr>Right<wbr>Edge<wbr>Vert<wbr>Indices</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#gettopvertindices" class="tsd-kind-icon">get<wbr>Top<wbr>Vert<wbr>Indices</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#modifyedgewidth" class="tsd-kind-icon">modify<wbr>Edge<wbr>Width</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#scaleface" class="tsd-kind-icon">scale<wbr>Face</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#setedgetospline" class="tsd-kind-icon">set<wbr>Edge<wbr>ToSpline</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_swordgenerator_.swordgenerator.html#translateface" class="tsd-kind-icon">translate<wbr>Face</a></li>
 							</ul>
 						</section>
 					</div>
@@ -133,19 +141,33 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Sword<wbr>Generator<span class="tsd-signature-symbol">(</span>verbose<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.swordgenerator.html" class="tsd-signature-type">SwordGenerator</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Sword<wbr>Generator<span class="tsd-signature-symbol">(</span>seed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, verbose<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.swordgenerator.html" class="tsd-signature-type">SwordGenerator</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L234">SwordGenerator.ts:234</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L97">SwordGenerator.ts:97</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Constructs a new SwordGenerator object with its own pseudo random
+									number generator</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> verbose: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> seed: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> verbose: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>Print intermediate output from generation process</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.swordgenerator.html" class="tsd-signature-type">SwordGenerator</a></h4>
@@ -161,7 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">rand<wbr>Generator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">prng</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L233">SwordGenerator.ts:233</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L96">SwordGenerator.ts:96</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">seed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L232">SwordGenerator.ts:232</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L95">SwordGenerator.ts:95</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +203,7 @@
 					<div class="tsd-signature tsd-kind-icon">verbose<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L234">SwordGenerator.ts:234</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L97">SwordGenerator.ts:97</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -192,18 +214,19 @@
 					<a name="buildblade" class="tsd-anchor"></a>
 					<h3>build<wbr>Blade</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">build<wbr>Blade<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></li>
+						<li class="tsd-signature tsd-kind-icon">build<wbr>Blade<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L280">SwordGenerator.ts:280</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L196">SwordGenerator.ts:196</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Procedurally generates a sword blade and adds it to the swords geometry</p>
+									<p>Given a sword template, geration parameters, a sword,
+									Procedurally generates a sword blade and adds it to the swords geometry</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -215,10 +238,10 @@
 									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
 								</li>
 								<li>
-									<h5>sword: <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h5>
+									<h5>sword: <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -226,13 +249,13 @@
 					<a name="buildguard" class="tsd-anchor"></a>
 					<h3>build<wbr>Guard</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">build<wbr>Guard<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a>, guardThickness<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, guardBladeRatio<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></li>
+						<li class="tsd-signature tsd-kind-icon">build<wbr>Guard<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a>, guardThickness<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, guardBladeRatio<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L509">SwordGenerator.ts:509</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L615">SwordGenerator.ts:615</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -252,7 +275,7 @@
 									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
 								</li>
 								<li>
-									<h5>sword: <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h5>
+									<h5>sword: <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> guardThickness: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0.1</span></h5>
@@ -261,7 +284,7 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> guardBladeRatio: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1.5</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -269,13 +292,13 @@
 					<a name="buildhandle" class="tsd-anchor"></a>
 					<h3>build<wbr>Handle</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">build<wbr>Handle<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a>, handleRadius<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, numHands<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></li>
+						<li class="tsd-signature tsd-kind-icon">build<wbr>Handle<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a>, handleRadius<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, numHands<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L567">SwordGenerator.ts:567</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L674">SwordGenerator.ts:674</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -295,7 +318,7 @@
 									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
 								</li>
 								<li>
-									<h5>sword: <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h5>
+									<h5>sword: <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> handleRadius: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0.1</span></h5>
@@ -304,7 +327,7 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> numHands: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -312,13 +335,13 @@
 					<a name="buildpommel" class="tsd-anchor"></a>
 					<h3>build<wbr>Pommel</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">build<wbr>Pommel<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a>, numHands<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, pommelBladeWidthRatio<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></li>
+						<li class="tsd-signature tsd-kind-icon">build<wbr>Pommel<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, sword<span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a>, numHands<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, pommelBladeWidthRatio<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L624">SwordGenerator.ts:624</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L732">SwordGenerator.ts:732</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -338,7 +361,7 @@
 									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
 								</li>
 								<li>
-									<h5>sword: <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h5>
+									<h5>sword: <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> numHands: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></h5>
@@ -347,7 +370,64 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> pommelBladeWidthRatio: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0.5</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="configurebladeparameters" class="tsd-anchor"></a>
+					<h3>configure<wbr>Blade<wbr>Parameters</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">configure<wbr>Blade<wbr>Parameters<span class="tsd-signature-symbol">(</span>genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a>, template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L133">SwordGenerator.ts:133</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
+								</li>
+								<li>
+									<h5>template: <a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="configureparameters" class="tsd-anchor"></a>
+					<h3>configure<wbr>Parameters</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">configure<wbr>Parameters<span class="tsd-signature-symbol">(</span>requestOptions<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Object</span>, template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L124">SwordGenerator.ts:124</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Fills any missing parameters with randomly generated values</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>requestOptions: <span class="tsd-signature-type">Object</span></h5>
+								</li>
+								<li>
+									<h5>template: <a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -355,18 +435,18 @@
 					<a name="generatesword" class="tsd-anchor"></a>
 					<h3>generate<wbr>Sword</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">generate<wbr>Sword<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Object</span>, seed<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></li>
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Sword<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Object</span>, seed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L259">SwordGenerator.ts:259</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L169">SwordGenerator.ts:169</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>The factory method of this class that returns a new sword
+									<p>Returns a new sword
 									instance with procedurally generated blade geometry</p>
 								</div>
 							</div>
@@ -379,10 +459,11 @@
 									<h5>options: <span class="tsd-signature-type">Object</span></h5>
 								</li>
 								<li>
-									<h5>seed: <span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seed: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_sword_.sword.html" class="tsd-signature-type">Sword</a></h4>
+							<p>A sword object containing the final gerated mesh of the sword</p>
 						</li>
 					</ul>
 				</section>
@@ -390,19 +471,28 @@
 					<a name="seedgenerator" class="tsd-anchor"></a>
 					<h3>seed<wbr>Generator</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">seed<wbr>Generator<span class="tsd-signature-symbol">(</span>seed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">seed<wbr>Generator<span class="tsd-signature-symbol">(</span>seed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L248">SwordGenerator.ts:248</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L116">SwordGenerator.ts:116</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Seeds the random number generator
+									with a new seed</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seed: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> seed: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>(Optional) seed value for pseudo number generator</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -410,16 +500,155 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="createbladecrosssection" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>Blade<wbr>Cross<wbr>Section</h3>
+					<a name="configuresplinepointspacing" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> Configure<wbr>Spline<wbr>Point<wbr>Spacing</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Blade<wbr>Cross<wbr>Section<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, crossSectionType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">Configure<wbr>Spline<wbr>Point<wbr>Spacing<span class="tsd-signature-symbol">(</span>edgeSplines<span class="tsd-signature-symbol">: </span><a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span>, edgePositions<span class="tsd-signature-symbol">: </span><a href="_spline_.point2d.html" class="tsd-signature-type">Point2D</a><span class="tsd-signature-symbol">[]</span>, cPIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, equalSpacing<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, sectionHeight<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, heightOffset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, prng<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">prng</span>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L683">SwordGenerator.ts:683</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L480">SwordGenerator.ts:480</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>edgeSplines: <a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>edgePositions: <a href="_spline_.point2d.html" class="tsd-signature-type">Point2D</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>cPIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>equalSpacing: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>sectionHeight: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>heightOffset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>prng: <span class="tsd-signature-type">prng</span></h5>
+								</li>
+								<li>
+									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="modifyedgespline" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> Modify<wbr>Edge<wbr>Spline</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">Modify<wbr>Edge<wbr>Spline<span class="tsd-signature-symbol">(</span>edgeSplines<span class="tsd-signature-symbol">: </span><a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span>, cPIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, layerOffset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, funcType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, prng<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">prng</span>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L466">SwordGenerator.ts:466</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Given a spline defining the edge of the blade, randomly pertubates
+									the control point positions to give the edge a cool shape</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>edgeSplines: <a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>cPIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>layerOffset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>funcType: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>template: <a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a></h5>
+								</li>
+								<li>
+									<h5>prng: <span class="tsd-signature-type">prng</span></h5>
+								</li>
+								<li>
+									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="configuresectionheight" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> configure<wbr>Section<wbr>Height</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">configure<wbr>Section<wbr>Height<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, bladeLayers<span class="tsd-signature-symbol">: </span><a href="_geometrydata_.layerdata.html" class="tsd-signature-type">LayerData</a><span class="tsd-signature-symbol">[]</span>, layerIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, equalDivs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, sectionHeight<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, heightOffset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, prng<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">prng</span>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L549">SwordGenerator.ts:549</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>bladeLayers: <a href="_geometrydata_.layerdata.html" class="tsd-signature-type">LayerData</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>layerIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>equalDivs: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>sectionHeight: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>heightOffset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>prng: <span class="tsd-signature-type">prng</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+								<li>
+									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="createbladecrosssection" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>Blade<wbr>Cross<wbr>Section</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Blade<wbr>Cross<wbr>Section<span class="tsd-signature-symbol">(</span>template<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>, crossSectionTemplate<span class="tsd-signature-symbol">: </span><a href="../interfaces/_bladecrosssections_.bladecrosssection.html" class="tsd-signature-type">BladeCrossSection</a>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L791">SwordGenerator.ts:791</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -436,7 +665,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>crossSectionType: <span class="tsd-signature-type">string</span></h5>
+									<h5>crossSectionTemplate: <a href="../interfaces/_bladecrosssections_.bladecrosssection.html" class="tsd-signature-type">BladeCrossSection</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>name of a predefined blade cross section</p>
 									</div>
@@ -448,7 +677,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></h4>
 							<p>The vertices outlining the starting cross section of the blade</p>
 						</li>
 					</ul>
@@ -457,13 +686,13 @@
 					<a name="createbladetip" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>Blade<wbr>Tip</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Blade<wbr>Tip<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, topVertIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Blade<wbr>Tip<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, LayerData<span class="tsd-signature-symbol">: </span><a href="_geometrydata_.layerdata.html" class="tsd-signature-type">LayerData</a><span class="tsd-signature-symbol">[]</span>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L867">SwordGenerator.ts:867</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L1006">SwordGenerator.ts:1006</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -479,7 +708,10 @@
 									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
-									<h5>topVertIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>LayerData: <a href="_geometrydata_.layerdata.html" class="tsd-signature-type">LayerData</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -490,35 +722,43 @@
 					<a name="extrudeface" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> extrude<wbr>Face</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">extrude<wbr>Face<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, faceIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Vector3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.geometrydata.html" class="tsd-signature-type">GeometryData</a></li>
+						<li class="tsd-signature tsd-kind-icon">extrude<wbr>Face<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, faceIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Vector3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L758">SwordGenerator.ts:758</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L862">SwordGenerator.ts:862</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Extrudes the face of a geometry in a specified direction
-										Given: All the vertices in the model, the indices to extrude, and the direction to extrude in
-									Returns: The new vertices and the triangles created during extrusion</p>
+									<p>Extrudes the face of a geometry in a specified direction</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>All the vertices in the model</p>
+									</div>
 								</li>
 								<li>
 									<h5>faceIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the indices to extrude</p>
+									</div>
 								</li>
 								<li>
 									<h5>direction: <span class="tsd-signature-type">Vector3</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>direction to extrude in</p>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.geometrydata.html" class="tsd-signature-type">GeometryData</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></h4>
+							<p>The new vertices and the triangles created during extrusion</p>
 						</li>
 					</ul>
 				</section>
@@ -526,22 +766,28 @@
 					<a name="extrudetop" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> extrude<wbr>Top</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">extrude<wbr>Top<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Vector3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.geometrydata.html" class="tsd-signature-type">GeometryData</a></li>
+						<li class="tsd-signature tsd-kind-icon">extrude<wbr>Top<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Vector3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L744">SwordGenerator.ts:744</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L847">SwordGenerator.ts:847</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Extrudes a geometry, from the top, in a given direction
-										Given: All the vertices in the model, and a direction to extrude in
-									Returns: The new vertices and the triangles created during extrusion</p>
-									<h2 id="note-assumes-that-the-top-is-a-flat-horizontal-face">Note: Assumes that the top is a flat, horizontal face</h2>
+									<p>Extrudes a geometry, from the top, in a given direction</p>
 								</div>
+								<p>Note: Assumes that the top is a flat, horizontal face</p>
+								<dl class="tsd-comment-tags">
+									<dt>params</dt>
+									<dd><p>All the vertices in the model</p>
+									</dd>
+									<dt>params</dt>
+									<dd><p>direction to extrude in</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -552,7 +798,8 @@
 									<h5>direction: <span class="tsd-signature-type">Vector3</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.geometrydata.html" class="tsd-signature-type">GeometryData</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></h4>
+							<p>The new geometry created during extrusion and the indices of generated vertices</p>
 						</li>
 					</ul>
 				</section>
@@ -560,37 +807,42 @@
 					<a name="extrudetopmultiple" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> extrude<wbr>Top<wbr>Multiple</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">extrude<wbr>Top<wbr>Multiple<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Vector3</span>, numRepeat<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.geometrydata.html" class="tsd-signature-type">GeometryData</a></li>
+						<li class="tsd-signature tsd-kind-icon">extrude<wbr>Top<wbr>Multiple<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Vector3</span>, numRepeat<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L722">SwordGenerator.ts:722</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L822">SwordGenerator.ts:822</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Extrudes a geometry by in a given direction n-number of
+									<p>Extrudes a geometry by in a given direction, n-number of
 										times (Where n = numRepeat) and returns the verts at the
-										top of the geometry
-										Given: All the vertices in the model, and a direction to extrude in, and a number of times to extrude
-									Returns: The new vertices and the triangles created during extrusion</p>
+									top of the geometry</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>All the vertices in the model</p>
+									</div>
 								</li>
 								<li>
 									<h5>direction: <span class="tsd-signature-type">Vector3</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Direction to extrude in</p>
+									</div>
 								</li>
 								<li>
 									<h5>numRepeat: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.geometrydata.html" class="tsd-signature-type">GeometryData</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="_geometrydata_.geometrydata.html" class="tsd-signature-type">GeometryData</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></h4>
+							<p>The new vertices and the triangles created during extrusion</p>
 						</li>
 					</ul>
 				</section>
@@ -604,14 +856,16 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L882">SwordGenerator.ts:882</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L1022">SwordGenerator.ts:1022</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Given: all the vertices in the model, the number of subdivision in the blade, and the blade length
 									Returns: a 2D array of the vertex indices, where each row is one layer containing vertices all at the same height</p>
-									<h2 id="note-assumes-that-all-the-blade-divs-are-evenly-spaced-by-1-0-in-the-y-direction">Note: Assumes that all the blade divs are evenly spaced by 1.0 in the y-direction</h2>
+									<a href="#note-assumes-that-all-the-blade-divs-are-evenly-spaced-by-10-in-the-y-direction" id="note-assumes-that-all-the-blade-divs-are-evenly-spaced-by-10-in-the-y-direction" style="color: inherit; text-decoration: none;">
+										<h2>Note: Assumes that all the blade divs are evenly spaced by 1.0 in the y-direction</h2>
+									</a>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -640,7 +894,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L967">SwordGenerator.ts:967</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L1112">SwordGenerator.ts:1112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -673,7 +927,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L992">SwordGenerator.ts:992</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L1137">SwordGenerator.ts:1137</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -706,16 +960,23 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L916">SwordGenerator.ts:916</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L1061">SwordGenerator.ts:1061</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Given: all the vertices in the model and (optionally) the model&#39;s height
-										Returns: the indices of the vertices that are at the highest layer
-									in the geometry.</p>
-									<h2 id="note-assumes-the-top-is-flat-and-level">Note: Assumes the top is flat and level</h2>
+									<p>Gets the indices of the vertices that are the highest in the blade. We assume
+									that these vertices are the top face of the blade</p>
 								</div>
+								<p>Note: Assumes the top is flat and level</p>
+								<dl class="tsd-comment-tags">
+									<dt>params</dt>
+									<dd><p>vertices All the vertices in the model</p>
+									</dd>
+									<dt>params</dt>
+									<dd><p>geomHeight (optionally) The model&#39;s height</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -727,6 +988,8 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>The indices of the vertices that are at the highest layer
+							in the geometry.</p>
 						</li>
 					</ul>
 				</section>
@@ -734,13 +997,13 @@
 					<a name="modifyedgewidth" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> modify<wbr>Edge<wbr>Width</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">modify<wbr>Edge<wbr>Width<span class="tsd-signature-symbol">(</span>swordGenerator<span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.swordgenerator.html" class="tsd-signature-type">SwordGenerator</a>, vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, leftEdgeVertIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, rightEdgeVertIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, templateBladeWidth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, widthToleranceRatio<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, numBaseDivs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, numMidDivs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, numTipDivs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, symmetric<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">modify<wbr>Edge<wbr>Width<span class="tsd-signature-symbol">(</span>rng<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">prng</span>, vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, edgeVertexIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, templateBladeWidth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, widthToleranceRatio<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, numBaseDivs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, numMidDivs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, numTipDivs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, symmetric<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L825">SwordGenerator.ts:825</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L959">SwordGenerator.ts:959</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -749,22 +1012,21 @@
 										Given: A sword generator, all the model vertices, the indices to the left and right edge vertices,
 										the default blade with in the template, width tolerance, and whether to make edges symmetric
 									Returns: All the vertices in the model after being modified</p>
-									<h2 id="note-currently-this-only-creates-symmetrical-blades">NOTE: Currently, this only creates symmetrical blades</h2>
+									<a href="#note-currently-this-only-creates-symmetrical-blades" id="note-currently-this-only-creates-symmetrical-blades" style="color: inherit; text-decoration: none;">
+										<h2>NOTE: Currently, this only creates symmetrical blades</h2>
+									</a>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>swordGenerator: <a href="_swordgenerator_.swordgenerator.html" class="tsd-signature-type">SwordGenerator</a></h5>
+									<h5>rng: <span class="tsd-signature-type">prng</span></h5>
 								</li>
 								<li>
 									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
-									<h5>leftEdgeVertIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-								<li>
-									<h5>rightEdgeVertIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>edgeVertexIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
 									<h5>templateBladeWidth: <span class="tsd-signature-type">number</span></h5>
@@ -789,6 +1051,123 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="scaleface" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> scale<wbr>Face</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">scale<wbr>Face<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, faceIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, scaleX<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, scaleZ<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L928">SwordGenerator.ts:928</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Scales the x, z components of the vertices by a scale Factor</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>faceIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>scaleX: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>scaleZ: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>vertices with given indices scaled</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="setedgetospline" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> set<wbr>Edge<wbr>ToSpline</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Edge<wbr>ToSpline<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, edgeVertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span>, numLayers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, edgeSplines<span class="tsd-signature-symbol">: </span><a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span>, baseSectionLength<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, midSectionLength<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, tipSectionLength<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, genParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L409">SwordGenerator.ts:409</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>edgeVertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>numLayers: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>edgeSplines: <a href="_spline_.spline.html" class="tsd-signature-type">Spline</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>baseSectionLength: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>midSectionLength: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>tipSectionLength: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>genParams: <a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-signature-type">GenerationParameters</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="translateface" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> translate<wbr>Face</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">translate<wbr>Face<span class="tsd-signature-symbol">(</span>vertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, faceIndices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Vector3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordGenerator.ts#L943">SwordGenerator.ts:943</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Moves face vertices in the given direction.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>vertices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>faceIndices: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>direction: <span class="tsd-signature-type">Vector3</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>vertices with given indices translated</p>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -797,8 +1176,23 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_bladecrosssections_.html">"<wbr>Blade<wbr>Cross<wbr>Sections"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_geometrydata_.html">"<wbr>Geometry<wbr>Data"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_infiniforge_.html">"<wbr>Infiniforge"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_spline_.html">"<wbr>Spline"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_sword_.html">"<wbr>Sword"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/_swordgenerator_.html">"<wbr>Sword<wbr>Generator"</a>
@@ -806,16 +1200,22 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_swordtemplates_.html">"<wbr>Sword<wbr>Templates"</a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utils_.html">"utils"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_json_cross_sections_.html">"json/cross-<wbr>sections"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_json_sword_templates_.html">"json/sword-<wbr>templates"</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_swordgenerator_.geometrydata.html" class="tsd-kind-icon">Geometry<wbr>Data</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_swordgenerator_.sword.html" class="tsd-kind-icon">Sword</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
@@ -846,10 +1246,25 @@
 								<a href="_swordgenerator_.swordgenerator.html#buildpommel" class="tsd-kind-icon">build<wbr>Pommel</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_swordgenerator_.swordgenerator.html#configurebladeparameters" class="tsd-kind-icon">configure<wbr>Blade<wbr>Parameters</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_swordgenerator_.swordgenerator.html#configureparameters" class="tsd-kind-icon">configure<wbr>Parameters</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_swordgenerator_.swordgenerator.html#generatesword" class="tsd-kind-icon">generate<wbr>Sword</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_swordgenerator_.swordgenerator.html#seedgenerator" class="tsd-kind-icon">seed<wbr>Generator</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_swordgenerator_.swordgenerator.html#configuresplinepointspacing" class="tsd-kind-icon">Configure<wbr>Spline<wbr>Point<wbr>Spacing</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_swordgenerator_.swordgenerator.html#modifyedgespline" class="tsd-kind-icon">Modify<wbr>Edge<wbr>Spline</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_swordgenerator_.swordgenerator.html#configuresectionheight" class="tsd-kind-icon">configure<wbr>Section<wbr>Height</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="_swordgenerator_.swordgenerator.html#createbladecrosssection" class="tsd-kind-icon">create<wbr>Blade<wbr>Cross<wbr>Section</a>
@@ -881,6 +1296,15 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="_swordgenerator_.swordgenerator.html#modifyedgewidth" class="tsd-kind-icon">modify<wbr>Edge<wbr>Width</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_swordgenerator_.swordgenerator.html#scaleface" class="tsd-kind-icon">scale<wbr>Face</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_swordgenerator_.swordgenerator.html#setedgetospline" class="tsd-kind-icon">set<wbr>Edge<wbr>ToSpline</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_swordgenerator_.swordgenerator.html#translateface" class="tsd-kind-icon">translate<wbr>Face</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -889,16 +1313,13 @@
 						<a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-kind-icon">Generation<wbr>Parameters</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_swordgenerator_.html#_" class="tsd-kind-icon">_</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_swordgenerator_.html#assert" class="tsd-kind-icon">assert</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_swordgenerator_.html#seedrandom" class="tsd-kind-icon">seedrandom</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_swordgenerator_.html#getrandomfloat" class="tsd-kind-icon">get<wbr>Random<wbr>Float</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_swordgenerator_.html#getrandomint" class="tsd-kind-icon">get<wbr>Random<wbr>Int</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_swordgenerator_.html#getslope" class="tsd-kind-icon">get<wbr>Slope</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module">
 						<a href="../modules/_swordgenerator_.html#default_gen_params" class="tsd-kind-icon">DEFAULT_<wbr>GEN_<wbr>PARAMS</a>
@@ -920,6 +1341,7 @@
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -968,7 +1390,7 @@
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Sword | infiniforge</title>
+	<title>Spline | infiniforge</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,32 +56,24 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_swordgenerator_.html">&quot;SwordGenerator&quot;</a>
+					<a href="../modules/_spline_.html">&quot;Spline&quot;</a>
 				</li>
 				<li>
-					<a href="_swordgenerator_.sword.html">Sword</a>
+					<a href="_spline_.spline.html">Spline</a>
 				</li>
 			</ul>
-			<h1>Class Sword</h1>
+			<h1>Class Spline</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Swords are the weapon type that has an associated
-						stye and THREE geometry object</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Sword</span>
+						<span class="target">Spline</span>
 					</li>
 				</ul>
 			</section>
@@ -92,22 +84,20 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_swordgenerator_.sword.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_spline_.spline.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_swordgenerator_.sword.html#geometry" class="tsd-kind-icon">geometry</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_swordgenerator_.sword.html#geometrydata" class="tsd-kind-icon">geometry<wbr>Data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_swordgenerator_.sword.html#mesh" class="tsd-kind-icon">mesh</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_swordgenerator_.sword.html#style" class="tsd-kind-icon">style</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_spline_.spline.html#points" class="tsd-kind-icon">points</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_swordgenerator_.sword.html#getmesh" class="tsd-kind-icon">get<wbr>Mesh</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_spline_.spline.html#getsplinegradient" class="tsd-kind-icon">get<wbr>Spline<wbr>Gradient</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_spline_.spline.html#getsplinepoint" class="tsd-kind-icon">get<wbr>Spline<wbr>Point</a></li>
 							</ul>
 						</section>
 					</div>
@@ -119,22 +109,16 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Sword<span class="tsd-signature-symbol">(</span>style<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Spline<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_spline_.spline.html" class="tsd-signature-type">Spline</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L121">SwordGenerator.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Spline.ts#L13">Spline.ts:13</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>style: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_swordgenerator_.sword.html" class="tsd-signature-type">Sword</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_spline_.spline.html" class="tsd-signature-type">Spline</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -142,42 +126,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="geometry" class="tsd-anchor"></a>
-					<h3>geometry</h3>
-					<div class="tsd-signature tsd-kind-icon">geometry<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BufferGeometry</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
+					<a name="points" class="tsd-anchor"></a>
+					<h3>points</h3>
+					<div class="tsd-signature tsd-kind-icon">points<span class="tsd-signature-symbol">:</span> <a href="_spline_.point2d.html" class="tsd-signature-type">Point2D</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L119">SwordGenerator.ts:119</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="geometrydata" class="tsd-anchor"></a>
-					<h3>geometry<wbr>Data</h3>
-					<div class="tsd-signature tsd-kind-icon">geometry<wbr>Data<span class="tsd-signature-symbol">:</span> <a href="_swordgenerator_.geometrydata.html" class="tsd-signature-type">GeometryData</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L121">SwordGenerator.ts:121</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="mesh" class="tsd-anchor"></a>
-					<h3>mesh</h3>
-					<div class="tsd-signature tsd-kind-icon">mesh<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Mesh</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L120">SwordGenerator.ts:120</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="style" class="tsd-anchor"></a>
-					<h3>style</h3>
-					<div class="tsd-signature tsd-kind-icon">style<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L118">SwordGenerator.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Spline.ts#L13">Spline.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -185,25 +139,54 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getmesh" class="tsd-anchor"></a>
-					<h3>get<wbr>Mesh</h3>
+					<a name="getsplinegradient" class="tsd-anchor"></a>
+					<h3>get<wbr>Spline<wbr>Gradient</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Mesh<span class="tsd-signature-symbol">(</span>verbose<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Mesh</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Spline<wbr>Gradient<span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, looped<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_spline_.point2d.html" class="tsd-signature-type">Point2D</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/f9c23dc/src/SwordGenerator.ts#L128">SwordGenerator.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Spline.ts#L58">Spline.ts:58</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> verbose: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+									<h5>t: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>looped: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Mesh</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_spline_.point2d.html" class="tsd-signature-type">Point2D</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getsplinepoint" class="tsd-anchor"></a>
+					<h3>get<wbr>Spline<wbr>Point</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Spline<wbr>Point<span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, looped<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_spline_.point2d.html" class="tsd-signature-type">Point2D</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/Spline.ts#L19">Spline.ts:19</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>t: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>looped: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_spline_.point2d.html" class="tsd-signature-type">Point2D</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -215,70 +198,70 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_bladecrosssections_.html">"<wbr>Blade<wbr>Cross<wbr>Sections"</a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_geometrydata_.html">"<wbr>Geometry<wbr>Data"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_infiniforge_.html">"<wbr>Infiniforge"</a>
+					</li>
 					<li class="current tsd-kind-external-module">
+						<a href="../modules/_spline_.html">"<wbr>Spline"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_sword_.html">"<wbr>Sword"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_swordgenerator_.html">"<wbr>Sword<wbr>Generator"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_swordtemplates_.html">"<wbr>Sword<wbr>Templates"</a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utils_.html">"utils"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_json_cross_sections_.html">"json/cross-<wbr>sections"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_json_sword_templates_.html">"json/sword-<wbr>templates"</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_swordgenerator_.geometrydata.html" class="tsd-kind-icon">Geometry<wbr>Data</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_spline_.point2d.html" class="tsd-kind-icon">Point2D</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_swordgenerator_.sword.html" class="tsd-kind-icon">Sword</a>
+						<a href="_spline_.spline.html" class="tsd-kind-icon">Spline</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_swordgenerator_.sword.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_spline_.spline.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_swordgenerator_.sword.html#geometry" class="tsd-kind-icon">geometry</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_swordgenerator_.sword.html#geometrydata" class="tsd-kind-icon">geometry<wbr>Data</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_swordgenerator_.sword.html#mesh" class="tsd-kind-icon">mesh</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_swordgenerator_.sword.html#style" class="tsd-kind-icon">style</a>
+								<a href="_spline_.spline.html#points" class="tsd-kind-icon">points</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_swordgenerator_.sword.html#getmesh" class="tsd-kind-icon">get<wbr>Mesh</a>
+								<a href="_spline_.spline.html#getsplinegradient" class="tsd-kind-icon">get<wbr>Spline<wbr>Gradient</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_spline_.spline.html#getsplinepoint" class="tsd-kind-icon">get<wbr>Spline<wbr>Point</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_swordgenerator_.swordgenerator.html" class="tsd-kind-icon">Sword<wbr>Generator</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_swordgenerator_.generationparameters.html" class="tsd-kind-icon">Generation<wbr>Parameters</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_swordgenerator_.html#seedrandom" class="tsd-kind-icon">seedrandom</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_swordgenerator_.html#getrandomfloat" class="tsd-kind-icon">get<wbr>Random<wbr>Float</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_swordgenerator_.html#getrandomint" class="tsd-kind-icon">get<wbr>Random<wbr>Int</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_swordgenerator_.html#getslope" class="tsd-kind-icon">get<wbr>Slope</a>
-					</li>
-					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module">
-						<a href="../modules/_swordgenerator_.html#default_gen_params" class="tsd-kind-icon">DEFAULT_<wbr>GEN_<wbr>PARAMS</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
@@ -296,6 +279,7 @@
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -344,7 +328,7 @@
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>

@@ -77,32 +77,13 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Variables</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_swordtemplates_.html#supportedswords" class="tsd-kind-icon">Supported<wbr>Swords</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_swordtemplates_.html#getswordtemplate" class="tsd-kind-icon">get<wbr>Sword<wbr>Template</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_swordtemplates_.html#issupportedsword" class="tsd-kind-icon">is<wbr>Supported<wbr>Sword</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_swordtemplates_.html#isvalidtemplate" class="tsd-kind-icon">is<wbr>Valid<wbr>Template</a></li>
 							</ul>
 						</section>
 					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
-					<a name="supportedswords" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> Supported<wbr>Swords</h3>
-					<div class="tsd-signature tsd-kind-icon">Supported<wbr>Swords<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, SwordTemplate&gt;([[&quot;short&quot;, {&quot;style&quot;: &quot;short&quot;,&quot;baseBladeWidth&quot;: 0.2,&quot;minBladeLength&quot;: 0.5,&quot;maxBladeLength&quot;: 0.5,&quot;minHandleLength&quot;: 0.3,&quot;maxHandleLength&quot;: 0.4}],[&quot;long&quot;, {&quot;style&quot;: &quot;long&quot;,&quot;baseBladeWidth&quot;: 0.3,&quot;minBladeLength&quot;: 0.85,&quot;maxBladeLength&quot;: 1.1,&quot;minHandleLength&quot;: 0.16,&quot;maxHandleLength&quot;: 0.28}],[&quot;great&quot;, {&quot;style&quot;: &quot;short&quot;,&quot;baseBladeWidth&quot;: 0.5,&quot;minBladeLength&quot;: 1.5,&quot;maxBladeLength&quot;: 2.0,&quot;minHandleLength&quot;: 0.5,&quot;maxHandleLength&quot;: 1.0}]])</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in SwordTemplates.ts:15</li>
-						</ul>
-					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -111,13 +92,13 @@
 					<a name="getswordtemplate" class="tsd-anchor"></a>
 					<h3>get<wbr>Sword<wbr>Template</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Sword<wbr>Template<span class="tsd-signature-symbol">(</span>swordStyle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Sword<wbr>Template<span class="tsd-signature-symbol">(</span>swordStyle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in SwordTemplates.ts:46</li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordTemplates.ts#L24">SwordTemplates.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -126,24 +107,21 @@
 									<h5>swordStyle: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-signature-type">SwordTemplate</a>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">undefined</span>
-							</h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
-					<a name="issupportedsword" class="tsd-anchor"></a>
-					<h3>is<wbr>Supported<wbr>Sword</h3>
+					<a name="isvalidtemplate" class="tsd-anchor"></a>
+					<h3>is<wbr>Valid<wbr>Template</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Supported<wbr>Sword<span class="tsd-signature-symbol">(</span>swordStyle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Valid<wbr>Template<span class="tsd-signature-symbol">(</span>swordStyle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in SwordTemplates.ts:42</li>
+									<li>Defined in <a href="https://github.com/ShiJbey/Infiniforge/blob/94fa10f/src/SwordTemplates.ts#L17">SwordTemplates.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -164,14 +142,41 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="_bladecrosssections_.html">"<wbr>Blade<wbr>Cross<wbr>Sections"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_geometrydata_.html">"<wbr>Geometry<wbr>Data"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_infiniforge_.html">"<wbr>Infiniforge"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_spline_.html">"<wbr>Spline"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_sword_.html">"<wbr>Sword"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="_swordgenerator_.html">"<wbr>Sword<wbr>Generator"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="_swordtemplates_.html">"<wbr>Sword<wbr>Templates"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_.html">"utils"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="_json_cross_sections_.html">"json/cross-<wbr>sections"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="_json_sword_templates_.html">"json/sword-<wbr>templates"</a>
 					</li>
 				</ul>
 			</nav>
@@ -180,14 +185,11 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_swordtemplates_.swordtemplate.html" class="tsd-kind-icon">Sword<wbr>Template</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
-						<a href="_swordtemplates_.html#supportedswords" class="tsd-kind-icon">Supported<wbr>Swords</a>
-					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="_swordtemplates_.html#getswordtemplate" class="tsd-kind-icon">get<wbr>Sword<wbr>Template</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="_swordtemplates_.html#issupportedsword" class="tsd-kind-icon">is<wbr>Supported<wbr>Sword</a>
+						<a href="_swordtemplates_.html#isvalidtemplate" class="tsd-kind-icon">is<wbr>Valid<wbr>Template</a>
 					</li>
 				</ul>
 			</nav>
@@ -206,6 +208,7 @@
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -254,7 +257,7 @@
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
