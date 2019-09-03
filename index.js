@@ -234,7 +234,7 @@ function generateAndExportSword(style, seed, options) {
     // Get template
     var template = infiniforge.Templates.getSwordTemplate(style);
     // Create a new sword Generator for this request
-    var generator = new infiniforge.Generator.SwordGenerator('',infiniforgeConfig["generator"]["verbose"]);
+    var generator = new infiniforge.Generator.SwordGenerator(infiniforgeConfig["generator"]["verbose"]);
     // Generate the sword using the template, default params and seed
     var sword = generator.generateSword(template, options, seed);
     // Create a new exported

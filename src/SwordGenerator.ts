@@ -92,7 +92,6 @@ export const DEFAULT_GEN_PARAMS : GenerationParameters = {
  */
 export class SwordGenerator {
 
-    public seed : string;
     public randGenerator : seedrandom.prng;
     public verbose: boolean;
 
@@ -101,10 +100,9 @@ export class SwordGenerator {
      * number generator
      * @param verbose Print intermediate output from generation process
      */
-    constructor(seed: string = '',verbose: boolean = false) {
+    constructor(verbose: boolean = false) {
         // The generator only cares about its own seed value and its random number generator
-        this.seed = seed;
-        this.randGenerator = seedrandom(seed);
+        this.randGenerator = seedrandom();
         this.verbose = verbose;
     }
 
@@ -114,7 +112,6 @@ export class SwordGenerator {
      * @param seed (Optional) seed value for pseudo number generator
      */
     seedGenerator(seed: string = '') {
-        this.seed = seed;
         this.randGenerator = seedrandom(seed);
     }
 
@@ -124,13 +121,15 @@ export class SwordGenerator {
     configureParameters(requestOptions: Object, template: SwordTemplate): GenerationParameters {
         // Overwrite the default parameters with any provided parameters
         var genParams = Object.assign(DEFAULT_GEN_PARAMS, requestOptions);
+
         // Configure randomized parameters for the blade
-        this.configureBladeParameters(genParams, template);
+        genParams = this.configureBladeParameters(genParams, template);
 
         return genParams;
     }
 
-    configureBladeParameters(genParams: GenerationParameters, template: SwordTemplate) {
+    configureBladeParameters(genParams: GenerationParameters, template: SwordTemplate): GenerationParameters{
+
         /////////////////////////////////////////////////////////////////
         //                        BLADE LENGTH                         //
         /////////////////////////////////////////////////////////////////
@@ -156,6 +155,8 @@ export class SwordGenerator {
             genParams.nMidCPs = utils.getRandomInt(this.randGenerator, genParams.minCPs, genParams.maxCPs + 1);
             genParams.nTipCPs = utils.getRandomInt(this.randGenerator, genParams.minCPs, genParams.maxCPs + 1);
         }
+
+        return genParams;
     }
 
     /**
@@ -171,7 +172,7 @@ export class SwordGenerator {
         this.seedGenerator(seed);
 
         // Fill in any missing generation parameters with default values
-        var genParams : GenerationParameters = this.configureParameters(options,template);
+        var genParams = this.configureParameters(options,template);
 
         // Create a new sword Object
         var sword = new Sword(template.style);
@@ -340,14 +341,13 @@ export class SwordGenerator {
         sword.geometryData.vertices = SwordGenerator.setEdgeToSpline(sword.geometryData.vertices, edgeVertices, bladeLayers.length, edgeSplines,
             baseSectionLength, midSectionLength, tipSectionLength, genParams);
 
-        SwordGenerator.createBladeTip(sword.geometryData.vertices, bladeLayers, genParams);
 
         /////////////////////////////////////////////////////////////////
         //                     CREATE BLADE TIP                        //
         /////////////////////////////////////////////////////////////////
 
-        // Place a point at the tip of the blade
-        //sword.geometryData.vertices = SwordGenerator.createBladeTip(sword.geometryData.vertices, bladeLayers[bladeLayers.length - 1].vertices);
+        SwordGenerator.createBladeTip(sword.geometryData.vertices, bladeLayers, genParams);
+
 
         /////////////////////////////////////////////////////////////////
         //                     VERIFY GEOMETRY                         //
@@ -363,32 +363,10 @@ export class SwordGenerator {
 
         // Add colors for the sword blade
         var bladeColor = utils.normalizeRGB(genParams.bladeColor);
+
         for (var i = 0; i < (sword.geometryData.vertices.length / 3); i++) {
             sword.geometryData.addColor(bladeColor[0], bladeColor[1], bladeColor[2]);
         }
-
-        // for (var layerIndex = 0; layerIndex <= totalBladeDivs; layerIndex++) {
-        //     var layer = bladeLayers[layerIndex];
-        //     var section = '';
-        //     if (layerIndex <= numBaseDivs) {
-        //         section = 'base';
-        //     }
-        //     else if(layerIndex > numBaseDivs && layerIndex <= numBaseDivs + numMidDivs) {
-        //         section = 'mid';
-        //     }
-        //     else {
-        //         section = 'tip';
-        //     }
-        //     for(var i = 0; i < layer.vertices.length; i++) {
-        //         if (section == 'base') {
-        //             sword.geometryData.addColor(1.0, 0.0, 0.0);
-        //         } else if (section == 'mid') {
-        //             sword.geometryData.addColor(1.0, 1.0, 0.5);
-        //         } else {
-        //             sword.geometryData.addColor(0.0, 0.0, 1.0);
-        //         }
-        //     }
-        // }
 
         // Check number of colors
         assert(sword.geometryData.colors.length > 0, "ERROR:buildBlade(): Model does not have any colors defined");
