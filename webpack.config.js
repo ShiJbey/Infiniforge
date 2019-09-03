@@ -1,7 +1,6 @@
 'use strict';
 
 var path = require('path');
-const webpack = require('webpack');
 const MinifyPlugin = require('babel-minify-webpack-plugin');
 
 module.exports = {
