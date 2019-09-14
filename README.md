@@ -15,11 +15,11 @@ representations of procedurally generated 3D fanstasy swords.
 6. Open your web browser and go to ```localhost:8080``` to open the help page
 which lists common routes
 
-## How to Build and Run on Docker (Currently not Supported)
+## How to Build and Run on Docker
 
-1. ```$ sudo docker build -t Infiniforge .```
-2. ```$ sudo docker run -dti -p 8080:8080 Infiniforge```
-3. Open your web browser and go to <ip of Docker Containter>:8080/api
+1. ```$ sudo docker build -t infiniforge .```
+2. ```$ sudo docker run -d -p 8080:8080 infiniforge```
+3. Open your web browser and go to localhost:8080
 
 ## Building the Documentation
 
@@ -49,7 +49,7 @@ glTF files can also be opened on windows 10 using the 3D Viewer application.
 
 ## Credits
 
-Sword morphologies sourced from: [](https://en.wikipedia.org/wiki/Longsword)
+Sword morphologies sourced from: [Long Sword Wikipedia](https://en.wikipedia.org/wiki/Longsword)
 
 ## Misc
 
