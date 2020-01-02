@@ -1,0 +1,40 @@
+:root {
+    /* 
+    Colors are sampled from Base16
+    Hugo theme by Chris Kempson
+    */
+    --color-black: #2d2d2d;
+    --color-blue: #6699cc;
+    --color-lightblue: #66cccc;
+    --color-green: #99cc99;
+    --color-yellow: #ffcc66;
+    --color-orange: #f99157;
+    --color-red: #f2777a;
+    --color-white: #f2f0ec;
+
+    /*Nav Colors*/
+    --color-lava: #1153c0;
+    --color-lava-border: #0059ec;
+}
+
+section {
+    justify-content: left;
+}
+
+h3:not(#header-subtitle) {
+    text-align: left;
+    justify-content: left;
+}
+
+.position {
+    color: var(--color-white);
+}
+
+.dates, .organization {
+    color: var(--color-lightblue);
+}
+
+.descriptionLabel {
+    color: var(--color-orange);
+}
+

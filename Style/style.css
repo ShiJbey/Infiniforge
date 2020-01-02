@@ -1,0 +1,155 @@
+:root {
+    /* 
+    Colors are sampled from Base16
+    Hugo theme by Chris Kempson
+    */
+    --color-black: #2d2d2d;
+    --color-blue: #6699cc;
+    --color-lightblue: #66cccc;
+    --color-green: #99cc99;
+    --color-yellow: #ffcc66;
+    --color-orange: #f99157;
+    --color-red: #f2777a;
+    --color-white: #f2f0ec;
+
+    /*Nav Colors*/
+    --color-lava: #1153c0;
+    --color-lava-border: #0059ec;
+}
+
+body {
+    background-color: var(--color-black);
+}
+
+#container {
+    width: 800px;
+    margin: auto;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--color-yellow);
+    justify-content: center;
+}
+
+#header-subtitle {
+    color: var(--color-white);
+}
+
+section {
+    clear: both;
+}
+
+h3 {
+    color: var(--color-white);
+    text-align: center;
+    clear: both;
+}
+
+nav ul, nav li {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+hr {
+    clear: both;
+}
+
+img {
+    float: left;
+    padding: 10px;
+    margin: 10px;
+    width: auto;
+    height: 200px;
+}
+
+img#headshot {
+    width: 400px;
+    height: auto;
+}
+
+img#LinkedInLogo, img#GitHubLogo, img#PDFIcon {
+    width: 52px;
+    height: 52px;
+    border: 0px;
+}
+
+#lava {
+    background: var(--color-black);
+    border-right: 1px solid var(--color-green);
+    border-left: 1px solid var(--color-green);
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    background: -moz-linear-gradient(top, #0b2b61, #1153c0);
+    background: -webkit-gradient(linear, left top, left bottom, from(#0b2b61), to(#1153c0));
+}
+
+#nav {
+    position: relative;
+    background: black;
+    border: 1px solid var(--color-green);
+}
+
+#nav li {
+    float: left;
+    list-style: none;
+}
+
+#nav li a {
+    color: #c3c3c3;
+    position: relative;
+    z-index: 2;
+    float: left;
+    font-size: 15px;
+    font-family: Helvetica, Arial, sans-serif;
+    text-decoration: none;
+    padding: 15px 22px;
+}
+
+h2.sectionHeader {
+    background: -moz-linear-gradient(top, #0b2b61, #1153c0);
+    background: -webkit-gradient(linear, left top, left bottom, from(#0b2b61), to(#1153c0));
+    
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+   
+    -moz-box-shadow: 0px 3px var(--color-black);
+    box-shadow:  0px 3px var(--color-black);
+    -webkit-box-shadow: 0px 3px var(--color-black);
+
+    border: 1px solid var(--color-green);
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: var(--color-white);
+}
+
+header {
+    background-color: var(--color-black);
+    color: var(--color-yellow);
+    text-align: center;
+    padding: 1em;
+}
+
+footer {
+    padding: 1em;
+    background-color: var(--color-black);
+    color: var(--color-blue);
+    clear: left;
+    text-align: center;
+}
+
+
+a {
+    color: var(--color-yellow);
+}
+
+a:hover {
+    color: var(--color-blue);
+}
+
+p {
+    padding: 10px;
+    color: var(--color-yellow);
+}
+

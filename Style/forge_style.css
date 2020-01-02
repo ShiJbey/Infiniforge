@@ -1,0 +1,14 @@
+div#game-container {
+    margin-top: 16px;
+    border: 10px inset;
+    width: 780px;
+    height: 800px;
+    -webkit-border-image: url(../Assets/infiniforge/border1.png) 30 stretch;
+    -o-border-image: url(../Assets/infiniforge/border1.png) 30 stretch;
+    border-image: url(../Assets/infiniforge/border1.png) 30 stretch;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}

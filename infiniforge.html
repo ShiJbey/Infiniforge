@@ -1,0 +1,494 @@
+<!Doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Shijbey-Infiniforge</title>
+    <link rel="shortcut icon" href="Assets/favicon.ico" />
+
+    <link rel="stylesheet" href="Style/forge_style.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="Style/style.css" type="text/css" media="screen" />
+
+    <script src="js/lib/three.min.js"></script>
+    <script src="js/lib/GLTFExporter.js"></script>
+    <script src="js/lib/dat.gui.min.js"></script>
+    <script src="js/lib/jquery.min.js"></script>
+    <script src="js/lib/jquery-ui.min.js"></script>
+
+    <script src="js/ui/jquery.lavaNav.js"></script>
+    <script type="text/javascript">$('#nav').lavaNav();</script>
+    <script src="js/infiniforge/infiniforge.bundle.js"></script>
+</head>
+
+<body>
+    <div id="container">
+
+        <header>
+            <h1 id="header-name">Shi Johnson-Bey</h1>
+            <h3 id="header-subtitle">Research Software Engineer</h3>
+        </header>
+
+        <nav>
+            <ul id="nav">
+                <li>
+                    <a href="shijbey.github.io">About</a>
+                </li>
+                <li id="selected">
+                    <a href="shijbey.github.io/projects.html">Projects</a>
+                </li>
+                <li>
+                    <a href="shijbey.github.io/resume.html">CV</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="game-container">
+            <canvas id="threejs-canvas"></canvas>
+        </div>
+
+        <a id="gltf-download" href="javascript: void(0)" download="sword.gltf">Download Sword as glTF!</a>
+
+        <section id="how-to-play">
+            <h2 class="sectionHeader">How to Play</h2>
+            <p>This is demo uses a webpack'ed bundle of the <a
+                    href="https://github.com/ShiJbey/Infiniforge">Infiniforge</a> module.</p>
+            <p>Rotate the model using 'W', 'A', 'S', 'D'.</p>
+            <p>Move the model forward with '1' and backwards with '2'/</p>
+            <p>Move model vertically with 'Q' and 'E'.</p>
+        </section>
+
+        <section id=recent-updates>
+            <h2 class="sectionHeader">Recent Updates</h2>
+            <h3>March 2018</h3>
+            <ul>
+                <li>UI updates</li>
+            </ul>
+            <h3>April 2018</h3>
+            <ul>
+                <li>New UI</li>
+                <li>Items! Players can now smelt and Forge using items in their inventory!</li>
+                <li>Fixed pseudo randomness of generation process</li>
+            </ul>
+            <h3>August 2019</h3>
+            <ul>
+                <li>Removed old crafting game</li>
+                <li>Users now have access to all the parameters used to make blades!</li>
+            </ul>
+        </section>
+
+        <footer>Last updated: September 2019</footer>
+    </div>
+
+    <script>
+        console.log(Infiniforge);
+
+        ///////////////////////////////////////////////////////////
+        //          HANDLE SWORD ROTATION CONTROLS               //
+        ///////////////////////////////////////////////////////////
+
+        var scene, camera, renderer;
+        var swordModel, material, importedMaterial;
+        var useWireFrame;
+        var generationParams;
+        var gui;
+        var seedController, baseWidthController;
+        var edgeWidthRatioController, swordStyleController;
+        var swordglTF;
+        var exporter;
+
+        const wireframeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x050505,
+            wireframe: true
+        });
+
+        var rotation = {
+            "left": false,
+            "right": false,
+            "up": false,
+            "down": false
+        };
+
+        var translation = {
+            "up": false,
+            "down": false
+        };
+
+        var zoom = {
+            "in": false,
+            "out": false
+        };
+
+        // Set the keyboard handlers
+        document.onkeyup = handle_keyboard_up;
+        document.onkeydown = handle_keyboard_down;
+
+        function handle_keyboard_down(event) {
+            event = event || window.event;
+            if (event.which == 65) {
+                // W
+                rotation["left"] = true;
+                rotation["right"] = false;
+            }
+            else if (event.which == 68) {
+                // D
+                rotation["right"] = true;
+                rotation["left"] = false;
+            }
+            else if (event.which == 87) {
+                // A
+                rotation["up"] = true;
+                rotation["down"] = false;
+            }
+            else if (event.which == 83) {
+                // S
+                rotation["down"] = true;
+                rotation["up"] = false;
+            }
+
+            else if (event.which == 81) {
+                // Q
+                translation["up"] = true;
+                translation["down"] = false;
+            }
+            else if (event.which == 69) {
+                // E
+                translation["up"] = false;
+                translation["down"] = true;
+            }
+
+            else if (event.which == 49) {
+                // 1
+                zoom["in"] = true;
+                zoom["out"] = false;
+            }
+            else if (event.which == 50) {
+                // 2
+                zoom["in"] = false;
+                zoom["out"] = true;
+            }
+        }
+
+        function handle_keyboard_up(event) {
+            event = event || window.event;
+            if (event.which == 65) {
+                // LEFT
+                rotation["left"] = false;
+                rotation["right"] = false;
+            }
+            else if (event.which == 68) {
+                // RIGHT
+                rotation["right"] = false;
+                rotation["left"] = false;
+            }
+            else if (event.which == 87) {
+                // UP
+                rotation["up"] = false;
+                rotation["down"] = false;
+            }
+            else if (event.which == 83) {
+                // DOWN
+                rotation["down"] = false;
+                rotation["up"] = false;
+            }
+            else if (event.which == 81) {
+                // Q
+                translation["up"] = false;
+                translation["down"] = false;
+            }
+            else if (event.which == 69) {
+                // E
+                translation["up"] = false;
+                translation["down"] = false;
+            }
+            else if (event.which == 49) {
+                zoom["in"] = false;
+                zoom["out"] = false;
+            }
+            else if (event.which == 50) {
+                zoom["in"] = false;
+                zoom["out"] = false;
+            }
+        }
+
+
+        ///////////////////////////////////////////////////////////
+        //                  HELPER FUNTIONS                      //
+        ///////////////////////////////////////////////////////////
+
+        // Borrowed from MDN Math.Random()
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        function randomSeed(seedLength = 7) {
+            var seed = "";
+            numberAsciiOffset = 48;
+            lowercaseAsciiOffset = 97;
+            uppercaseAsciiOffset = 65;
+            for (var i = 0; i < seedLength; i++) {
+                var rand_num = Math.random();
+                if (rand_num <= 0.33) {
+                    seed += String.fromCharCode(numberAsciiOffset + getRandomInt(10));
+                }
+                else if (rand_num > 0.33 && rand_num <= 0.66) {
+                    seed += String.fromCharCode(lowercaseAsciiOffset + getRandomInt(25));
+                }
+                else {
+                    seed += String.fromCharCode(uppercaseAsciiOffset + getRandomInt(25));
+                }
+            }
+            return seed;
+        }
+
+        function forgeSword(use_ingots) {
+            var seed = generationParams['seed'];
+            var swordStyle = generationParams['swordStyle'];
+            var options = generationParams.getGenerationParams();
+            //console.log(options);
+            console.log(`Pizza: ${typeof(options)}`);
+            var template = Infiniforge.Templates.getSwordTemplate(swordStyle);
+            var generator = new Infiniforge.Generator.SwordGenerator(false);
+            var sword = generator.generateSword(template, options, seed);
+            if (swordModel) {
+                scene.remove(swordModel);
+            }
+            swordModel = sword.getMesh();
+            swordModel.rotation.y += Math.PI / 2;
+            importedMaterial = swordModel.material;
+
+
+            scene.add(swordModel);
+
+            exporter.parse( sword.getMesh(), function ( gltf ) {
+                swordglTF = gltf;
+                setGlTFDownload(true);
+            }, {} );
+
+            if (generationParams['wireframe'] == true) {
+                swordModel.material = wireframeMaterial;
+            }
+
+        }
+
+        ///////////////////////////////////////////////////////////
+        //                   THREEJS SET UP                      //
+        ///////////////////////////////////////////////////////////
+
+        function init() {
+            var ThreeJSCanvas = document.getElementById("threejs-canvas");
+
+            renderer = new THREE.WebGLRenderer({ canvas: ThreeJSCanvas, antialias: true });
+            var renderer_rect = renderer.domElement.getBoundingClientRect();
+            renderer.setSize(renderer_rect.width, renderer_rect.height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            var aspect = renderer_rect.width / renderer_rect.height;
+            camera = new THREE.PerspectiveCamera(75, aspect, 1, 1000);
+            camera.position.z = 2;
+            camera.updateProjectionMatrix();
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0);
+
+            var light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(1, 1, 1).normalize();
+            scene.add(light);
+
+            exporter = new THREE.GLTFExporter();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (rotation["left"]) {
+                swordModel.rotation.y -= 0.05;
+            }
+            else if (rotation["right"]) {
+                swordModel.rotation.y += 0.05;
+            }
+
+            if (rotation["down"]) {
+                swordModel.rotation.x += 0.05;
+            }
+            else if (rotation["up"]) {
+                swordModel.rotation.x -= 0.05;
+            }
+
+            if (translation["down"]) {
+                swordModel.position.y -= 0.05;
+            }
+            else if (translation["up"]) {
+                swordModel.position.y += 0.05;
+            }
+
+            if (zoom["in"]) {
+                swordModel.position.z += 0.05;
+            }
+            else if (zoom["out"]) {
+                swordModel.position.z -= 0.05;
+            }
+
+            renderer.render(scene, camera);
+        };
+
+
+
+        function setGlTFDownload(enable) {
+            var downloadLink = document.getElementById('gltf-download');
+            if (enable) {
+                downloadLink.href = "data:text/json," + encodeURIComponent(JSON.stringify(swordglTF));
+            }
+            else {
+                downloadLink.href = "javascript: void(0)"
+            }
+        }
+
+        ///////////////////////////////////////////////////////////
+        //                    GUI CONTROLS                       //
+        ///////////////////////////////////////////////////////////
+
+        var SandboxManager = function () {
+            this.seed = 'pizza';
+            this.randomizeSeed = () => { };
+            this.bladeColor = [127, 127, 127];
+            this.guardColor = [127, 81, 0];
+            this.handleColor = [204, 81, 0];
+            this.pommelColor = [229, 204, 89];
+            this.nBaseCPs = 3;
+            this.nMidCPs = 5;
+            this.nTipCPs = 2;
+            this.nBaseSplinePoints = 5;
+            this.nMidSplinePoints = 5;
+            this.nTipSplinePoints = 2;
+            this.randomizeNumCps = true;
+            this.maxCPs = 7;
+            this.minCPs = 2;
+            this.evenSpacedBaseCPs = true;
+            this.evenSpacedMidCPs = true;
+            this.evenSpacedTipCPs = true;
+
+            this.bladeThickness = 0.1;
+            this.swordStyle = 'long';
+            this.baseWidth = 0.3;
+
+            this.bladeBaseProportion = 0.3;
+            this.bladeMidProportion = 0.5;
+            this.bladeWidthToleranceRatio = 0.6;
+            this.Forge = () => {
+                forgeSword();
+            };
+            this.ForgeRandom = () => {
+                seedController.setValue(randomSeed());
+                forgeSword();
+            };
+            this.wireframe = false;
+
+            this.getGenerationParams = () => {
+                return {
+                    "bladeColor": this.bladeColor,
+                    "guardColor": this.guardColor,
+                    "handleColor": this.handleColor,
+                    "pommelColor": this.pommelColor,
+                    "nBaseCPs": this.nBaseCPs,
+                    "nMidCPs": this.nMidCPs,
+                    "nTipCPs": this.nTipCPs,
+                    "nBaseSPlinePoints": this.nBaseSplinePoints,
+                    "nMidSplinePoints": this.nMidSplinePoints,
+                    "nTipSplinePoints": this.nTipSplinePoints,
+                    "randomizeNumCps": this.randomizeNumCps,
+                    "maxCPs": this.maxCPs,
+                    "minCPs": this.minCPs,
+                    "evenSpacedBaseCPs": this.evenSpacedBaseCPs,
+                    "evenSpacedMidCPs": this.evenSpacedMidCPs,
+                    "evenSpacedTipCPs": this.evenSpacedTipCPs,
+
+
+                    "bladeBaseProportion": this.bladeBaseProportion,
+                    "bladeMidProportion": this.bladeMidProportion,
+                    "bladeWidthToleranceRatio": this.bladeWidthToleranceRatio,
+
+                    "bladeThickness": this.bladeThickness,
+                    "baseWidth": this.baseWidth
+                };
+            };
+        };
+
+        generationParams = new SandboxManager();
+
+        gui = new dat.GUI({ autoPlace: true });
+        gui.domElement.id = 'gui';
+
+        gui.remember(generationParams);
+
+        gui.add(generationParams, 'ForgeRandom');
+        gui.add(generationParams, 'Forge');
+
+        seedController = gui.add(generationParams, 'seed');
+
+        gui.add(generationParams, 'randomizeSeed').setValue(() => {
+            seedController.setValue(randomSeed());
+        });
+
+        gui.add(generationParams, 'swordStyle', { 'Short': 'short', 'Long': 'long', 'Great': 'great' }).onChange((val) => { });
+
+        var colorOptions = gui.addFolder("Color Options");
+        colorOptions.addColor(generationParams, "bladeColor");
+        colorOptions.addColor(generationParams, "guardColor");
+        colorOptions.addColor(generationParams, "handleColor");
+        colorOptions.addColor(generationParams, "pommelColor");
+
+        var edgeSplineOptions = gui.addFolder("Edge Spline Options");
+
+        var numControlPointsOptions = edgeSplineOptions.addFolder("Number of Control Points");
+        numControlPointsOptions.add(generationParams, "nBaseCPs");
+        numControlPointsOptions.add(generationParams, "nMidCPs");
+        numControlPointsOptions.add(generationParams, "nTipCPs");
+        numControlPointsOptions.add(generationParams, "randomizeNumCps");
+
+        var splineSamplingOptions = edgeSplineOptions.addFolder("Spline Sampling");
+        splineSamplingOptions.add(generationParams, "nBaseSplinePoints");
+        splineSamplingOptions.add(generationParams, "nMidSplinePoints");
+        splineSamplingOptions.add(generationParams, "nTipSplinePoints");
+
+        var controlPointSpacing = edgeSplineOptions.addFolder("Control Point Spacing");
+        controlPointSpacing.add(generationParams, "evenSpacedBaseCPs");
+        controlPointSpacing.add(generationParams, "evenSpacedMidCPs");
+        controlPointSpacing.add(generationParams, "evenSpacedTipCPs");
+
+
+        gui.add(generationParams, 'baseWidth', 0.08, 0.3);
+        gui.add(generationParams, 'bladeWidthToleranceRatio', 0.1, 1.0);
+        gui.add(generationParams, 'bladeBaseProportion', 0.1, 0.3);
+        gui.add(generationParams, 'bladeMidProportion', 0.1, 0.5);
+
+        gui.add(generationParams, 'wireframe').onChange((enabled) => {
+            if (enabled) {
+                swordModel.material = wireframeMaterial;
+            } else {
+                swordModel.material = importedMaterial;
+            }
+        });
+
+        document.body.appendChild(gui.domElement);
+        var pos = $('#threejs-canvas').position();
+        var width = $('#threejs-canvas').outerWidth();
+        $('#gui').css({
+            position: 'absolute',
+            top: pos.top + "px",
+            left: (pos.left) + "px"
+        }).show();
+
+        ///////////////////////////////////////////////////////////
+        //                 INITIALIZE GAME                       //
+        ///////////////////////////////////////////////////////////
+        init();
+        animate();
+        setGlTFDownload(false);
+        forgeSword();
+    </script>
+
+
+</body>
+
+</html>
