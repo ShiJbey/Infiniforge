@@ -15,9 +15,6 @@
     <script src="js/lib/dat.gui.min.js"></script>
     <script src="js/lib/jquery.min.js"></script>
     <script src="js/lib/jquery-ui.min.js"></script>
-
-    <script src="js/ui/jquery.lavaNav.js"></script>
-    <script type="text/javascript">$('#nav').lavaNav();</script>
     <script src="js/infiniforge/infiniforge.bundle.js"></script>
 </head>
 
@@ -32,13 +29,13 @@
         <nav>
             <ul id="nav">
                 <li>
-                    <a href="shijbey.github.io">About</a>
+                    <a href="https://shijbey.github.io/index.html">About</a>
                 </li>
                 <li id="selected">
-                    <a href="shijbey.github.io/projects.html">Projects</a>
+                    <a href="https://shijbey.github.io/projects.html">Projects</a>
                 </li>
                 <li>
-                    <a href="shijbey.github.io/resume.html">CV</a>
+                    <a href="https://shijbey.github.io/resume.html">CV</a>
                 </li>
             </ul>
         </nav>
@@ -81,6 +78,7 @@
     </div>
 
     <script>
+
         console.log(Infiniforge);
 
         ///////////////////////////////////////////////////////////
@@ -246,7 +244,7 @@
             var swordStyle = generationParams['swordStyle'];
             var options = generationParams.getGenerationParams();
             //console.log(options);
-            console.log(`Pizza: ${typeof(options)}`);
+            console.log(`Pizza: ${typeof (options)}`);
             var template = Infiniforge.Templates.getSwordTemplate(swordStyle);
             var generator = new Infiniforge.Generator.SwordGenerator(false);
             var sword = generator.generateSword(template, options, seed);
@@ -260,10 +258,10 @@
 
             scene.add(swordModel);
 
-            exporter.parse( sword.getMesh(), function ( gltf ) {
+            exporter.parse(sword.getMesh(), function (gltf) {
                 swordglTF = gltf;
                 setGlTFDownload(true);
-            }, {} );
+            }, {});
 
             if (generationParams['wireframe'] == true) {
                 swordModel.material = wireframeMaterial;
@@ -486,6 +484,11 @@
         animate();
         setGlTFDownload(false);
         forgeSword();
+    </script>
+
+    <script type="text/javascript" src="js/ui/jquery.lavaNav.js"></script>
+    <script type="text/javascript">
+        $('#nav').lavaNav();
     </script>
 
 
