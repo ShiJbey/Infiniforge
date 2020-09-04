@@ -1,11 +1,10 @@
-/// <reference types="three" />
 import * as THREE from 'three';
 
 /**
  * Output object used when extruding faces or creating
  * additional geometry
  */
-class GeometryData {
+export class GeometryData {
 
     vertices : number[];
     triangles : number[];
@@ -104,7 +103,7 @@ class GeometryData {
  * LayerData is used to keep track of the vertices on a face of
  * a geometry as well as the collective normal of that face
  */
-class LayerData {
+export class LayerData {
 
     private _vertices: number[];
     private _normal: THREE.Euler;
@@ -131,5 +130,3 @@ class LayerData {
     }
 
 }
-
-export { GeometryData, LayerData };

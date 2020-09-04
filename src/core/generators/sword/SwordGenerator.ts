@@ -1,18 +1,16 @@
-/// <reference types="three" />
-/// <reference types="seedrandom" />
-
-const assert = require('assert');
-const _ = require('lodash');
-var seedrandom = require('seedrandom');
-
-import * as THREE from 'three';
+import * as _ from 'lodash';
+import * as seedrandom from 'seedrandom';
+import {
+    Vector3, Vector2, BoxGeometry, SplineCurve,
+    BufferGeometry, SphereGeometry, CylinderGeometry
+} from 'three';
+import * as assert from 'assert';
 
 import { BladeCrossSection, SupportedCrossSections } from './BladeCrossSections';
-import { SwordTemplate } from './SwordTemplates';
-import { GeometryData, LayerData } from './GeometryData';
+import { SwordTemplate } from './SwordTemplate';
+import { GeometryData, LayerData } from '../../modeling/GeometryData';
 import { Sword } from './Sword';
-import * as Spline from './Spline';
-import * as utils from './utils';
+import * as utils from '../../utilities/utils';
 
 
 export interface GenerationParameters {
@@ -240,11 +238,11 @@ export class SwordGenerator {
         // Save information on which vertices are on cutting edges
         // only cutting edges will be modified later
         var edgeVertices: number[][] = [];
-        var edgePositions: Spline.Point2D[] = [];
+        var edgePositions: Vector2[] = [];
         for (var i = 0; i < result[1].length; i++) {
             var vertexIndex = result[1][i];
             var v = sword.geometryData.getVertex(vertexIndex);
-            edgePositions.push(new Spline.Point2D(v[0], v[2]));
+            edgePositions.push(new Vector2(v[0], v[2]));
             edgeVertices.push([vertexIndex]);
         }
 
@@ -260,7 +258,7 @@ export class SwordGenerator {
         var baseDivHeight = utils.setPrecision(baseSectionLength / genParams.nBaseSplinePoints, 3);
         // Extrude the base sections
         for (var i = 0; i < genParams.nBaseSplinePoints; i++) {
-            result = SwordGenerator.extrudeFace(sword.geometryData.vertices, bladeLayers[bladeLayers.length - 1].vertices,  new THREE.Vector3(0.0, baseDivHeight, 0.0));
+            result = SwordGenerator.extrudeFace(sword.geometryData.vertices, bladeLayers[bladeLayers.length - 1].vertices,  new Vector3(0.0, baseDivHeight, 0.0));
             sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices);
             sword.geometryData.triangles = sword.geometryData.triangles.concat(result[0].triangles);
             // Update the arrays of edge vertex indices
@@ -274,7 +272,7 @@ export class SwordGenerator {
         var midDivHeight = utils.setPrecision(midSectionLength / genParams.nMidSplinePoints, 3);
         // Extrude the base sections
         for (var i = 0; i < genParams.nMidSplinePoints; i++) {
-            result = SwordGenerator.extrudeFace(sword.geometryData.vertices, bladeLayers[bladeLayers.length - 1].vertices,  new THREE.Vector3(0.0, midDivHeight, 0.0));
+            result = SwordGenerator.extrudeFace(sword.geometryData.vertices, bladeLayers[bladeLayers.length - 1].vertices,  new Vector3(0.0, midDivHeight, 0.0));
             sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices);
             sword.geometryData.triangles = sword.geometryData.triangles.concat(result[0].triangles);
             // Update the arrays of edge vertex indices
@@ -288,7 +286,7 @@ export class SwordGenerator {
         var tipDivHeight = utils.setPrecision(tipSectionLength / genParams.nTipSplinePoints, 3);
         // Extrude the base sections
         for (var i = 0; i < genParams.nTipSplinePoints; i++) {
-            result = SwordGenerator.extrudeFace(sword.geometryData.vertices, bladeLayers[bladeLayers.length - 1].vertices,  new THREE.Vector3(0.0, tipDivHeight, 0.0));
+            result = SwordGenerator.extrudeFace(sword.geometryData.vertices, bladeLayers[bladeLayers.length - 1].vertices,  new Vector3(0.0, tipDivHeight, 0.0));
             sword.geometryData.vertices = sword.geometryData.vertices.concat(result[0].vertices);
             sword.geometryData.triangles = sword.geometryData.triangles.concat(result[0].triangles);
             // Update the arrays of edge vertex indices
@@ -303,15 +301,15 @@ export class SwordGenerator {
         //           CONFIGURE CP POSITIONS FOR EDGE SPLINES           //
         /////////////////////////////////////////////////////////////////
 
-        var edgeSplines: Spline.Spline[] = [];
+        var edgeSplines: SplineCurve[] = [];
 
         var totalCps = genParams.nBaseCPs + genParams.nMidCPs + genParams.nMidCPs;
 
         // Create controls points for each edge
         for (var i = 0; i < edgeVertices.length; i++) {
-            var s = new Spline.Spline();
+            var s = new SplineCurve();
             for (var j = 0; j < totalCps + 1; j++) {
-                s.points.push(new Spline.Point2D(0, 0));
+                s.points.push(new Vector2(0, 0));
             }
             edgeSplines.push(s);
         }
@@ -384,7 +382,7 @@ export class SwordGenerator {
         return sword;
     }
 
-    static setEdgeToSpline(vertices: number[], edgeVertices: number[][], numLayers: number, edgeSplines: Spline.Spline[], baseSectionLength:number,
+    static setEdgeToSpline(vertices: number[], edgeVertices: number[][], numLayers: number, edgeSplines: SplineCurve[], baseSectionLength:number,
         midSectionLength: number, tipSectionLength: number, genParams: GenerationParameters): number[] {
 
         var totalCps = genParams.nBaseCPs + genParams.nMidCPs + genParams.nMidCPs;
@@ -395,10 +393,10 @@ export class SwordGenerator {
                 var t = ((i * baseDivHeight) / genParams.bladeLength) * totalCps;
 
                 if (Math.abs(vertices[vertexIndex * 3]) > Math.abs(vertices[vertexIndex * 3 + 2])) {
-                    vertices[vertexIndex * 3] =  utils.setPrecision(edgeSplines[edge].getSplinePoint(t, false).x, 2);
+                    vertices[vertexIndex * 3] =  utils.setPrecision(edgeSplines[edge].getPoint(t).x, 2);
                 }
                 else {
-                    vertices[vertexIndex * 3 + 2] =  utils.setPrecision(edgeSplines[edge].getSplinePoint(t, false).x, 2);
+                    vertices[vertexIndex * 3 + 2] =  utils.setPrecision(edgeSplines[edge].getPoint(t).x, 2);
                 }
             }
         }
@@ -410,10 +408,10 @@ export class SwordGenerator {
                 var t = ((i * midDivHeight + baseSectionLength) / genParams.bladeLength) * totalCps;
 
                 if (Math.abs(vertices[vertexIndex * 3]) > Math.abs(vertices[vertexIndex * 3 + 2])) {
-                    vertices[vertexIndex * 3] =  edgeSplines[edge].getSplinePoint(t, false).x;
+                    vertices[vertexIndex * 3] =  edgeSplines[edge].getPoint(t).x;
                 }
                 else {
-                    vertices[vertexIndex * 3 + 2] = edgeSplines[edge].getSplinePoint(t, false).x;
+                    vertices[vertexIndex * 3 + 2] = edgeSplines[edge].getPoint(t).x;
                 }
             }
         }
@@ -425,10 +423,10 @@ export class SwordGenerator {
                 var t = ((i * tipDivHeight + baseSectionLength + midSectionLength) / genParams.bladeLength) * totalCps;
 
                 if (Math.abs(vertices[vertexIndex * 3]) > Math.abs(vertices[vertexIndex * 3 + 2])) {
-                    vertices[vertexIndex * 3] = edgeSplines[edge].getSplinePoint(t, false).x;
+                    vertices[vertexIndex * 3] = edgeSplines[edge].getPoint(t).x;
                 }
                 else {
-                    vertices[vertexIndex * 3 + 2] = edgeSplines[edge].getSplinePoint(t, false).x;
+                    vertices[vertexIndex * 3 + 2] = edgeSplines[edge].getPoint(t).x;
                 }
             }
         }
@@ -441,7 +439,7 @@ export class SwordGenerator {
      * the control point positions to give the edge a cool shape
      * @param edgeSpline
      */
-    static ModifyEdgeSpline(edgeSplines: Spline.Spline[], cPIndices: number[], layerOffset: number,funcType: string, template: SwordTemplate, prng : seedrandom.prng, genParams: GenerationParameters): Spline.Spline[]  {
+    static ModifyEdgeSpline(edgeSplines: SplineCurve[], cPIndices: number[], layerOffset: number,funcType: string, template: SwordTemplate, prng : seedrandom.prng, genParams: GenerationParameters): SplineCurve[]  {
         for (var i = 0; i < cPIndices.length; i++) {
             var layer = cPIndices[i];
             var scale = utils.getRandomFloat(prng, 1, 1 + genParams.bladeWidthToleranceRatio);
@@ -450,12 +448,12 @@ export class SwordGenerator {
             }
         }
         for (var t = 0; t < edgeSplines[0].points.length - 1; t+=0.5) {
-            var pos = edgeSplines[0].getSplinePoint(t, true);
+            var pos = edgeSplines[0].getPoint(t);
         }
         return edgeSplines;
     }
 
-    static ConfigureSplinePointSpacing(edgeSplines: Spline.Spline[], edgePositions: Spline.Point2D[], cPIndices: number[], equalSpacing: boolean,
+    static ConfigureSplinePointSpacing(edgeSplines: SplineCurve[], edgePositions: Vector2[], cPIndices: number[], equalSpacing: boolean,
         sectionHeight: number, heightOffset: number, prng : seedrandom.prng, genParams: GenerationParameters) {
 
         var nCPs = cPIndices.length;
@@ -596,10 +594,10 @@ export class SwordGenerator {
         guardBladeRatio : number = 1.5) : Sword {
 
         // Create a simple box
-        var guardGeometry = new THREE.BoxGeometry(genParams.bladeThickness + 0.1, guardThickness, 0.3 + template.baseBladeWidth);
+        var guardGeometry = new BoxGeometry(genParams.bladeThickness + 0.1, guardThickness, 0.3 + template.baseBladeWidth);
 
         // Convert the box to a buffer geometry
-        var guardBufferGeometry = new THREE.BufferGeometry().fromGeometry(guardGeometry);
+        var guardBufferGeometry = new BufferGeometry().fromGeometry(guardGeometry);
 
         // Number of vertices in the model prior to appending this geometry
         var priorNumVertices = sword.geometryData.vertices.length / 3;
@@ -652,13 +650,13 @@ export class SwordGenerator {
     buildHandle(template : SwordTemplate, genParams : GenerationParameters, sword: Sword, handleRadius = 0.1, numHands = 1) {
         // Create a simple cylinder
         var handleLength = 0.4 * numHands;
-        var handleGeometry = new THREE.CylinderGeometry(genParams.bladeThickness / 2, genParams.bladeThickness / 2, handleLength, 8);
+        var handleGeometry = new CylinderGeometry(genParams.bladeThickness / 2, genParams.bladeThickness / 2, handleLength, 8);
 
         // Moves translates the handle to fall below the guard and blade
         handleGeometry.translate(0,-handleLength / 2,0);
 
         // Convert the box to a buffer geometry
-        var handleBufferGeometry = new THREE.BufferGeometry().fromGeometry(handleGeometry);
+        var handleBufferGeometry = new BufferGeometry().fromGeometry(handleGeometry);
 
         // Number of vertices in the model prior to appending this geometry
         var priorNumVertices = sword.geometryData.vertices.length / 3;
@@ -709,13 +707,13 @@ export class SwordGenerator {
      */
     buildPommel(template : SwordTemplate, genParams : GenerationParameters, sword: Sword, numHands: number = 1, pommelBladeWidthRatio = 0.50) : Sword {
         var pommelRadius = genParams.bladeThickness;
-        var pommelGeometry = new THREE.SphereGeometry(pommelRadius, 5, 5);
+        var pommelGeometry = new SphereGeometry(pommelRadius, 5, 5);
         var handleLength = 0.4 * numHands;
         // Translates the pommel to fall below the handle
         pommelGeometry.translate(0,-handleLength,0);
 
         // Convert the box to a buffer geometry
-        var pommelBufferGeometry = new THREE.BufferGeometry().fromGeometry(pommelGeometry);
+        var pommelBufferGeometry = new BufferGeometry().fromGeometry(pommelGeometry);
 
         // Number of vertices in the model prior to appending this geometry
         var priorNumVertices = sword.geometryData.vertices.length / 3;
@@ -1132,3 +1130,5 @@ export class SwordGenerator {
         return rightEdgeIndices;
     }
 }
+
+export default { SwordGenerator };

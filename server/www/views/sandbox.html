@@ -3,146 +3,43 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Infiniforge Sandbox</title>
-    <link rel="stylesheet" type="text/css" href="/sandbox/style.css" />
-    <script src="/sandbox/three.min.js" type="text/javascript"></script>
-    <script src="/sandbox/GLTFLoader.js" type="text/javascript"></script>
-    <script src="/sandbox/dat.gui.min.js"></script>
-    <script src="/sandbox/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/style/style.css" />
 </head>
 
 <body>
     <div id="container">
-
         <canvas id="threejs-canvas"></canvas>
-        <a id="gltf-download" href="javascript: void(0)" download="sword.gltf">Download glTF</a>
+        <a id="download-button" href="javascript: void(0)" download="sword.gltf">
+            <button>
+                Download glTF
+            </button>
+        </a>
     </div>
 
-    <script type="text/javascript">
-        var scene, camera, renderer;
+    <script type="module">
+        import { GUI } from '/node_modules/dat.gui.module.js';
+        import * as THREE from '/node_modules/three.module.js';
+        import { GLTFLoader } from '/js/GLTFLoader.js';
+        import { OrbitControls } from '/js/OrbitControls.js';
+
+        var scene, camera, renderer, controls;
         var swordModel, material, importedMaterial;
         var useWireFrame;
         var generationParams;
         var gui;
         var seedController, baseWidthController;
-        var edgeWidthRatioController, swordStyleController;
         var swordglTF;
+
+        init();
+        animate();
+
 
         const wireframeMaterial = new THREE.MeshBasicMaterial({
             color: 0x050505,
             wireframe: true
         });
-
-        var rotation = {
-            "left": false,
-            "right": false,
-            "up": false,
-            "down": false
-        };
-
-        var translation = {
-            "up": false,
-            "down": false
-        };
-
-        var zoom = {
-            "in": false,
-            "out": false
-        };
-
-
-        // Set the keyboard handlers
-        document.onkeyup = handle_keyboard_up;
-        document.onkeydown = handle_keyboard_down;
-
-        function handle_keyboard_down(event) {
-            event = event || window.event;
-            if (event.which == 65) {
-                // W
-                rotation["left"] = true;
-                rotation["right"] = false;
-            }
-            else if (event.which == 68) {
-                // D
-                rotation["right"] = true;
-                rotation["left"] = false;
-            }
-            else if (event.which == 87) {
-                // A
-                rotation["up"] = true;
-                rotation["down"] = false;
-            }
-            else if (event.which == 83) {
-                // S
-                rotation["down"] = true;
-                rotation["up"] = false;
-            }
-
-            else if (event.which == 81) {
-                // Q
-                translation["up"] = true;
-                translation["down"] = false;
-            }
-            else if (event.which == 69) {
-                // E
-                translation["up"] = false;
-                translation["down"] = true;
-            }
-
-            else if (event.which == 49) {
-                // 1
-                zoom["in"] = true;
-                zoom["out"] = false;
-            }
-            else if (event.which == 50) {
-                // 2
-                zoom["in"] = false;
-                zoom["out"] = true;
-            }
-        }
-
-        function handle_keyboard_up(event) {
-            event = event || window.event;
-            if (event.which == 65) {
-                // LEFT
-                rotation["left"] = false;
-                rotation["right"] = false;
-            }
-            else if (event.which == 68) {
-                // RIGHT
-                rotation["right"] = false;
-                rotation["left"] = false;
-            }
-            else if (event.which == 87) {
-                // UP
-                rotation["up"] = false;
-                rotation["down"] = false;
-            }
-            else if (event.which == 83) {
-                // DOWN
-                rotation["down"] = false;
-                rotation["up"] = false;
-            }
-            else if (event.which == 81) {
-                // Q
-                translation["up"] = false;
-                translation["down"] = false;
-            }
-            else if (event.which == 69) {
-                // E
-                translation["up"] = false;
-                translation["down"] = false;
-            }
-            else if (event.which == 49) {
-                zoom["in"] = false;
-                zoom["out"] = false;
-            }
-            else if (event.which == 50) {
-                zoom["in"] = false;
-                zoom["out"] = false;
-            }
-        }
 
         // Borrowed from MDN Math.Random()
         function getRandomInt(max) {
@@ -152,10 +49,10 @@
         // Creates a rnadom seed using upper case, lowercase
         // and numbers
         function randomSeed(seedLength = 7) {
-            var seed = "";
-            numberAsciiOffset = 48;
-            lowercaseAsciiOffset = 97;
-            uppercaseAsciiOffset = 65;
+            let seed = "";
+            const numberAsciiOffset = 48;
+            const lowercaseAsciiOffset = 97;
+            const uppercaseAsciiOffset = 65;
             for (var i = 0; i < seedLength; i++) {
                 var rand_num = Math.random();
                 if (rand_num <= 0.33) {
@@ -180,39 +77,57 @@
             var weaponStyle = generationParams['swordStyle'];
             var seed = generationParams['seed'];
             var options = generationParams.getGenerationParams();
-            var requestString = `${protocol}//${host}/api/forge/${weaponType}/style/${weaponStyle}/seed/${seed}/options/${JSON.stringify(options)}`;
+            var requestString = `${protocol}//${host}/api/forge/${weaponType}/style/${weaponStyle}/seed/${seed}/options/${encodeURIComponent(JSON.stringify(options))}`;
 
-            $.ajax({
-                method: 'GET',
-                url: requestString,
-                success: (res) => {
-                    // Load Model
-                    var loader = new THREE.GLTFLoader();
-                    loader.parse(
-                        JSON.stringify(res),
-                        '',
-                        (gltf) => {
-                            scene.remove(swordModel);
-                            swordModel = gltf.scene.children[0];
-                            swordModel.rotation.y += Math.PI / 2;
-                            importedMaterial = swordModel.material;
-                            scene.add(swordModel);
-                            // Save the json
-                            swordglTF = res;
-                            // Toggle the download
-                            setGlTFDownload(true);
-                        },
-                        (err) => {
-                            alert(err);
 
-                        }
-                    );
-                },
-                error: (XMLHttpRequest, textStatus, err) => {
-                    setGlTFDownload(false);
-                    alert(err);
+            let httpRequest = new XMLHttpRequest();
+
+            if (!httpRequest) {
+                alert('Giving up :( Cannot create an XMLHTTP instance');
+                return false;
+            }
+
+            httpRequest.onreadystatechange = () => {
+                if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                    if (httpRequest.status === 200) {
+                        loadModel(httpRequest.responseText);
+                    }
+                    else {
+                        setGlTFDownload(false);
+                        alert(httpRequest.responseText);
+                    }
                 }
-            });
+            }
+
+            httpRequest.onerror = (err) => {
+                setGlTFDownload(false);
+                alert(err);
+            }
+
+            httpRequest.open('GET', requestString, true);
+            httpRequest.setRequestHeader('Content-Type', 'text/json');
+            httpRequest.send();
+        }
+
+        function loadModel(data) {
+            var loader = new GLTFLoader();
+            loader.parse(
+                JSON.stringify(data),
+                '',
+                (gltf) => {
+                    scene.remove(swordModel);
+                    swordModel = gltf.scene.children[0];
+                    swordModel.rotation.y += Math.PI / 2;
+                    importedMaterial = swordModel.material;
+                    scene.add(swordModel);
+                    // Save the json
+                    swordglTF = res;
+                    // Toggle the download
+                    setGlTFDownload(true);
+                },
+                (err) => {
+                    alert(err);
+                });
         }
 
         function init() {
@@ -231,52 +146,53 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xf0f0f0);
 
-            var light = new THREE.DirectionalLight(0xffffff, 1);
-            light.position.set(1, 1, 1).normalize();
-            scene.add(light);
+            // controls
+
+			controls = new OrbitControls( camera, renderer.domElement );
+
+            //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+
+            controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+            controls.dampingFactor = 0.05;
+
+            controls.screenSpacePanning = false;
+
+            controls.minDistance = 100;
+            controls.maxDistance = 500;
+
+            controls.maxPolarAngle = Math.PI / 2;
+
+            // Lights
+
+            var light = new THREE.DirectionalLight( 0xffffff );
+            light.position.set( 1, 1, 1 );
+            scene.add( light );
+
+            var light = new THREE.DirectionalLight( 0x002288 );
+            light.position.set( - 1, - 1, - 1 );
+            scene.add( light );
+
+            var light = new THREE.AmbientLight( 0x222222 );
+            scene.add( light );
         }
 
         function animate() {
             requestAnimationFrame(animate);
-
-            if (rotation["left"]) {
-                swordModel.rotation.y -= 0.05;
-            }
-            else if (rotation["right"]) {
-                swordModel.rotation.y += 0.05;
-            }
-
-            if (rotation["down"]) {
-                swordModel.rotation.x += 0.05;
-            }
-            else if (rotation["up"]) {
-                swordModel.rotation.x -= 0.05;
-            }
-
-            if (translation["down"]) {
-                swordModel.position.y -= 0.05;
-            }
-            else if (translation["up"]) {
-                swordModel.position.y += 0.05;
-            }
-
-            if (zoom["in"]) {
-                swordModel.position.z += 0.05;
-            }
-            else if (zoom["out"]) {
-                swordModel.position.z -= 0.05;
-            }
-
-            renderer.render(scene, camera);
+            controls.update();
+            render();
         };
 
+        function render() {
+            renderer.render(scene, camera);
+        }
+
         function setGlTFDownload(enable) {
-            var downloadLink = document.getElementById('gltf-download');
+            var downloadButton = document.getElementById('download-button');
             if (enable) {
-                downloadLink.href = "data:text/json," + encodeURIComponent(JSON.stringify(swordglTF));
+                downloadButton.href = "data:text/json," + encodeURIComponent(JSON.stringify(swordglTF));
             }
             else {
-                downloadLink.href = "javascript: void(0)"
+                downloadButton.href = "javascript: void(0)"
             }
         }
 
@@ -352,8 +268,9 @@
 
         generationParams = new SandboxManager();
 
-        gui = new dat.GUI({ autoPlace: true });
+        gui = new GUI({ autoPlace: true });
         gui.domElement.id = 'gui';
+        gui.domElement.class = 'gui';
 
         gui.remember(generationParams);
 
@@ -399,21 +316,16 @@
         gui.add(generationParams, 'bladeMidProportion', 0.1, 0.5);
 
         gui.add(generationParams, 'wireframe').onChange((enabled) => {
-            if (enabled) {
+            if (swordModel) {
+                if (enabled) {
                 swordModel.material = wireframeMaterial;
-            } else {
-                swordModel.material = importedMaterial;
+                } else {
+                    swordModel.material = importedMaterial;
+                }
             }
         });
 
-        document.body.appendChild(gui.domElement);
-
-        ///////////////////////////////////////////////////////////
-        //                 INITIALIZE GAME                       //
-        ///////////////////////////////////////////////////////////
-
-        init();
-        animate();
+        document.getElementById("container").appendChild(gui.domElement);
     </script>
 </body>
 

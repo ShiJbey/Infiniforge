@@ -1,5 +1,17 @@
-{
-    "Diamond" : {
+/**
+ * Cross sections are the starting point for generating
+ * blade geometry.
+ */
+export interface BladeCrossSection {
+    name: string
+    vertices: number[]      // (x,z) coordinates for vertices
+    edgeVertices: number[]  // Indices of vertices are on the cutting edges
+    width: number,          // Distance between the vertices on cutting edges
+    thickness: number       // Distance between vertices on the axis orthogonal to width
+}
+
+export let SupportedCrossSections: BladeCrossSection[] = [
+    {
             "name": "Diamond",
             "vertices": [
                 0.0, 0.5,
@@ -14,7 +26,7 @@
             "width": 1.0,
             "thickness": 0.3
     },
-    "HallowGround": {
+    {
             "name":"HallowGround",
             "vertices": [
                 0.0, 0.5,
@@ -37,7 +49,7 @@
             "width": 1.0,
             "thickness": 0.3
     },
-    "Hexagonal": {
+    {
             "name": "Hexagonal",
             "vertices": [
                 0.0, 0.5,
@@ -54,7 +66,7 @@
             "width": 1.0,
             "thickness": 0.02
     },
-    "ThickenedDiamond": {
+    {
             "name": "ThickenedDiamond",
             "vertices": [
                 0.0, 0.5,
@@ -69,7 +81,7 @@
             "width": 1.0,
             "thickness": 1.3
     },
-    "Lenticular": {
+    {
             "name": "Lenticular",
             "vertices": [
                 0.0, 0.5,
@@ -97,7 +109,7 @@
             "width": 1.0,
             "thickness": 0.3
     },
-    "Fuller": {
+    {
             "name": "Fuller",
             "vertices": [
                 0.0, 0.5,
@@ -127,7 +139,7 @@
             "width": 1.0,
             "thickness": 0.3
     },
-    "DoubleFuller": {
+    {
             "name": "DoubleFuller",
             "vertices": [
                 0.0, 0.5,
@@ -159,7 +171,7 @@
             "width": 1.0,
             "thickness": 0.3
     },
-    "BroadFuller": {
+    {
             "name": "BroadFuller",
             "vertices": [
                 0.0, 0.5,
@@ -178,4 +190,6 @@
             "width": 1.0,
             "thickness": 0.04
     }
-}
+]
+
+export default { SupportedCrossSections };

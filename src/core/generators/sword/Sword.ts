@@ -1,55 +1,86 @@
-/// <reference types="three" />
-
-const assert = require('assert');
 import * as THREE from 'three';
-import { GeometryData } from './GeometryData'
+import { GeometryData } from '../../modeling/GeometryData'
+import { GLTFExporter } from '../../../lib/GLTFExporter.js';
 
 /**
  * Swords are the core of this API and manage information about
  * their 3D geometry
+ *
+ * @class Sword
  */
-class Sword {
+export class Sword {
 
     style : string;
     geometry : THREE.BufferGeometry | undefined;
     mesh : THREE.Mesh | undefined;
     geometryData : GeometryData;
 
+    /**
+     * Creates an instance of sword
+     *
+     * @constructor
+     * @param style
+     */
     constructor(style: string) {
         this.style = style;
         this.geometryData = new GeometryData();
+    }
+
+    async exportToGltf() {
+        let gltfExporter = new GLTFExporter();
+
+        // Parse the swords mesh and create a new promise to access the result
+        let gltfData = await new Promise((resolve, reject) => {
+            gltfExporter.parse(this.getMesh(), (gltf) => {
+                resolve(gltf);
+            },{});
+        }).catch(console.error);
+
+        return gltfData;
     }
 
     getMesh(verbose?: boolean): THREE.Mesh {
 
         // Check number of vertices
         if (this.geometryData.vertices != undefined) {
-            assert(this.geometryData.vertices.length > 0, "ERROR:Sword.getMesh(): Model does not have any vertices defined");
-            assert(this.geometryData.vertices.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of vertex components");
+            if (this.geometryData.vertices.length > 0)
+                throw "ERROR:Sword.getMesh(): Model does not have any vertices defined";
+
+            if (this.geometryData.vertices.length % 3 == 0)
+                throw "ERROR:Sword.getMesh(): Model has the incorrect number of vertex components";
         } else {
             throw "ERROR:Sword.getMesh(): Model does not have any vertices defined"
         }
 
         // Check the number of triangles
         if (this.geometryData.triangles != undefined) {
-            assert(this.geometryData.triangles.length > 0, "ERROR:Sword.getMesh(): Model does not have any triangles defined");
-            assert(this.geometryData.triangles.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of triangle components");
+            if (this.geometryData.triangles.length > 0)
+                throw "ERROR:Sword.getMesh(): Model does not have any triangles defined";
+
+            if (this.geometryData.triangles.length % 3 == 0)
+                throw "ERROR:Sword.getMesh(): Model has the incorrect number of triangle components";
         } else {
             throw "ERROR:Sword.getMesh(): Model does not have any triangles defined"
         }
 
         // Check number of colors
         if (this.geometryData.colors != undefined) {
-            assert(this.geometryData.colors.length > 0, "ERROR:Sword.getMesh(): Model does not have any colors defined");
-            assert(this.geometryData.colors.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of color components");
+            if (this.geometryData.colors.length > 0)
+                throw "ERROR:Sword.getMesh(): Model does not have any colors defined";
+
+            if (this.geometryData.colors.length % 3 == 0)
+                throw "ERROR:Sword.getMesh(): Model has the incorrect number of color components";
         } else {
             throw "ERROR:Sword.getMesh(): Model does not have any colors defined";
         }
 
         // Check number of normals
         if (this.geometryData.normals != undefined) {
-            assert(this.geometryData.normals.length > 0, "ERROR:Sword.getMesh(): Model does not have any normals defined");
-            assert(this.geometryData.normals.length % 3 == 0, "ERROR:Sword.getMesh(): Model has the incorrect number of normal components");
+            if (this.geometryData.normals.length > 0)
+                throw "ERROR:Sword.getMesh(): Model does not have any normals defined";
+
+            if (this.geometryData.normals.length % 3 == 0)
+                throw "ERROR:Sword.getMesh(): Model has the incorrect number of normal components";
         } else {
             throw "ERROR:Sword.getMesh(): Model does not have any normals defined"
         }
@@ -73,9 +104,10 @@ class Sword {
 
         // Borrowed from: https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_indexed.html#L72
         var material = new THREE.MeshStandardMaterial({
-            vertexColors: THREE.VertexColors,
+            vertexColors: true,
             side: THREE.DoubleSide
         });
+
         var mesh = new THREE.Mesh( this.geometry, material );
         mesh.name = "Sword";
 
@@ -83,4 +115,4 @@ class Sword {
     }
 }
 
-export { Sword };
+export default { Sword };
