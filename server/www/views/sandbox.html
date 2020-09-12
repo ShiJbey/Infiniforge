@@ -5,7 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Infiniforge Sandbox</title>
-    <link rel="stylesheet" type="text/css" href="/style/style.css" />
+    <link rel="stylesheet" type="text/css" href="/style/style.css" >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -19,94 +20,46 @@
     </div>
 
     <script type="module">
-        import { GUI } from '/node_modules/dat.gui.module.js';
+        import * as dat from '/node_modules/dat.gui.module.js';
         import * as THREE from '/node_modules/three.module.js';
         import { GLTFLoader } from '/js/GLTFLoader.js';
         import { OrbitControls } from '/js/OrbitControls.js';
+        import { getRandomInt, randomSeed } from '/js/utils.js';
 
-        var scene, camera, renderer, controls;
-        var swordModel, material, importedMaterial;
-        var useWireFrame;
-        var generationParams;
-        var gui;
-        var seedController, baseWidthController;
-        var swordglTF;
+        let scene, camera, renderer, controls;
+        let swordModel, material, importedMaterial;
+        let useWireFrame;
+        let generationParams;
+        let gui;
+        let seedController, baseWidthController;
+        let swordglTF;
 
-        init();
-        animate();
-
-
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
+        let wireFrameEnabled = false;
+        let wireframeMaterial = new THREE.MeshBasicMaterial({
             color: 0x050505,
             wireframe: true
         });
 
-        // Borrowed from MDN Math.Random()
-        function getRandomInt(max) {
-            return Math.floor(Math.random() * Math.floor(max));
-        }
 
-        // Creates a rnadom seed using upper case, lowercase
-        // and numbers
-        function randomSeed(seedLength = 7) {
-            let seed = "";
-            const numberAsciiOffset = 48;
-            const lowercaseAsciiOffset = 97;
-            const uppercaseAsciiOffset = 65;
-            for (var i = 0; i < seedLength; i++) {
-                var rand_num = Math.random();
-                if (rand_num <= 0.33) {
-                    seed += String.fromCharCode(numberAsciiOffset + getRandomInt(10));
-                }
-                else if (rand_num > 0.33 && rand_num <= 0.66) {
-                    seed += String.fromCharCode(lowercaseAsciiOffset + getRandomInt(25));
-                }
-                else {
-                    seed += String.fromCharCode(uppercaseAsciiOffset + getRandomInt(25));
-                }
-            }
-            return seed;
-        }
+        init();
+        animate();
 
         function forgeSword() {
+            var data = JSON.stringify(forgeParams);
 
-            var protocol = window.location.protocol;
-            var host = window.location.host;
-            var port = window.location.port;
-            var weaponType = 'sword';
-            var weaponStyle = generationParams['swordStyle'];
-            var seed = generationParams['seed'];
-            var options = generationParams.getGenerationParams();
-            var requestString = `${protocol}//${host}/api/forge/${weaponType}/style/${weaponStyle}/seed/${seed}/options/${encodeURIComponent(JSON.stringify(options))}`;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
 
-
-            let httpRequest = new XMLHttpRequest();
-
-            if (!httpRequest) {
-                alert('Giving up :( Cannot create an XMLHTTP instance');
-                return false;
-            }
-
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                    if (httpRequest.status === 200) {
-                        loadModel(httpRequest.responseText);
-                    }
-                    else {
-                        setGlTFDownload(false);
-                        alert(httpRequest.responseText);
-                    }
+            xhr.addEventListener("readystatechange", function() {
+                if(this.readyState === 4) {
+                    console.log(JSON.parse(this.response));
                 }
-            }
+            });
 
-            httpRequest.onerror = (err) => {
-                setGlTFDownload(false);
-                alert(err);
-            }
+            xhr.open("POST", "/api/forge/sword");
+            xhr.setRequestHeader("Content-Type", "application/json");
 
-            httpRequest.open('GET', requestString, true);
-            httpRequest.setRequestHeader('Content-Type', 'text/json');
-            httpRequest.send();
+            xhr.send(data);
         }
 
         function loadModel(data) {
@@ -189,7 +142,7 @@
         function setGlTFDownload(enable) {
             var downloadButton = document.getElementById('download-button');
             if (enable) {
-                downloadButton.href = "data:text/json," + encodeURIComponent(JSON.stringify(swordglTF));
+                downloadButton.href = "data:application/json," + encodeURIComponent(JSON.stringify(swordglTF));
             }
             else {
                 downloadButton.href = "javascript: void(0)"
@@ -200,130 +153,98 @@
         //                    GUI CONTROLS                       //
         ///////////////////////////////////////////////////////////
 
-        var SandboxManager = function () {
-            this.seed = 'pizza';
-            this.randomizeSeed = () => { };
-            this.bladeColor = [127, 127, 127];
-            this.guardColor = [127, 81, 0];
-            this.handleColor = [204, 81, 0];
-            this.pommelColor = [229, 204, 89];
-            this.nBaseCPs = 3;
-            this.nMidCPs = 5;
-            this.nTipCPs = 2;
-            this.nBaseSplinePoints = 5;
-            this.nMidSplinePoints = 5;
-            this.nTipSplinePoints = 2;
-            this.randomizeNumCps = true;
-            this.maxCPs = 7;
-            this.minCPs = 2;
-            this.evenSpacedBaseCPs = true;
-            this.evenSpacedMidCPs = true;
-            this.evenSpacedTipCPs = true;
-
-            this.bladeThickness = 0.1;
-            this.swordStyle = 'long';
-            this.baseWidth = 0.3;
-
-            this.bladeBaseProportion = 0.3;
-            this.bladeMidProportion = 0.5;
-            this.bladeWidthToleranceRatio = 0.6;
-            this.Forge = () => {
-                forgeSword();
-            };
-            this.ForgeRandom = () => {
-                seedController.setValue(randomSeed());
-                forgeSword();
-            };
-            this.wireframe = false;
-
-            this.getGenerationParams = () => {
-                return {
-                    "bladeColor": this.bladeColor,
-                    "guardColor": this.guardColor,
-                    "handleColor": this.handleColor,
-                    "pommelColor": this.pommelColor,
-                    "nBaseCPs": this.nBaseCPs,
-                    "nMidCPs": this.nMidCPs,
-                    "nTipCPs": this.nTipCPs,
-                    "nBaseSPlinePoints": this.nBaseSplinePoints,
-                    "nMidSplinePoints": this.nMidSplinePoints,
-                    "nTipSplinePoints": this.nTipSplinePoints,
-                    "randomizeNumCps": this.randomizeNumCps,
-                    "maxCPs": this.maxCPs,
-                    "minCPs": this.minCPs,
-                    "evenSpacedBaseCPs": this.evenSpacedBaseCPs,
-                    "evenSpacedMidCPs": this.evenSpacedMidCPs,
-                    "evenSpacedTipCPs": this.evenSpacedTipCPs,
-
-
-                    "bladeBaseProportion": this.bladeBaseProportion,
-                    "bladeMidProportion": this.bladeMidProportion,
-                    "bladeWidthToleranceRatio": this.bladeWidthToleranceRatio,
-
-                    "bladeThickness": this.bladeThickness,
-                    "baseWidth": this.baseWidth
-                };
-            };
+        export var forgeParams = {
+            output: "gltf",
+            seed: "Enter a seed value",
+            template: "random",
+            bladeParams: {
+                color: "#7f7f7f",
+                crossSection: "random"
+            },
+            guardParams: {
+                color: "#7f5100"
+            },
+            handleParams: {
+                color: "#cc5100"
+            },
+            pommelParams: {
+                color: "#e5cc59"
+            }
         };
 
-        generationParams = new SandboxManager();
-
-        gui = new GUI({ autoPlace: true });
-        gui.domElement.id = 'gui';
-        gui.domElement.class = 'gui';
-
-        gui.remember(generationParams);
-
-        gui.add(generationParams, 'ForgeRandom');
-        gui.add(generationParams, 'Forge');
-
-        seedController = gui.add(generationParams, 'seed');
-
-        gui.add(generationParams, 'randomizeSeed').setValue(() => {
-            seedController.setValue(randomSeed());
-        });
-
-        gui.add(generationParams, 'swordStyle', { 'Short': 'short', 'Long': 'long', 'Great': 'great' }).onChange((val) => { });
-
-        var colorOptions = gui.addFolder("Color Options");
-        colorOptions.addColor(generationParams, "bladeColor");
-        colorOptions.addColor(generationParams, "guardColor");
-        colorOptions.addColor(generationParams, "handleColor");
-        colorOptions.addColor(generationParams, "pommelColor");
-
-        var edgeSplineOptions = gui.addFolder("Edge Spline Options");
-
-        var numControlPointsOptions = edgeSplineOptions.addFolder("Number of Control Points");
-        numControlPointsOptions.add(generationParams, "nBaseCPs");
-        numControlPointsOptions.add(generationParams, "nMidCPs");
-        numControlPointsOptions.add(generationParams, "nTipCPs");
-        numControlPointsOptions.add(generationParams, "randomizeNumCps");
-
-        var splineSamplingOptions = edgeSplineOptions.addFolder("Spline Sampling");
-        splineSamplingOptions.add(generationParams, "nBaseSplinePoints");
-        splineSamplingOptions.add(generationParams, "nMidSplinePoints");
-        splineSamplingOptions.add(generationParams, "nTipSplinePoints");
-
-        var controlPointSpacing = edgeSplineOptions.addFolder("Control Point Spacing");
-        controlPointSpacing.add(generationParams, "evenSpacedBaseCPs");
-        controlPointSpacing.add(generationParams, "evenSpacedMidCPs");
-        controlPointSpacing.add(generationParams, "evenSpacedTipCPs");
-
-
-        gui.add(generationParams, 'baseWidth', 0.08, 0.3);
-        gui.add(generationParams, 'bladeWidthToleranceRatio', 0.1, 1.0);
-        gui.add(generationParams, 'bladeBaseProportion', 0.1, 0.3);
-        gui.add(generationParams, 'bladeMidProportion', 0.1, 0.5);
-
-        gui.add(generationParams, 'wireframe').onChange((enabled) => {
-            if (swordModel) {
-                if (enabled) {
-                swordModel.material = wireframeMaterial;
-                } else {
-                    swordModel.material = importedMaterial;
+        let guiFunctions = {
+            "Random Seed": () => {},
+            "Forge": forgeSword,
+            "Random Forge": () => {
+                seedController.setValue(randomSeed());
+                forgeSword();
+            },
+            "Toggle Wireframe": () => {
+                wireFrameEnabled = !wireFrameEnabled
+                if (swordModel) {
+                    if (wireFrameEnabled) {
+                        swordModel.material = wireframeMaterial;
+                    } else {
+                        swordModel.material = importedMaterial;
+                    }
                 }
             }
+        };
+
+        const supportedCrossSections = {
+            "Random": 'random',
+            "Diamond": "diamond",
+            "Hallow Ground": "hallow_ground",
+            "Hexagonal": "hexagonal",
+            "Thickened Diamond": "thickened_diamond",
+            "Lenticular": "lenticular",
+            "Fuller": "fuller",
+            "Doule Fuller": "doule_fuller",
+            "Broad Fuller": "broad_fuller"
+        }
+
+        const supportedTemplates = {
+            'Random': 'random',
+            'Short': 'short',
+            'Long': 'long',
+            'Great': 'great'
+        }
+
+        gui = new dat.GUI({
+            "name": "Infiniforge Playground",
+            "closeOnTop": "true"
         });
+
+        gui.domElement.id = 'gui';
+
+        gui.add(guiFunctions, "Random Forge");
+        gui.add(guiFunctions, 'Forge');
+
+        gui.add(guiFunctions, 'Random Seed')
+            .setValue(() => {
+                seedController.setValue(randomSeed());
+            });
+
+        seedController = gui.add(forgeParams, 'seed');
+
+        gui.add(forgeParams, 'template', supportedTemplates);
+
+        let bladeOptions = gui.addFolder("Blade Options");
+        bladeOptions.add(forgeParams.bladeParams, "crossSection", supportedCrossSections);
+        bladeOptions.addColor(forgeParams.bladeParams, "color");
+
+
+        let guardOptions = gui.addFolder("Guard Options");
+        guardOptions.addColor(forgeParams.guardParams, "color");
+
+        let handleOptions = gui.addFolder("Handle Options");
+        handleOptions.addColor(forgeParams.handleParams, "color");
+
+        let pommelOptions = gui.addFolder("Pommel Options");
+        pommelOptions.addColor(forgeParams.pommelParams, "color");
+
+
+        gui.add(guiFunctions, 'Toggle Wireframe')
 
         document.getElementById("container").appendChild(gui.domElement);
     </script>

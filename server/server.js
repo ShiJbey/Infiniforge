@@ -2,7 +2,6 @@
 
 const colors = require('colors');
 const express = require('express');
-const bodyParser = require('body-parser');
 const path = require('path');
 const serveStatic = require('serve-static');
 const fs = require('fs');
@@ -11,10 +10,14 @@ const favicon = require('serve-favicon');
 const commander = require('commander');
 const Infiniforge = require('../build/Infiniforge');
 
+// Define Generators
+const swordGenerator = new Infiniforge.SwordGenerator();
+
 
 /**
  * Configure Express app to serve static files like a http server
- * @param app
+ *
+ * @param {express.Application} app
  */
 function configureStaticAssets(app) {
     app.use(serveStatic(path.join(__dirname, 'www', 'views'), { 'index' : ['help.html']}));
@@ -32,38 +35,11 @@ function configureStaticAssets(app) {
 }
 
 /**
- * Configure express app to use body parser
+ * Configure REST routes for express
  *
- * @param app
+ * @param {express.Application} app
+ * @param {any} options
  */
-function configureBodyParser(app) {
-    app.use(bodyParser.json());         // to support JSON-encoded bodies
-    app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-      extended: true
-    }));
-}
-
-
-
-/**
- * Compare the json in the source and build folders and
- * warn the user that they should rebuild the project
- * to get the latest templates and cross sections
- */
-function checkForJsonUpdates() {
-    var nonBuiltCrossSections = JSON.parse(fs.readFileSync("./src/json/cross-sections.json", "utf-8"));
-    // var builtCrossSections = JSON.parse(fs.readFileSync("./build/json/cross-sections.json", "utf-8"));
-    if (JSON.stringify(nonBuiltCrossSections) !== JSON.stringify(builtCrossSections)) {
-        console.log(colors.blue("Updates have been made to the cross sections json.\nRebuild with 'npm run build' to get latest changes."));
-    }
-
-    var nonBuiltCrossSections = JSON.parse(fs.readFileSync("./src/json/sword-templates.json", "utf-8"));
-    var builtCrossSections = JSON.parse(fs.readFileSync("./build/json/sword-templates.json", "utf-8"));
-    if (JSON.stringify(nonBuiltCrossSections) !== JSON.stringify(builtCrossSections)) {
-        console.log(colors.blue("Updates have been made to the sword templates json.\nRebuild with 'npm run build' to get latest changes."));
-    }
-}
-
 function configureRoutes(app, options) {
 
     const VERBOSE_OUTPUT = (options != undefined && options.verbose != undefined) ? true : false;
@@ -100,21 +76,17 @@ function configureRoutes(app, options) {
     });
 
     ////////////////////////////////////////////////////////
-    //                    API (POST)                      //
+    //                        API                         //
     ////////////////////////////////////////////////////////
 
-    app.post('/api/crosssection/:name/:jsonData', (req, res) => {
-        var crossSection = JSON.parse(req.params.jsonData);
+    app.post('/api/crosssection/:name/', (req, res) => {
+        var crossSection = JSON.parse(req.body);
         var allCrossSections = JSON.parse(fs.readFileSync("./src/json/cross-sections.json", "utf-8"));
         res.send({result: "done"});
         allCrossSections[crossSection.name] = crossSection;
         fs.writeFileSync("./src/json/cross-sections.json", JSON.stringify(allCrossSections));
         console.log("Saved cross section");
     });
-
-    ////////////////////////////////////////////////////////
-    //                     API (GET)                      //
-    ////////////////////////////////////////////////////////
 
     app.get('/api/crosssection/:name', (req, res) => {
         var allCrossSections = JSON.parse(fs.readFileSync("./src/json/cross-sections.json", "utf-8"));
@@ -127,152 +99,56 @@ function configureRoutes(app, options) {
         }
     });
 
-    // Request for a sword mesh without providing a seed value
-    app.get('/api/forge/sword/style/:style', (req, res) => {
-        var seed = new Date().toDateString();
-        var promise = generateAndExportSword(req.params.style, seed, {});
-
-        promise
-            .then((result) => {
-                res.status(200).json(result);
-            })
-            .catch((err) => {
-                res.status(400).json({Error: err});
-            });
-
-        if (VERBOSE_OUTPUT) {
-            var now = new Date();
-            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
-                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
-                `> Forge Request Satisfied`);
-        }
+    app.post('/test', (req, res) => {
+        res.status(200).json(req.body);
     });
 
-    // Request for a sword mesh without providing a seed value
-    app.get('/api/forge/sword/style/:style/options/:options', (req, res) => {
-        let options = {}
-        try {
-            options = JSON.parse(req.params.options);
-        } catch(err) {
-            res.status(400).json({Error: "Invalid JSON"});
-        }
+    // Request for a sword mesh
+    app.post('/api/forge/sword', (req, res) => {
 
-        var seed = new Date().toDateString();
+        let options = req.body
 
-        var promise = generateAndExportSword(req.params.style, seed, options);
+        // Always export gltf JSON from REST API
+        options.output = "gltf"
 
-        promise
+        swordGenerator.generate(options)
             .then((result) => {
                 res.status(200).json(result);
+
+                if (VERBOSE_OUTPUT) {
+                    console.log(`${new Date().toISOString()}> Request Satisfied`);
+                }
             })
             .catch((err) => {
-                res.status(400).json({Error: err});
+                res.status(400).json({ "error": err });
+
+                if (VERBOSE_OUTPUT) {
+                    console.log(`${new Date().toISOString()} > Error`);
+                }
             });
-
-
-        if (VERBOSE_OUTPUT) {
-            var now = new Date();
-            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
-                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
-                `> Forge Request Satisfied`);
-        }
-    });
-
-    // Request for a sword mesh, providing a seed value
-    app.get('/api/forge/sword/style/:style/seed/:seed', (req, res) => {
-
-        var promise = generateAndExportSword(req.params.style, req.params.seed, {});
-
-        promise
-            .then((result) => {
-                res.status(200).json(result);
-            })
-            .catch((err) => {
-                res.status(400).json({Error: err});
-            });
-
-        if (VERBOSE_OUTPUT) {
-            var now = new Date();
-            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
-                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
-                `> Forge Request Satisfied`);
-        }
-    });
-
-    // Request for a sword mesh, providing a seed value
-    app.get('/api/forge/sword/style/:style/seed/:seed/options/:options', (req, res) => {
-
-        let options = {}
-        try {
-            options = JSON.parse(req.params.options);
-        } catch(err) {
-            res.status(400).json({Error: "Invalid JSON"});
-        }
-
-        var promise = generateAndExportSword(req.params.style, req.params.seed, options);
-
-        promise
-            .then((result) => {
-                res.status(200).json(result);
-            })
-            .catch((err) => {
-                res.status(400).json({Error: err});
-            });
-
-        if (VERBOSE_OUTPUT) {
-            var now = new Date();
-            console.log(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} @ ` +
-                `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` +
-                `> Forge Request Satisfied`);
-        }
     });
 }
-
-/**
- * Calls the infiniforge module to generate the sword and returns a
- * promise to the GLTFExporter
- *
- * @param {string} style
- * @param {string} seed
- * @param {JSON} options
- * @return
- */
-function generateAndExportSword(style, seed, options) {
-    // Check optional parameters
-    var options = (options !== undefined) ? options : {};
-    // Get template
-    var template = Infiniforge.getSwordTemplate(style);
-
-    if (template) {
-        // Create a new sword Generator for this request
-        var generator = new Infiniforge.SwordGenerator();
-        // Generate the sword using the template, default params and seed
-        var sword = generator.generateSword(template, options, seed);
-        // Create a new exported
-        return sword.exportToGltf();
-    } else {
-        return new Promise((resolve, reject) => {reject(`'${style}' is not a valid sword style`)})
-    }
-}
-
 
 async function startServer(options) {
 
     const PORT = (options.port != undefined) ? options.port : 8080;
     const API_ONLY = (options.api_only != undefined) ? true : false;
     const VERBOSE = (options.verbose != undefined) ? true : false;
-
+    const HOST = '0.0.0.0';
 
     // Configure Express Application
     let app = express();
 
+    app.use(express.json());
     configureStaticAssets(app);
-    configureBodyParser(app);
-    configureRoutes(app);
+    configureRoutes(app, {
+        "verbose": VERBOSE
+    });
 
     // Starts the base endpoint
-    let server = app.listen(PORT, () => {
-        console.log(colors.green(`\nREST API started at http://localhost:${PORT}. For help use route '/help/'.`));
+    let server = app.listen(PORT, HOST, () => {
+        console.log(colors.green(`\nServer started at`), colors.yellow(`http://${HOST}:${PORT}`),
+        colors.green(`\nFor help use route`), colors.yellow(`http://${HOST}:${PORT}/help`));
     });
 
     // Handle Process Signals

@@ -36,6 +36,27 @@ The documentation is generated using [Typedoc](https://typedoc.org)
 
 infiniforge-config.json can be changed to specify a different port and allow for verbose output.
 
+## Example
+
+```javascript
+
+const Infiniforge = require('infiniforge');
+
+const swordGenerator = Infiniforge.SwordGenerator();
+
+swordGenerator.generate({
+
+    "output": "gltf",
+    "style": "long"
+
+}).then((sword) => {
+
+        console.log(sword);
+
+}).catch(console.error);
+
+```
+
 ## How are models exported
 
 When accessing the server via the rest API, geometry is exported using the
