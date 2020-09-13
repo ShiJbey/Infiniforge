@@ -1,76 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Infiniforge REST API</title>
+    <title>Infiniforge Server</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
-<body>
-    <h1>Infiniforge REST API</h1>
 
-    <h2>Routes</h2>
-    <h3>GET: /help</h3>
-    <p>
-        Opens this page with information about available routes
-    </p>
-
-    </br>
-
-    <h3>GET: /tools/sandbox</h3>
-    <p>
-        Opens the live web GUI that interacts with the active server
-    </p>
-
-    <h3>GET: /tools/crosssection/ &lt; name &gt;</h3>
-    <p>
-        Returns the json json representation of the cross section
-        with the given name
-    </p>
-
-    <h3>GET: /tools/crosssection</h3>
-    <p>
-        Opens the live web GUI for editing and saving blade cross secetions
-    </p>
-
-    </br>
-
-    <h3>POST: /api/crosssection/ &lt; name &gt; / &lt; jsonData &gt;</h3>
-    <p>
-        Saves the json representation of the cross section to the json file
-        with all the cross sections.
-    </p>
-
-    <h3>GET: /api/forge/sword/style/ &lt; style &gt;</h3>
-    <p>
-        Forge a sword with the given style
-    </p>
-
-    <h3>GET: /api/forge/sword/style/ &lt; style &gt;/options/ &lt; options &gt;</h3>
-    <p>
-        Forge a sword with the given style and with the additional options passed.
-        (See GenerationParameters in docs.)
-    </p>
-
-    <h3>GET: /api/forge/sword/style/ &lt; style &gt;/seed/ &lt; seed &gt;</h3>
-    <p>
-        Forge a sword with the given style and seed
-    </p>
-
-    <h3>GET: /api/forge/sword/style/ &lt; style &gt;/seed/ &lt; seed &gt;/options/ &lt; options &gt;</h3>
-    <p>
-        Forge a sword with the given style and seed and options. (See GenerationParameters in docs.)
-    </p>
-
-    </br>
-
-    <h4>Supported Weapon Types and Styles
-    <ul>
-        <li>
-            sword
-            <ul>
-                <li>short</li>
-                <li>long</li>
-                <li>great</li>
-            </ul>
-        </li>
-    </ul>
+<body class="w3-grey">
+    <div class="w3-container">
+        <div class="w3-bar w3-center w3-black">
+            <h1 class="w3-bar-item">Infiniforge REST API</h1>
+        </div>
+        <div class="w3-bar w3-black">
+            <a href="/sandbox.html" class="w3-button w3-bar-item">Playground</a>
+            <a href="/help.html" class="w3-button w3-bar-item">Help</a>
+            <a href="/docs/index.html" class="w3-button w3-bar-item">Docs</a>
+        </div>
+        <div class="w3-container">
+            <h2>API Routes</h2>
+            <h3><strong>Method: </strong>POST</h3>
+            <h3><strong>Url: </strong>/api/forge/sword</h3>
+            <p>Request body should contain JSON data with generation params</p>
+        </div>
+    </div>
 </body>
 </html>

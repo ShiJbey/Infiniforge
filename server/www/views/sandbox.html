@@ -2,21 +2,34 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <title>Infiniforge Server</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infiniforge Sandbox</title>
-    <link rel="stylesheet" type="text/css" href="/style/style.css" >
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/style/style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 
-<body>
-    <div id="container">
-        <canvas id="threejs-canvas"></canvas>
-        <a id="download-button" href="javascript: void(0)" download="sword.gltf">
-            <button>
-                Download glTF
-            </button>
-        </a>
+<body class="w3-grey">
+    <div class="w3-container">
+
+        <div class="w3-bar w3-center w3-black">
+            <h1 class="w3-bar-item">Infiniforge REST API</h1>
+        </div>
+
+        <div class="w3-bar w3-black">
+            <a href="/sandbox.html" class="w3-button w3-bar-item">Playground</a>
+            <a href="/help.html" class="w3-button w3-bar-item">Help</a>
+            <a href="/docs/index.html" class="w3-button w3-bar-item">Docs</a>
+        </div>
+
+        <div id="container" class="w3-contrainer w3-border w3-card">
+            <canvas id="threejs-canvas"></canvas>
+            <a href="javascript: void(0)" download="sword.gltf">
+                <button  id="download-button" class="w3-button w3-grey" disabled>
+                    <strong>Download glTF</strong>
+                </button>
+            </a>
+        </div>
     </div>
 
     <script type="module">
@@ -52,7 +65,7 @@
 
             xhr.addEventListener("readystatechange", function() {
                 if(this.readyState === 4) {
-                    console.log(JSON.parse(this.response));
+                    loadModel(this.response);
                 }
             });
 
@@ -62,10 +75,10 @@
             xhr.send(data);
         }
 
-        function loadModel(data) {
+        function loadModel(json) {
             var loader = new GLTFLoader();
             loader.parse(
-                JSON.stringify(data),
+                json,
                 '',
                 (gltf) => {
                     scene.remove(swordModel);
@@ -74,7 +87,7 @@
                     importedMaterial = swordModel.material;
                     scene.add(swordModel);
                     // Save the json
-                    swordglTF = res;
+                    swordglTF =json;
                     // Toggle the download
                     setGlTFDownload(true);
                 },
@@ -110,18 +123,22 @@
 
             controls.screenSpacePanning = false;
 
-            controls.minDistance = 100;
-            controls.maxDistance = 500;
+            controls.minDistance = 1;
+            controls.maxDistance = 20;
 
-            controls.maxPolarAngle = Math.PI / 2;
-
+            // controls.maxPolarAngle = Math.PI / 2;
+            controls.enableZoom = true;
+            controls.autoRotate = true;
+            controls.enableRotate = true;
+            controls.enableKeys = false;
+            // controls.minPolarAngle = -Math.PI / 2;
             // Lights
 
             var light = new THREE.DirectionalLight( 0xffffff );
             light.position.set( 1, 1, 1 );
             scene.add( light );
 
-            var light = new THREE.DirectionalLight( 0x002288 );
+            var light = new THREE.DirectionalLight( 0xcccccc);
             light.position.set( - 1, - 1, - 1 );
             scene.add( light );
 
@@ -142,10 +159,11 @@
         function setGlTFDownload(enable) {
             var downloadButton = document.getElementById('download-button');
             if (enable) {
-                downloadButton.href = "data:application/json," + encodeURIComponent(JSON.stringify(swordglTF));
+                downloadButton.disabled = false;
+                downloadButton.parentElement.href = "data:application/json," + encodeURIComponent(swordglTF);
             }
             else {
-                downloadButton.href = "javascript: void(0)"
+                downloadButton.parentElement.href = "javascript: void(0)"
             }
         }
 

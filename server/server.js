@@ -4,7 +4,6 @@ const colors = require('colors');
 const express = require('express');
 const path = require('path');
 const serveStatic = require('serve-static');
-const fs = require('fs');
 const process = require('process');
 const favicon = require('serve-favicon');
 const commander = require('commander');
@@ -12,7 +11,6 @@ const Infiniforge = require('../build/Infiniforge');
 
 // Define Generators
 const swordGenerator = new Infiniforge.SwordGenerator();
-
 
 /**
  * Configure Express app to serve static files like a http server
@@ -27,6 +25,7 @@ function configureStaticAssets(app) {
     app.use('/js', express.static(path.join(__dirname, 'www', 'js')));
     app.use('/style', express.static(path.join(__dirname, 'www', 'style')));
     app.use('/build', express.static(path.join(__dirname, '..', 'build')));
+    app.use('/docs', express.static(path.join(__dirname, '..', 'docs')));
     app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'build')));
     app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'jsm','exporters')));
     app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'jsm','loaders')));
@@ -42,7 +41,7 @@ function configureStaticAssets(app) {
  */
 function configureRoutes(app, options) {
 
-    const VERBOSE_OUTPUT = (options != undefined && options.verbose != undefined) ? true : false;
+    const VERBOSE_OUTPUT = (options && options.verbose) ? true : false;
 
     ////////////////////////////////////////////////////////
     //                     HELP PAGES                     //
@@ -70,44 +69,14 @@ function configureRoutes(app, options) {
         res.sendFile(path.join(__dirname, 'www', 'views', 'sandbox.html'));
     });
 
-    // Return html GUI for editing cross section JSON
-    app.get('/tools/crosssection', (req, res) => {
-        res.sendFile(path.join(__dirname, 'www', 'views', 'crosssectiontool.html'));
-    });
-
     ////////////////////////////////////////////////////////
     //                        API                         //
     ////////////////////////////////////////////////////////
-
-    app.post('/api/crosssection/:name/', (req, res) => {
-        var crossSection = JSON.parse(req.body);
-        var allCrossSections = JSON.parse(fs.readFileSync("./src/json/cross-sections.json", "utf-8"));
-        res.send({result: "done"});
-        allCrossSections[crossSection.name] = crossSection;
-        fs.writeFileSync("./src/json/cross-sections.json", JSON.stringify(allCrossSections));
-        console.log("Saved cross section");
-    });
-
-    app.get('/api/crosssection/:name', (req, res) => {
-        var allCrossSections = JSON.parse(fs.readFileSync("./src/json/cross-sections.json", "utf-8"));
-        if (req.params.name in allCrossSections) {
-            res.send(allCrossSections[req.params.name]);
-        }
-        else {
-            res.status(404).send("Cant find cross section");
-            console.log(`Could not find cross section: ${req.params.name}`);
-        }
-    });
-
-    app.post('/test', (req, res) => {
-        res.status(200).json(req.body);
-    });
 
     // Request for a sword mesh
     app.post('/api/forge/sword', (req, res) => {
 
         let options = req.body
-
         // Always export gltf JSON from REST API
         options.output = "gltf"
 
@@ -116,14 +85,14 @@ function configureRoutes(app, options) {
                 res.status(200).json(result);
 
                 if (VERBOSE_OUTPUT) {
-                    console.log(`${new Date().toISOString()}> Request Satisfied`);
+                    console.log(`${new Date().toISOString()}> Sword Request Complete`);
                 }
             })
             .catch((err) => {
                 res.status(400).json({ "error": err });
 
                 if (VERBOSE_OUTPUT) {
-                    console.log(`${new Date().toISOString()} > Error`);
+                    console.log(`${new Date().toISOString()}> Error:: ${err}`);
                 }
             });
     });
@@ -131,9 +100,8 @@ function configureRoutes(app, options) {
 
 async function startServer(options) {
 
-    const PORT = (options.port != undefined) ? options.port : 8080;
-    const API_ONLY = (options.api_only != undefined) ? true : false;
-    const VERBOSE = (options.verbose != undefined) ? true : false;
+    const PORT = (options.port) ? options.port : 8080;
+    const VERBOSE = (options.verbose) ? true : false;
     const HOST = '0.0.0.0';
 
     // Configure Express Application
@@ -172,7 +140,6 @@ function main() {
 
     commander
         .description("Serve infiniforge via http server")
-        .option("--api-only", "Only serve api")
         .option("-p, --port <port>", "Server port")
         .option("-, --vebose", "Verbose output")
         .action(startServer);
