@@ -1,4 +1,10 @@
-// GLTF Exporter from ThreeJS r120
+/**
+ * This is a highly specialized version of the
+ * GLTFExporter from ThreeJS r120.
+ *
+ * At the moment, it only supports exporting
+ * models that use vertex colors.
+ */
 
 import {
     BufferAttribute,
@@ -23,7 +29,6 @@ import {
     Object3D,
     AnimationClip, Material, Texture, Light, DirectionalLight, PointLight, SpotLight, Mesh, Camera, SkinnedMesh, KeyframeTrack, LineSegments, LineLoop, InterleavedBufferAttribute, MeshStandardMaterial, MeshBasicMaterial, ShaderMaterial, Geometry
 } from "three";
-import * as fs from 'fs';
 
 //------------------------------------------------------------------------------
 // Constants
