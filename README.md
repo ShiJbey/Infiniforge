@@ -1,4 +1,4 @@
-# ![](anvil.ico) Infiniforge 2.0
+# ![](server/www/anvil.ico) Infiniforge 2.0
 
 InfiniForge is a NodeJS REST API that returns JSON
 representations of procedurally generated 3D fanstasy swords.
