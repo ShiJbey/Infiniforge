@@ -2,7 +2,6 @@ import { CrossSection } from './CrossSection';
 import { GLTFExporter } from '../../lib/GLTFExporter';
 import * as THREE from 'three';
 import * as _ from 'lodash';
-import { Face3 } from 'three';
 
 /**
  * Organizes and manages vertex information
@@ -116,6 +115,45 @@ export class GeometryData {
         return this;
     }
 
+    translate(distance: THREE.Vector3 | number): this {
+
+        // Check that there is a cross section to extrude
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to translate.");
+        }
+
+        let translationVector: THREE.Vector3 = new THREE.Vector3();
+
+        if (typeof(distance) == 'number') {
+            translationVector.copy(this._activeCrossSection.getNorm().normalize());
+            translationVector.multiplyScalar(distance);
+        } else {
+            translationVector.copy(distance);
+        }
+
+        this._activeCrossSection.translate(translationVector);
+
+        return this;
+    }
+
+    scale(scaleFactor: THREE.Vector2 | number): this {
+        // Check that there is a cross section to extrude
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to scale");
+        }
+        this._activeCrossSection.scale(scaleFactor);
+        return this;
+    }
+
+    rotate(quaternion: THREE.Quaternion): this {
+        // Check that there is a cross section to extrude
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to rotate");
+        }
+        this._activeCrossSection.rotate(quaternion);
+        return this;
+    }
+
     /**
      * @description Extrudes the active cross section of a GeometryData object
      *
@@ -163,6 +201,10 @@ export class GeometryData {
             this._colors.push(this._colors[previousVertIdxs[i]].clone());
         }
 
+        newCrossSection.copyTransform(this._activeCrossSection);
+        newCrossSection.setTranslation(newCrossSection.getTranslation().add(translationVector));
+        this._activeCrossSection = newCrossSection;
+
 
         // Create quads
         for (let i = 0; i < previousVertIdxs.length; i++) {
@@ -179,7 +221,7 @@ export class GeometryData {
             }
         }
 
-        this._activeCrossSection = newCrossSection;
+
         return this;
     }
 
@@ -198,22 +240,6 @@ export class GeometryData {
         if (this._vertices.length === 0) {
             throw new Error("Geometry data has no vertices");
         }
-
-        // let geometry = new THREE.Geometry();
-        // geometry.vertices.push(...this._vertices);
-        // for (let i = 0; i < this._triangles.length; i++) {
-        //     let tri = this._triangles[i];
-        //     geometry.faces.push(new THREE.Face3(
-        //         tri.x,
-        //         tri.y,
-        //         tri.z,
-        //         [
-        //             this
-        //         ]))
-        // }
-        // geometry.faces.push(...this._triangles);
-        // geometry.colors.push(...this._colors);
-        // geometry.computeVertexNormals();
 
         let geometry = new THREE.BufferGeometry;
 
@@ -242,7 +268,6 @@ export class GeometryData {
 
         geometry.computeVertexNormals();
 
-        // let
         let material = new THREE.MeshStandardMaterial({
             vertexColors: true,
             side: THREE.DoubleSide

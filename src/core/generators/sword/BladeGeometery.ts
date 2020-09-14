@@ -72,10 +72,7 @@ export class BladeGeometry extends GeometryData{
         return this;
     }
 
-    /**
-     * @override
-     */
-    setCrossSection(crossSection: CrossSection, color?: THREE.Color): this {
+    setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color): this {
         super.setCrossSection(crossSection, color);
         return this;
     }

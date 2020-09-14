@@ -31,13 +31,15 @@ export class CrossSection {
     protected _rotation: THREE.Quaternion;
     protected _scale: THREE.Vector3;
     protected _translation: THREE.Vector3;
+    protected _transform: THREE.Matrix4;
 
     constructor(crossSectionData?: CrossSectionData) {
         this._vertices = [];
-        this._norm = Y_AXIS;
+        this._norm = Y_AXIS.clone();
         this._rotation = new THREE.Quaternion();
         this._scale = new THREE.Vector3(1, 1, 1);
         this._translation = new THREE.Vector3(0, 0, 0);
+        this._transform = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
 
 
         if (crossSectionData !== undefined) {
@@ -61,6 +63,25 @@ export class CrossSection {
 
     getNorm() {
         return this._norm;
+    }
+
+    getTranslation() {
+        return this._translation;
+    }
+
+    copyTransform(crossSection: CrossSection) {
+        this._norm = crossSection._norm.clone();
+        this._rotation = crossSection._rotation.clone();
+        this._scale = crossSection._scale.clone();
+        this._translation = crossSection._translation.clone();
+    }
+
+    setTranslation(direction: THREE.Vector3) {
+        this._translation = direction;
+    }
+
+    setNorm(norm: THREE.Vector3) {
+        this._norm = norm;
     }
 
     addVertex(vertex: THREE.Vector3) {
@@ -87,29 +108,73 @@ export class CrossSection {
     }
 
     rotate(quaternion: THREE.Quaternion) {
-        this._norm.applyQuaternion(quaternion);
+
+        // Calculate the transform matrix and its inverse
+        let M = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
+        let M_inverse = new THREE.Matrix4().getInverse(M);
+
+        this._rotation.multiply(quaternion);
+        M = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
+
         for (let i = 0; i < this._vertices.length; i++) {
-            this._vertices[i].applyQuaternion(quaternion);
+
+            // Get the position of the vertex in object space
+            let objectVert = this._vertices[i];
+
+            // Get position of the vert relative to the cross-section
+            let localVert = objectVert.clone()
+                .applyMatrix4(M_inverse);
+
+
+
+            // Apply the rotation then redo the transformation back
+            // to object-space coordinates
+            localVert
+                .applyMatrix4(M);
+
+            // Update the vertex coordinates
+            objectVert.copy(localVert);
         }
-    }
 
-    /**
-     * @note crossSection is not yet supported
-     *
-     * @param {THREE.Vector3} direction
-     * @param {any} crossSection
-     */
-    extrude(direction: THREE.Vector3, crossSection?: any) {
-
+        this._norm.applyQuaternion(quaternion);
     }
 
     /**
      * @param scaleFactor
      */
-    scale(scaleFactor: THREE.Vector3) {
-        for (let i = 0; i < this._vertices.length; i++) {
-            this._vertices[i].multiply(scaleFactor);
+    scale(scaleFactor: THREE.Vector2 | number) {
+
+
+        if (typeof scaleFactor === 'number') {
+            scaleFactor = new THREE.Vector2(scaleFactor, scaleFactor);
         }
+
+        // Calculate the transform matrix and its inverse
+        let M = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
+        let M_inverse = new THREE.Matrix4().getInverse(M);
+
+        for (let i = 0; i < this._vertices.length; i++) {
+            // Get the position of the vertex in object space
+            let objectVert = this._vertices[i];
+
+            // Get position of the vert relative to the cross-section
+            let localVert = new THREE.Vector3()
+                .copy(objectVert)
+                .applyMatrix4(M_inverse);
+
+            // Scale up the x and z components
+            localVert.x *= scaleFactor.x;
+            localVert.z *= scaleFactor.y;
+
+            // Convert the local vert back to object space
+            localVert.applyMatrix4(M);
+
+            // Set the positions of the objectVert
+            objectVert.copy(localVert);
+        }
+
+        // Update the scale vector
+        this._scale.multiply(new THREE.Vector3(scaleFactor.x, 1, scaleFactor.y));
     }
 
     /**
@@ -121,14 +186,14 @@ export class CrossSection {
         for (let i = 0; i < this._vertices.length; i++) {
             this._vertices[i].add(direction);
         }
+
+        this._translation.add(direction);
     }
 
     /**
      * Fills the Cross section, making it a solid shape
      */
     public fill() {
-        // Pick a vertex
 
-        // Connect it to all the others that it can see
     }
 }

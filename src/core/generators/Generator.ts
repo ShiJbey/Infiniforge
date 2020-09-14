@@ -15,6 +15,10 @@ export class Generator {
         this._prng = seedrandom(seed);
     }
 
+    setVerbose(verbose: boolean) {
+        this._verbose = verbose;
+    }
+
     generate(options: any) {
         return new Promise((resolve, reject) => {
             reject("Generate function is not implemented")

@@ -52,20 +52,20 @@ export const HALLOW_GROUND: BladeCrossSection = {
 
 export const HEXAGONAL: BladeCrossSection = {
     "name": "Hexagonal",
-    "vertices": [
-        0.0, 0.5,
-        0.01, 0.4,
-        0.01, -0.4,
-        0.0, -0.5,
-        -0.01, 0.4,
-        -0.01, -0.4
-    ],
-    "edgeVertices": [
-        0,
-        4
-    ],
-    "width": 1.0,
-    "thickness": 0.02
+        "vertices": [
+            -0.1, -0.3,
+            0.0, -0.5,
+            0.1, -0.3,
+            0.1, 0.3,
+            0.0, 0.5,
+            -0.1, 0.3
+        ],
+        "edgeVertices": [
+            1,
+            4
+        ],
+        "width": 1,
+        "thickness": 0.2
 }
 
 export const THICKENED_DIAMOND: BladeCrossSection = {
