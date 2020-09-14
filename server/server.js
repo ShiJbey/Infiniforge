@@ -19,7 +19,7 @@ const swordGenerator = new Infiniforge.SwordGenerator();
  */
 function configureStaticAssets(app) {
     app.use(serveStatic(path.join(__dirname, 'www', 'views'), { 'index' : ['help.html']}));
-    app.use(favicon(path.join(__dirname, 'www','anvil.ico')));
+    app.use(favicon(path.join(__dirname, 'www','anvil.png')));
     app.use('/', express.static(path.join(__dirname, 'www')));
     app.use('/', express.static(path.join(__dirname, 'www', 'views')));
     app.use('/js', express.static(path.join(__dirname, 'www', 'js')));
@@ -114,19 +114,41 @@ async function startServer(options) {
     });
 
     // Starts the base endpoint
-    let server = app.listen(PORT, HOST, () => {
-        console.log(colors.green(`\nServer started at`), colors.yellow(`http://${HOST}:${PORT}`),
-        colors.green(`\nFor help use route`), colors.yellow(`http://${HOST}:${PORT}/help`));
+    let server = app.listen(PORT, HOST, (err) => {
+        if (err) { throw err }
+        let host = server.address().address;
+        let port = server.address().port;
+
+        console.log(colors.green(`\nServer listening at`), colors.yellow(`http://${host}:${port}`),
+        colors.green(`\nFor help use route`), colors.yellow(`http://${host}:${port}/help`));
+    });
+
+    var lastSocketKey = -1;
+    var socketMap = {};
+    server.on('connection', (socket)=> {
+        lastSocketKey++;
+        var socketKey = lastSocketKey;
+        socketMap[socketKey] = socket;
+        socket.on('close', () => {
+            delete socketMap[socketKey];
+        })
     });
 
     // Handle Process Signals
     process.on('SIGINT', () => {server.emit("shutdown")});
     process.on('SIGTERM', () => {server.emit("shutdown")});
     server.on("shutdown", () => {
-        console.log('Closing http server.');
-        server.close(() => {
-          console.log('Server closed.');
-          process.exit(0);
+        console.log('Shutting down server...');
+
+        Object.keys(socketMap).forEach((socketKey) => {
+            socketMap[socketKey].destroy();
+        });
+
+
+        server.close((err) => {
+            if (err) { throw err }
+            console.log('Server closed');
+            process.exit(0);
         });
     });
 
@@ -141,7 +163,7 @@ function main() {
     commander
         .description("Serve infiniforge via http server")
         .option("-p, --port <port>", "Server port")
-        .option("-, --vebose", "Verbose output")
+        .option("-v, --verbose", "Verbose output")
         .action(startServer);
 
     commander.parse(process.argv);
