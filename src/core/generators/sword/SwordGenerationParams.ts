@@ -24,7 +24,7 @@ export interface BladeParams {
      */
     bladeMidProportion?: number;
 
-        /**
+    /**
      * Number of control points for the spline that defines
      * the edge geometry at the base of the blade
      */
@@ -98,6 +98,14 @@ export interface BladeParams {
      * from the template
      */
     edgeScaleTolerance?: number;
+
+    /**
+     * Type of spline used to define edge geometry
+     *
+     * Example:
+     * "linear" | "random" |
+     */
+    edgeSplineType?: string;
 };
 
 export interface GuardParams {

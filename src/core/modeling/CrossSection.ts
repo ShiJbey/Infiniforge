@@ -69,6 +69,32 @@ export class CrossSection {
         return this._translation;
     }
 
+    scaleVertex(index:number, scaleFactor: number) {
+        if (index < 0 || index > this._vertices.length) {
+            throw new Error("Vertex index out of range");
+        }
+
+        // Calculate the transform matrix and its inverse
+        let M = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
+        let M_inverse = new THREE.Matrix4().getInverse(M);
+
+        // Get the vertex to modify
+        let objectVert = this._vertices[index];
+
+        // Get position of the vert relative to the cross-section
+        let localVert = objectVert.clone().applyMatrix4(M_inverse);
+
+        // Scale the vertex
+        localVert.multiplyScalar(scaleFactor);
+
+        // Change the local vertex to object coordinates
+        localVert.applyMatrix4(M);
+
+        // Update the vertex coordinates
+        objectVert.copy(localVert);
+
+    }
+
     copyTransform(crossSection: CrossSection) {
         this._norm = crossSection._norm.clone();
         this._rotation = crossSection._rotation.clone();

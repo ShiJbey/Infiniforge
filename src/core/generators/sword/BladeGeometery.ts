@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GeometryData } from '../../modeling/GeometryData';
 import { BladeCrossSection } from './BladeCrossSection';
 import { CrossSection } from '../../modeling/CrossSection';
+import { sample } from 'lodash';
 
 /**
  * Swords are the core of this API and manage information about
@@ -40,9 +41,25 @@ export class BladeGeometry extends GeometryData{
     extrudeSection(
         extrusionCruve: THREE.Curve<THREE.Vector2>,
         edgeCurve: THREE.Curve<THREE.Vector2>,
-        samplingResolution: number,
-        height: number,
+        nSubdivisions: number,
+        length: number,
         taper?: number): this {
+
+        this.setEdgeCurve(edgeCurve);
+
+        // distance of each intermediate extrusion along the curve
+        var sampleInterval = length / nSubdivisions;
+        var taperInterval = 1;
+
+        if (taper)
+            var taperInterval = 1 - (taper / nSubdivisions);
+
+        for (let i = 1; i <= nSubdivisions; i++) {
+            this.extrude(sampleInterval);
+            this.modifyEdgeVerts(sampleInterval * i / length);
+            if (taper)
+                this.scale(taperInterval);
+        }
 
         return this;
     }
@@ -62,11 +79,10 @@ export class BladeGeometry extends GeometryData{
             throw new Error("BladeGeometry does not have an active edge curve");
         }
 
-        let desiredEdgeWidth = this._activeEdgeCurve.getPoint(samplePoint).x;
+        let edgeScaleFactor = this._activeEdgeCurve.getPoint(samplePoint).x + 1;
 
-        for (let i = 0; i < this._activeCrossSection.getVertices().length; i++) {
-            let vert = this._activeCrossSection.getVertices()[i];
-            let currentEdgeWidth = Math.sqrt(Math.pow(vert.x, 2) + Math.pow(vert.z, 2));
+        for (let i = 0; i < this._bladeEdgeVertices.length; i++) {
+            this._activeCrossSection.scaleVertex(this._bladeEdgeVertices[i], edgeScaleFactor);
         }
 
         return this;
@@ -74,6 +90,7 @@ export class BladeGeometry extends GeometryData{
 
     setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color): this {
         super.setCrossSection(crossSection, color);
+        this._bladeEdgeVertices = edgeVerts;
         return this;
     }
 }

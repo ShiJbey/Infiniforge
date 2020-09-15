@@ -8,6 +8,7 @@ import { BladeParams, HandleParams, GuardParams, PommelParams, SwordGenerationPa
 import { GeometryData } from '../../modeling/GeometryData';
 import { CrossSection } from '../../modeling/CrossSection';
 import { BladeGeometry } from './BladeGeometery';
+import { Vector2 } from 'three';
 
 export class SwordGenerator extends Generator {
 
@@ -106,7 +107,7 @@ export class SwordGenerator extends Generator {
         const DEFAULT_PARAMS: BladeParams = {
             color: "rgb(127, 127, 127)",
             crossSection: "random",
-            bladeBaseProportion: 0.3,
+            bladeBaseProportion: 0.4,
             bladeMidProportion: 0.5,
             baseSplineControlPoints: 3,
             evenSpacedBaseCPs: true,
@@ -157,18 +158,12 @@ export class SwordGenerator extends Generator {
         let tipSectionLength: number =
             utils.setPrecision(bladeLength - (baseSectionLength + midSectionLength), 2);
 
-        if (this._verbose) {
-            console.log(
-                `DEBUG:: Base section length: ${baseSectionLength},`,
-                `Mid section length: ${midSectionLength},`,
-                `Total blade length: ${baseSectionLength + midSectionLength + tipSectionLength},`,
-                `Desired blade length: ${bladeLength}`
-            );
-        }
-
         /////////////////////////////////////////////////////////////////
         //                        BUILD SECTIONS                       //
         /////////////////////////////////////////////////////////////////
+
+        var edgeSpline = this.CreateEdgeSpline(5, 0.3, true);
+        var extrusionSpline = this.CreateEdgeSpline(0, 0);
 
         bladeGeometry.setBladeCrossSection(new CrossSection(crossSection), crossSection.edgeVertices, bladeColor)
 
@@ -176,31 +171,18 @@ export class SwordGenerator extends Generator {
             template.bladeThickness / crossSection.thickness,
             template.baseBladeWidth / crossSection.width))
 
-        bladeGeometry.rotate(new THREE.Quaternion()
-            .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 8))
-
-        bladeGeometry.extrude(baseSectionLength)
-
-        bladeGeometry.rotate(new THREE.Quaternion()
-            .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 8))
-
-
-
-        // bladeGeometry.translate(new THREE.Vector3(0, 1, 0.3))
-        bladeGeometry.scale(0.75)
-
-
+        bladeGeometry.extrudeSection(
+            extrusionSpline,
+            edgeSpline,
+            10,
+            baseSectionLength,
+            0.75
+        )
 
         bladeGeometry.extrude(midSectionLength)
-        bladeGeometry.rotate(new THREE.Quaternion()
-            .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 8))
-        // // bladeGeometry.translate(new THREE.Vector3(0, 0, 0.3))
-        bladeGeometry.scale(0.75)
-
-        // bladeGeometry.rotate(new THREE.Quaternion()
-        //     .setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 8));
+        bladeGeometry.scale(0.8)
         bladeGeometry.extrude(tipSectionLength)
-        bladeGeometry.scale(new THREE.Vector2(0, 1));
+        bladeGeometry.scale(0);
 
 
         sword.add(bladeGeometry);
@@ -291,135 +273,45 @@ export class SwordGenerator extends Generator {
         sword.add(pommelGeometryData);
     }
 
-    // static ConfigureSplinePointSpacing(edgeSplines: THREE.SplineCurve[], edgePositions: THREE.Vector2[], cPIndices: number[], equalSpacing: boolean,
-    //     sectionHeight: number, heightOffset: number, prng : seedrandom.prng, params: SwordGenerationParams) {
+    /**
+     * Creates a SplineCurve for edge geometry
+     *
+     * @param nPoints Number of points in the curve not includin ends
+     */
+    private CreateEdgeSpline(nPoints: number, widthTolerance: number, evenSpacing = true): THREE.SplineCurve {
 
-    //     var nCPs = cPIndices.length;
-    //     var equalCPSpacing = utils.setPrecision(sectionHeight / nCPs, 3);
+        if (nPoints < 0) {
+            throw new Error("Invalid number of points to create spline curve");
+        }
 
-    //     if (equalSpacing == true) {
-    //         // Loop through each layer of edge control points
-    //         for (var j = 0; j < cPIndices.length; j++) {
-    //             var layerIndex = cPIndices[j];
-    //             for (var i = 0; i < edgeSplines.length; i++) {
-    //                 edgeSplines[i].points[layerIndex].x = (Math.abs(edgePositions[i].x) > Math.abs(edgePositions[i].y)) ?
-    //                     utils.setPrecision(edgePositions[i].x, 2) : utils.setPrecision(edgePositions[i].y, 2);
+        // Spline points are defined on the interval [0,1]
+        // and are defined along the positive y-axis.
+        // The  x-values of the points along the curve represent
+        // the width of the blade's edge when measured from
+        // the center of the cross-section
 
-    //                 edgeSplines[i].points[layerIndex].y = utils.setPrecision(((j+1)*equalCPSpacing) + heightOffset, 2);
-    //             }
-    //         }
-    //     }
+        var splinePoints: Vector2[] = [
+            new THREE.Vector2(0, 0)
+        ];
 
+        // Spacings are the vertical distance between control points on the spline curve
+        var spacing = utils.divideValue(1.0, nPoints + 1, evenSpacing, this._prng);
 
+        var totalSpaceing = 0;
 
-    //     else {
-    //         // We keep track of how much height is left in this sections
-    //         var spaceLeft = sectionHeight;
+        for (let i = 0; i < spacing.length; i++) {
+            // Space the point vertically
+            let point = new THREE.Vector2();
+            if (i == spacing.length - 1) {
+                point.y = 1.0;
+            }
+            totalSpaceing += spacing[i];
+            point.y = totalSpaceing;
+            // Chose horizontal position of point
+            point.x = utils.getRandomFloat(this._prng, -widthTolerance/2, widthTolerance);
+            splinePoints.push(point);
+        }
 
-    //         // Loop through all the layers
-    //         for (var j = 0; j < cPIndices.length; j++) {
-
-    //             var layerIndex = cPIndices[j];
-
-    //             if (j == cPIndices.length - 1) {
-    //                 // Change the y value of all the vertices in this layer
-    //                 for (var i = 0; i < edgeSplines.length; i++) {
-    //                     edgeSplines[i].points[layerIndex].x = (Math.abs(edgePositions[i].x) > Math.abs(edgePositions[i].y)) ?
-    //                         edgePositions[i].x : edgePositions[i].y;
-    //                     edgeSplines[i].points[layerIndex].y = ((j+1)*equalCPSpacing) + heightOffset;
-    //                 }
-    //             }
-
-    //             else {
-    //                 // randomly determine a height and modify the verts
-    //                 var minSpacing = params.minCPSpacing * equalCPSpacing;
-    //                 var maxSpacing = params.maxCPSpacing * equalCPSpacing;
-    //                 var randHeight =  utils.getRandomFloat(prng, minSpacing, maxSpacing);
-    //                 var heightCap = spaceLeft - (minSpacing * (nCPs - layerIndex));
-    //                 var cPSpace = Math.min(randHeight, heightCap);
-
-    //                 for (var i = 0; i < edgeSplines.length; i++) {
-    //                     edgeSplines[i].points[layerIndex].x = (Math.abs(edgePositions[i].x) > Math.abs(edgePositions[i].y)) ?
-    //                         edgePositions[i].x : edgePositions[i].y;
-    //                     edgeSplines[i].points[layerIndex].y = ((j+1)*equalCPSpacing) + heightOffset;
-    //                 }
-
-    //                 spaceLeft -= cPSpace;
-    //             }
-    //         }
-    //     }
-    // }
-
-    // /**
-    //  * @deprecated
-    //  * @param vertices
-    //  * @param bladeLayers
-    //  * @param layerIndices
-    //  * @param equalDivs
-    //  * @param sectionHeight
-    //  * @param heightOffset
-    //  * @param prng
-    //  */
-    // static configureSectionHeight(vertices: number[], bladeLayers: CrossSection[], layerIndices: number[], equalDivs: boolean,
-    //     sectionHeight: number, heightOffset: number, prng : seedrandom.prng, params: SwordGenerationParams) {
-
-    //     var nSamplePoints = 10;
-
-    //     var equalDivHeight: number = sectionHeight / nSamplePoints;
-    //     equalDivHeight = Number.parseFloat(equalDivHeight.toFixed(3));
-
-
-    //     // Sets the y property of each vertex in the cross section
-    //     // to the height of tha cross section
-    //     if (equalDivs) {
-    //         for (var j = 0; j < layerIndices.length; j++) {
-    //             var layerIndex = layerIndices[j];
-    //             var layer = bladeLayers[layerIndex];
-    //             for (var i = 0; i < layer.getVertices().length; i++) {
-    //                 vertices[layer.getVertices()[i] * 3 + 1] = ((j+1)*equalDivHeight) + heightOffset;
-    //             }
-    //         };
-    //     }
-
-
-    //     else {
-    //         // We keep track of how much height is left in this sections
-    //         var spaceLeft = sectionHeight;
-    //         var totalHeightOfDivs = 0.0;
-
-    //         // Loop through all the layers
-    //         for (var j = 0; j < layerIndices.length; j++) {
-    //             var layerIndex = layerIndices[j];
-    //             var layer = bladeLayers[layerIndex];
-
-    //             if (j == layerIndices.length - 1) {
-    //                 // Change the y value of all the vertices in this layer
-    //                 for (var vertexIndex = 0; vertexIndex < layer.vertices.length; vertexIndex++) {
-    //                     vertices[layer.vertices[vertexIndex] * 3 + 1] = sectionHeight + heightOffset;
-    //                 }
-    //                 break;
-    //             }
-
-    //             else {
-    //                 // randomly determine a height and modify the verts
-    //                 var minDivHeight = equalDivHeight * 0.5;
-    //                 var maxDivHeight = equalDivHeight;
-    //                 var randHeight =  utils.getRandomFloat(prng, minDivHeight, maxDivHeight);
-    //                 var heightCap = spaceLeft - (minDivHeight * (nSamplePoints - layerIndex));
-    //                 var divHeight = Math.min(randHeight, heightCap);
-
-
-    //                 // Change the y value of all the vertices in this layer
-    //                 for (var vertexIndex = 0; vertexIndex < layer.vertices.length; vertexIndex++) {
-    //                     vertices[layer.vertices[vertexIndex] * 3 + 1] = divHeight + (totalHeightOfDivs) + heightOffset;
-    //                 }
-
-    //                 totalHeightOfDivs += divHeight;
-    //                 spaceLeft -= divHeight;
-    //             }
-    //         }
-    //     }
-
-    //     return vertices;
-    // }
+        return new THREE.SplineCurve(splinePoints);
+    }
 }

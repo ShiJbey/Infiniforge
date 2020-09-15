@@ -2,6 +2,8 @@
 //                      RANDOM NUMBERS                         //
 /////////////////////////////////////////////////////////////////
 
+type NumGenerator = seedrandom.prng | (() => number);
+
 /**
  * Given a random number generator and a min and max value,
  * returns a random int that is in the range [min,max)
@@ -10,7 +12,7 @@
  * @param min
  * @param max
  */
-export function getRandomInt(prng : seedrandom.prng, min : number, max : number) : number {
+export function getRandomInt(prng : NumGenerator, min : number, max : number) : number {
     min = Math.ceil(min);
     max = Math.floor(max);
     return  Math.floor(prng() * (max - min)) + min;
@@ -24,7 +26,7 @@ export function getRandomInt(prng : seedrandom.prng, min : number, max : number)
  * @param min
  * @param max
  */
-export function getRandomFloat(prng : seedrandom.prng, min : number, max : number) : number {
+export function getRandomFloat(prng : NumGenerator, min : number, max : number) : number {
     return prng() * (max - min) + min;
 }
 
@@ -56,6 +58,46 @@ export function getSlope(x1 : number,  y1 : number, x2 : number, y2 : number) : 
  */
 export function setPrecision(value: number, digits: number) {
     return Number.parseFloat(value.toFixed(digits));
+}
+
+export function divideValue(value: number, nDivisions: number, equalDivs: boolean, prng?: NumGenerator): number[] {
+    var divisions: number[] = [];
+
+    if (!equalDivs && prng == undefined) {
+        console.warn("No PRNG supplied. Using Default Math.random.");
+        prng = Math.random;
+    }
+
+    var equalDivSize = value / nDivisions;
+
+    if (equalDivs) {
+        for (let i = 0; i < nDivisions; i++) {
+            divisions.push(equalDivSize);
+        }
+    } else {
+        var remainder = value;
+        var divisionTotal = 0;
+
+        for (let i = 0; i < nDivisions; i++) {
+            if (i == nDivisions - 1) {
+                divisions.push(remainder);
+            } else {
+                var minDivSize = equalDivSize * 0.25;
+                var maxDivSize = equalDivSize * 1.25;
+                var randSize = getRandomFloat(prng as NumGenerator, minDivSize, maxDivSize);
+                var sizeCap = remainder - (minDivSize * (nDivisions - i));
+                var divSize = Math.min(randSize, sizeCap);
+
+                divisions.push(divSize);
+
+                divisionTotal += divSize;
+                remainder -= divSize;
+            }
+        }
+    }
+
+
+    return divisions;
 }
 
 /////////////////////////////////////////////////////////////////
