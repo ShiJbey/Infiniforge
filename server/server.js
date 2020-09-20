@@ -10,7 +10,7 @@ const commander = require('commander');
 const Infiniforge = require('../build/Infiniforge');
 
 // Define Generators
-const swordGenerator = new Infiniforge.SwordGenerator();
+const swordGenerator = new Infiniforge.SwordGenerator.SwordGenerator();
 
 /**
  * Configure Express app to serve static files like a http server

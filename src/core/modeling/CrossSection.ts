@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Vector3 } from 'three';
 
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
@@ -67,6 +68,47 @@ export class CrossSection {
 
     getTranslation() {
         return this._translation;
+    }
+
+    getVerticesLocal() {
+        var M = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
+        var M_inverse = new THREE.Matrix4().getInverse(M);
+        var verts: THREE.Vector3[] = [];
+
+        for (let i = 0; i < this._vertices.length; i++) {
+
+            // Get the position of the vertex in object space
+            let objectVert = this._vertices[i];
+
+            // Get position of the vert relative to the cross-section
+            let localVert = objectVert.clone()
+                .applyMatrix4(M_inverse);
+
+            verts.push(localVert)
+        }
+
+
+        return verts;
+    }
+
+    setVertexLocal(index: number, pos: Vector3) {
+        if (index < 0 || index > this._vertices.length) {
+            throw new Error("Vertex index out of range");
+        }
+
+        // Calculate the transform matrix and its inverse
+        let M = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
+        let M_inverse = new THREE.Matrix4().getInverse(M);
+
+        // Get the vertex to modify
+        let objectVert = this._vertices[index];
+
+        // Get position of the vert relative to the cross-section
+        let localVert = pos;
+
+        localVert.applyMatrix4(M);
+
+        objectVert.copy(localVert);
     }
 
     scaleVertex(index:number, scaleFactor: number) {

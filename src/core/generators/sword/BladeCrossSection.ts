@@ -53,16 +53,16 @@ export const HALLOW_GROUND: BladeCrossSection = {
 export const HEXAGONAL: BladeCrossSection = {
     "name": "Hexagonal",
         "vertices": [
-            -0.1, -0.3,
-            0.0, -0.5,
-            0.1, -0.3,
-            0.1, 0.3,
             0.0, 0.5,
-            -0.1, 0.3
+            0.1, 0.3,
+            0.1, -0.3,
+            0.0, -0.5,
+            -0.1, -0.3,
+            -0.1, 0.3,
         ],
         "edgeVertices": [
-            1,
-            4
+            0,
+            3
         ],
         "width": 1,
         "thickness": 0.2
@@ -172,7 +172,7 @@ export const DOUBLE_FULLER: BladeCrossSection = {
     ],
     "edgeVertices": [
         0,
-        7
+        9
     ],
     "width": 1.0,
     "thickness": 0.3
@@ -182,13 +182,16 @@ export const BROAD_FULLER: BladeCrossSection = {
     "name": "BroadFuller",
     "vertices": [
         0.0, 0.5,
+
         0.02, 0.4,
         0.01, 0.0,
         0.02, -0.4,
+
         0.0, -0.5,
-        -0.02, 0.4,
+
+        -0.02, -0.4,
         -0.01, 0.0,
-        -0.02, -0.4
+        -0.02, 0.4
     ],
     "edgeVertices": [
         0,
@@ -196,6 +199,22 @@ export const BROAD_FULLER: BladeCrossSection = {
     ],
     "width": 1.0,
     "thickness": 0.04
+}
+
+export const SINGLE_EDGE: BladeCrossSection = {
+    "name": "katana",
+    "vertices": [
+        0.0, 0.5,
+        0.01, 0.1,
+        0.01, -0.5,
+        -0.01, -0.5,
+        -0.01, 0.1,
+    ],
+    "edgeVertices": [
+        0
+    ],
+    "width": 1,
+    "thickness": 0.02
 }
 
 export const  BLADE_CROSS_SECTIONS: any = {
@@ -206,7 +225,8 @@ export const  BLADE_CROSS_SECTIONS: any = {
     "lenticular": LENTICULAR,
     "fuller": FULLER,
     "doule_fuller": DOUBLE_FULLER,
-    "broad_fuller": BROAD_FULLER
+    "broad_fuller": BROAD_FULLER,
+    "single_edge": SINGLE_EDGE
 }
 
 export function getCrossSection(style: string) {

@@ -106,27 +106,35 @@ export class SwordGenerator extends Generator {
 
         const DEFAULT_PARAMS: BladeParams = {
             color: "rgb(127, 127, 127)",
+
             crossSection: "random",
+
+            length: 0.975,
             bladeBaseProportion: 0.4,
             bladeMidProportion: 0.5,
+
             baseSplineControlPoints: 3,
             evenSpacedBaseCPs: true,
+
             midSplineControlPoints: 5,
             evenSpacedMidCPs: true,
+
             tipSplineControlPoints: 2,
             evenSpacedTipCPs: true,
+
+
             randomNumControlPoints: true,
             minSplineControlPoints: 2,
             maxSplineControlPoints: 7,
-            baseSplineSampleRes: 0.4,
-            midSplineSampleRes: 0.4,
-            tipSplineSampleRes: 0.4,
-            edgeScaleTolerance: 0.5
+
+            baseSplineSamples: 4,
+            midSplineSamples: 4,
+            tipSplineSamples: 0,
+
+            edgeScaleTolerance: 0
         }
 
-        params = Object.assign(params ?? {}, DEFAULT_PARAMS);
-
-        let bladeGeometry = new BladeGeometry();
+        params = Object.assign(DEFAULT_PARAMS, params);
 
         let crossSection = this.getBladeCrossSection(params?.crossSection);
 
@@ -142,28 +150,33 @@ export class SwordGenerator extends Generator {
         if (!params.bladeMidProportion)
             throw new Error("No blade mid proportion defined");
 
-        let bladeLength = utils.setPrecision(
-            utils.getRandomFloat(
-                this._prng,
-                template.minBladeLength,
-                template.maxBladeLength),
-            2);
+        let bladeLength = utils.getRandomFloat(this._prng, template.minBladeLength, template.maxBladeLength);
 
-        let baseSectionLength =
-            utils.setPrecision(bladeLength * params.bladeBaseProportion, 2);
+        let baseSectionLength = bladeLength * params.bladeBaseProportion;
 
-        let midSectionLength =
-            utils.setPrecision(bladeLength * params.bladeMidProportion, 2);
+        let midSectionLength = bladeLength * params.bladeMidProportion;
 
-        let tipSectionLength: number =
-            utils.setPrecision(bladeLength - (baseSectionLength + midSectionLength), 2);
+        let tipSectionLength = bladeLength - (baseSectionLength + midSectionLength);
 
         /////////////////////////////////////////////////////////////////
         //                        BUILD SECTIONS                       //
         /////////////////////////////////////////////////////////////////
 
-        var edgeSpline = this.CreateEdgeSpline(5, 0.3, true);
-        var extrusionSpline = this.CreateEdgeSpline(0, 0);
+        var nControlPoints = 0;
+
+        if (params.randomNumControlPoints) {
+            nControlPoints = utils.getRandomInt(
+                this._prng,
+                params.minSplineControlPoints ?? 2,
+                params.maxSplineControlPoints ?? 10)
+        }
+
+        var edgeSpline = this.CreateEdgeSpline(
+            nControlPoints,
+            params.edgeScaleTolerance ?? .2,
+            params.evenSpacedBaseCPs);
+
+        let bladeGeometry = new BladeGeometry(bladeLength, template.extrusionCurve);
 
         bladeGeometry.setBladeCrossSection(new CrossSection(crossSection), crossSection.edgeVertices, bladeColor)
 
@@ -172,17 +185,14 @@ export class SwordGenerator extends Generator {
             template.baseBladeWidth / crossSection.width))
 
         bladeGeometry.extrudeSection(
-            extrusionSpline,
             edgeSpline,
-            10,
-            baseSectionLength,
-            0.75
+            params.baseSplineSamples ?? 5,
+            baseSectionLength
         )
 
         bladeGeometry.extrude(midSectionLength)
         bladeGeometry.scale(0.8)
-        bladeGeometry.extrude(tipSectionLength)
-        bladeGeometry.scale(0);
+        bladeGeometry.createTip("clip", tipSectionLength);
 
 
         sword.add(bladeGeometry);
@@ -202,7 +212,7 @@ export class SwordGenerator extends Generator {
             guardBladeRatio: 1.5
         }
 
-        params = Object.assign(params ?? {}, DEFAULT_PARAMS);
+        params = Object.assign(DEFAULT_PARAMS, params);
 
         var guardGeometry = new THREE.BoxGeometry(template.bladeThickness + 0.04, params.thickness, 0.06 + template.baseBladeWidth);
 
@@ -224,19 +234,16 @@ export class SwordGenerator extends Generator {
             radius: 0.015
         }
 
-        params = Object.assign(params ?? {}, DEFAULT_PARAMS);
-
-        // Create a simple cylinder
-        var handleLength = 0.2;
+        params = Object.assign(DEFAULT_PARAMS, params);
 
         var handleGeometry = new THREE.CylinderGeometry(
             params.radius,
             params.radius ?? 0 * 0.75,
-            handleLength,
+            template.handleLength,
             8);
 
         // Moves translates the handle to fall below the guard and blade
-        handleGeometry.translate(0,-handleLength / 2, 0);
+        handleGeometry.translate(0,-template.handleLength / 2, 0);
 
         // Convert the box to a buffer geometry
         var handleGeometryData = new GeometryData().fromGeometry(handleGeometry, new THREE.Color(params.color));
@@ -257,14 +264,13 @@ export class SwordGenerator extends Generator {
             pommelBladeWidthRatio: 0.50,
         }
 
-        params = Object.assign(params ?? {}, DEFAULT_PARAMS);
+        params = Object.assign(DEFAULT_PARAMS, params);
 
         var pommelRadius = 0.025;
         var geometry = new THREE.SphereGeometry(pommelRadius, 5, 5);
-        var handleLength = 0.2;
 
         // Translates the pommel to fall below the handle
-        geometry.translate(0, -handleLength, 0);
+        geometry.translate(0, -template.handleLength, 0);
 
         // Convert the box to a buffer geometry
         var pommelGeometryData = new GeometryData().fromGeometry(geometry, new THREE.Color(params.color));

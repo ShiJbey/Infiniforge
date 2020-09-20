@@ -61,19 +61,19 @@ export interface BladeParams {
     minSplineControlPoints?: number;
 
     /**
-     * Base section spline sample resolution [0,1]
+     * Number of spline samples in base section
      */
-    baseSplineSampleRes?: number;
+    baseSplineSamples?: number;
 
     /**
-     * Mid section spline sample resolution [0,1)
+     * Number of spline samples in mid section
      */
-    midSplineSampleRes?: number;
+    midSplineSamples?: number;
 
     /**
-     * Tip section spline sample resolution [0,1)
+     * Number of spline samples in tip section
      */
-    tipSplineSampleRes?: number;
+    tipSplineSamples?: number;
 
     /**
      * Should the control points be spaced evenly along
@@ -106,6 +106,8 @@ export interface BladeParams {
      * "linear" | "random" |
      */
     edgeSplineType?: string;
+
+    length?: number | string;
 };
 
 export interface GuardParams {
