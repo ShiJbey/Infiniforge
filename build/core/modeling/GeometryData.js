@@ -74,6 +74,35 @@ class GeometryData {
         this._activeCrossSection = undefined;
         return this;
     }
+    translate(distance) {
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to translate.");
+        }
+        let translationVector = new THREE.Vector3();
+        if (typeof (distance) == 'number') {
+            translationVector.copy(this._activeCrossSection.getNorm().normalize());
+            translationVector.multiplyScalar(distance);
+        }
+        else {
+            translationVector.copy(distance);
+        }
+        this._activeCrossSection.translate(translationVector);
+        return this;
+    }
+    scale(scaleFactor) {
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to scale");
+        }
+        this._activeCrossSection.scale(scaleFactor);
+        return this;
+    }
+    rotate(quaternion) {
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to rotate");
+        }
+        this._activeCrossSection.rotate(quaternion);
+        return this;
+    }
     extrude(direction) {
         if (this._activeCrossSection == undefined) {
             throw new Error("GeometryData does not have an active cross section to extrude");
@@ -101,6 +130,9 @@ class GeometryData {
             newCrossSection.addVertex(vert);
             this._colors.push(this._colors[previousVertIdxs[i]].clone());
         }
+        newCrossSection.copyTransform(this._activeCrossSection);
+        newCrossSection.setTranslation(newCrossSection.getTranslation().add(translationVector));
+        this._activeCrossSection = newCrossSection;
         for (let i = 0; i < previousVertIdxs.length; i++) {
             if (i == previousVertIdxs.length - 1) {
                 this._triangles.push(new THREE.Vector3(previousVertIdxs[i], previousVertIdxs[0], newVertIdxs[i]));
@@ -111,7 +143,6 @@ class GeometryData {
                 this._triangles.push(new THREE.Vector3(newVertIdxs[i], previousVertIdxs[i + 1], newVertIdxs[i + 1]));
             }
         }
-        this._activeCrossSection = newCrossSection;
         return this;
     }
     toGlTF() {

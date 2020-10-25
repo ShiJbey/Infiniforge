@@ -13,6 +13,7 @@ export declare const LENTICULAR: BladeCrossSection;
 export declare const FULLER: BladeCrossSection;
 export declare const DOUBLE_FULLER: BladeCrossSection;
 export declare const BROAD_FULLER: BladeCrossSection;
+export declare const SINGLE_EDGE: BladeCrossSection;
 export declare const BLADE_CROSS_SECTIONS: any;
 export declare function getCrossSection(style: string): BladeCrossSection | undefined;
 export declare function isSupportedCrossSection(style: string): boolean;

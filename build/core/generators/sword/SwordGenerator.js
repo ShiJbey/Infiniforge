@@ -18,9 +18,6 @@ const BladeCrossSection_1 = require("./BladeCrossSection");
 const GeometryData_1 = require("../../modeling/GeometryData");
 const CrossSection_1 = require("../../modeling/CrossSection");
 const BladeGeometery_1 = require("./BladeGeometery");
-const DIMENSION_PRECISION = 2;
-const DEFAULT_BASE_PROPORTION = 0.3;
-const DEFAULT_MID_PROPORTION = 0.5;
 class SwordGenerator extends Generator_1.Generator {
     constructor(verbose = false) {
         super(verbose);
@@ -89,64 +86,106 @@ class SwordGenerator extends Generator_1.Generator {
         return BladeCrossSection_1.BLADE_CROSS_SECTIONS[crossSectionName];
     }
     buildBlade(sword, template, params) {
+        var _a, _b, _c, _d;
         const DEFAULT_PARAMS = {
             color: "rgb(127, 127, 127)",
+            crossSection: "random",
+            bladeBaseProportion: 0.4,
+            bladeMidProportion: 0.5,
+            baseSplineControlPoints: 3,
+            evenSpacedBaseCPs: true,
+            midSplineControlPoints: 5,
+            evenSpacedMidCPs: true,
+            tipSplineControlPoints: 2,
+            evenSpacedTipCPs: true,
+            randomNumControlPoints: true,
+            minSplineControlPoints: 2,
+            maxSplineControlPoints: 7,
+            baseSplineSamples: 4,
+            midSplineSamples: 4,
+            tipSplineSamples: 0,
+            edgeScaleTolerance: 0
         };
-        params = Object.assign(params !== null && params !== void 0 ? params : {}, DEFAULT_PARAMS);
-        let bladeGeometry = new BladeGeometery_1.BladeGeometry();
+        params = Object.assign(DEFAULT_PARAMS, params);
         let crossSection = this.getBladeCrossSection(params === null || params === void 0 ? void 0 : params.crossSection);
         let bladeColor = (params === null || params === void 0 ? void 0 : params.color) ? new THREE.Color(params.color) : new THREE.Color("rgb(127, 127, 127)");
-        bladeGeometry
-            .setCrossSection(new CrossSection_1.CrossSection(crossSection), bladeColor);
-        let bladeLength = utils.setPrecision(utils.getRandomFloat(this._prng, template.minBladeLength, template.maxBladeLength), 2);
-        let baseSectionLength = (params === null || params === void 0 ? void 0 : params.bladeBaseProportion) ?
-            utils.setPrecision(bladeLength * params.bladeBaseProportion, 2) :
-            utils.setPrecision(bladeLength * DEFAULT_BASE_PROPORTION, 2);
-        let midSectionLength = (params === null || params === void 0 ? void 0 : params.bladeMidProportion) ?
-            utils.setPrecision(bladeLength * params.bladeMidProportion, 2) :
-            utils.setPrecision(bladeLength * DEFAULT_MID_PROPORTION, 2);
-        let tipSectionLength = utils.setPrecision(bladeLength - (baseSectionLength + midSectionLength), 2);
-        if (this._verbose) {
-            console.log(`DEBUG:: Base section length: ${baseSectionLength},`, `Mid section length: ${midSectionLength},`, `Total blade length: ${baseSectionLength + midSectionLength + tipSectionLength}`, `DEBUG:: Desired blade length: ${bladeLength}`);
+        if (!params.bladeBaseProportion)
+            throw new Error("No blade base proportion defined");
+        if (!params.bladeMidProportion)
+            throw new Error("No blade mid proportion defined");
+        let bladeLength = utils.getRandomFloat(this._prng, template.minBladeLength, template.maxBladeLength);
+        let baseSectionLength = bladeLength * params.bladeBaseProportion;
+        let midSectionLength = bladeLength * params.bladeMidProportion;
+        let tipSectionLength = bladeLength - (baseSectionLength + midSectionLength);
+        var nControlPoints = 0;
+        if (params.randomNumControlPoints) {
+            nControlPoints = utils.getRandomInt(this._prng, (_a = params.minSplineControlPoints) !== null && _a !== void 0 ? _a : 2, (_b = params.maxSplineControlPoints) !== null && _b !== void 0 ? _b : 10);
         }
-        bladeGeometry.extrude(6);
+        var edgeSpline = this.CreateEdgeSpline(nControlPoints, (_c = params.edgeScaleTolerance) !== null && _c !== void 0 ? _c : .2, params.evenSpacedBaseCPs);
+        let bladeGeometry = new BladeGeometery_1.BladeGeometry(bladeLength, template.extrusionCurve);
+        bladeGeometry.setBladeCrossSection(new CrossSection_1.CrossSection(crossSection), crossSection.edgeVertices, bladeColor);
+        bladeGeometry.scale(new THREE.Vector2(template.bladeThickness / crossSection.thickness, template.baseBladeWidth / crossSection.width));
+        bladeGeometry.extrudeSection(edgeSpline, (_d = params.baseSplineSamples) !== null && _d !== void 0 ? _d : 5, baseSectionLength);
+        bladeGeometry.extrude(midSectionLength);
+        bladeGeometry.scale(0.8);
+        bladeGeometry.createTip("clip", tipSectionLength);
         sword.add(bladeGeometry);
     }
     buildGuard(sword, template, params) {
         const DEFAULT_PARAMS = {
             color: "#7f5100",
-            thickness: 0.1,
+            thickness: 0.01,
             guardBladeRatio: 1.5
         };
-        params = Object.assign(params !== null && params !== void 0 ? params : {}, DEFAULT_PARAMS);
-        var guardGeometry = new THREE.BoxGeometry(template.bladeThickness + 0.1, params.thickness, 0.3 + template.baseBladeWidth);
+        params = Object.assign(DEFAULT_PARAMS, params);
+        var guardGeometry = new THREE.BoxGeometry(template.bladeThickness + 0.04, params.thickness, 0.06 + template.baseBladeWidth);
         var guardGeometryData = new GeometryData_1.GeometryData().fromGeometry(guardGeometry, new THREE.Color(params.color));
         sword.add(guardGeometryData);
     }
     buildHandle(sword, template, params) {
+        var _a;
         const DEFAULT_PARAMS = {
             color: "#cc5100",
-            radius: 0.1
+            radius: 0.015
         };
-        params = Object.assign(params !== null && params !== void 0 ? params : {}, DEFAULT_PARAMS);
-        var handleLength = 0.4 * template.hands;
-        var handleGeometry = new THREE.CylinderGeometry(template.bladeThickness / 2, template.bladeThickness / 2, handleLength, 8);
-        handleGeometry.translate(0, -handleLength / 2, 0);
+        params = Object.assign(DEFAULT_PARAMS, params);
+        var handleGeometry = new THREE.CylinderGeometry(params.radius, (_a = params.radius) !== null && _a !== void 0 ? _a : 0 * 0.75, template.handleLength, 8);
+        handleGeometry.translate(0, -template.handleLength / 2, 0);
         var handleGeometryData = new GeometryData_1.GeometryData().fromGeometry(handleGeometry, new THREE.Color(params.color));
         sword.add(handleGeometryData);
     }
     buildPommel(sword, template, params) {
         const DEFAULT_PARAMS = {
             color: "#e5cc59",
-            pommelBladeWidthRatio: 0.50
+            pommelBladeWidthRatio: 0.50,
         };
-        params = Object.assign(params !== null && params !== void 0 ? params : {}, DEFAULT_PARAMS);
-        var pommelRadius = template.bladeThickness;
+        params = Object.assign(DEFAULT_PARAMS, params);
+        var pommelRadius = 0.025;
         var geometry = new THREE.SphereGeometry(pommelRadius, 5, 5);
-        var handleLength = 0.4 * template.hands;
-        geometry.translate(0, -handleLength, 0);
+        geometry.translate(0, -template.handleLength, 0);
         var pommelGeometryData = new GeometryData_1.GeometryData().fromGeometry(geometry, new THREE.Color(params.color));
         sword.add(pommelGeometryData);
+    }
+    CreateEdgeSpline(nPoints, widthTolerance, evenSpacing = true) {
+        if (nPoints < 0) {
+            throw new Error("Invalid number of points to create spline curve");
+        }
+        var splinePoints = [
+            new THREE.Vector2(0, 0)
+        ];
+        var spacing = utils.divideValue(1.0, nPoints + 1, evenSpacing, this._prng);
+        var totalSpaceing = 0;
+        for (let i = 0; i < spacing.length; i++) {
+            let point = new THREE.Vector2();
+            if (i == spacing.length - 1) {
+                point.y = 1.0;
+            }
+            totalSpaceing += spacing[i];
+            point.y = totalSpaceing;
+            point.x = utils.getRandomFloat(this._prng, -widthTolerance / 2, widthTolerance);
+            splinePoints.push(point);
+        }
+        return new THREE.SplineCurve(splinePoints);
     }
 }
 exports.SwordGenerator = SwordGenerator;

@@ -89,10 +89,10 @@ function configureRoutes(app, options) {
                 }
             })
             .catch((err) => {
-                res.status(400).json({ "error": err });
+                res.status(400).json({ "error": err.message });
 
                 if (VERBOSE_OUTPUT) {
-                    console.log(`${new Date().toISOString()}> Error:: ${err}`);
+                    console.log(`${new Date().toISOString()}> Error:: ${err.message}`);
                 }
             });
     });

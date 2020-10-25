@@ -5,6 +5,9 @@ representations of procedurally generated 3D fanstasy swords.
 
 ![screenshot](screenshot.png)
 
+This project was originally made as part of the August 2016 Reddit procedural generation challenge
+Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
+
 ## Whats New
 
 Infiniforge 2.0 features a revamped generation process that
@@ -63,15 +66,14 @@ with [ThreeJS](https://threejs.org/docs/#examples/exporters/GLTFExporter).
 
 ## What can I do with this
 
-Output can be saved as a *.gltf file and used in a multitude of projects. Various importers are
+Infiniforge output can be saved as a *.gltf file and used in a multitude of projects. Various importers are
 available from [Khronos Group](https://www.khronos.org/gltf/). For example, one could use this
-in a unity game by taking advantage of the [UnityGLTF plugin](https://github.com/KhronosGroup/UnityGLTF). glTF files can also be opened on windows 10 using the 3D Viewer application.
+in a unity game by taking advantage of the [UnityGLTF plugin](https://github.com/KhronosGroup/UnityGLTF). Also, glTF files can also be opened on windows 10 using the 3D Viewer application.
 
-## Credits
+## References
 
-Sword morphologies sourced from: [Long Sword Wikipedia](https://en.wikipedia.org/wiki/Longsword)
+* https://en.wikipedia.org/wiki/Longsword
 
-## Misc
+* http://www.lordsandladies.org/middle-ages-weapons.htm
 
-This project was originally made as part of the August 2016 Reddit procedural generation challenge
-Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
+* https://www.medievalswordsworld.com/

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isSupportedCrossSection = exports.getCrossSection = exports.BLADE_CROSS_SECTIONS = exports.BROAD_FULLER = exports.DOUBLE_FULLER = exports.FULLER = exports.LENTICULAR = exports.THICKENED_DIAMOND = exports.HEXAGONAL = exports.HALLOW_GROUND = exports.DIAMOND = void 0;
+exports.isSupportedCrossSection = exports.getCrossSection = exports.BLADE_CROSS_SECTIONS = exports.SINGLE_EDGE = exports.BROAD_FULLER = exports.DOUBLE_FULLER = exports.FULLER = exports.LENTICULAR = exports.THICKENED_DIAMOND = exports.HEXAGONAL = exports.HALLOW_GROUND = exports.DIAMOND = void 0;
 exports.DIAMOND = {
     "name": "Diamond",
     "vertices": [
@@ -43,18 +43,18 @@ exports.HEXAGONAL = {
     "name": "Hexagonal",
     "vertices": [
         0.0, 0.5,
-        0.01, 0.4,
-        0.01, -0.4,
+        0.1, 0.3,
+        0.1, -0.3,
         0.0, -0.5,
-        -0.01, 0.4,
-        -0.01, -0.4
+        -0.1, -0.3,
+        -0.1, 0.3,
     ],
     "edgeVertices": [
         0,
-        4
+        3
     ],
-    "width": 1.0,
-    "thickness": 0.02
+    "width": 1,
+    "thickness": 0.2
 };
 exports.THICKENED_DIAMOND = {
     "name": "ThickenedDiamond",
@@ -147,7 +147,7 @@ exports.DOUBLE_FULLER = {
     ],
     "edgeVertices": [
         0,
-        7
+        9
     ],
     "width": 1.0,
     "thickness": 0.3
@@ -160,9 +160,9 @@ exports.BROAD_FULLER = {
         0.01, 0.0,
         0.02, -0.4,
         0.0, -0.5,
-        -0.02, 0.4,
+        -0.02, -0.4,
         -0.01, 0.0,
-        -0.02, -0.4
+        -0.02, 0.4
     ],
     "edgeVertices": [
         0,
@@ -170,6 +170,21 @@ exports.BROAD_FULLER = {
     ],
     "width": 1.0,
     "thickness": 0.04
+};
+exports.SINGLE_EDGE = {
+    "name": "katana",
+    "vertices": [
+        0.0, 0.5,
+        0.01, 0.1,
+        0.01, -0.5,
+        -0.01, -0.5,
+        -0.01, 0.1,
+    ],
+    "edgeVertices": [
+        0
+    ],
+    "width": 1,
+    "thickness": 0.02
 };
 exports.BLADE_CROSS_SECTIONS = {
     "diamond": exports.DIAMOND,
@@ -179,7 +194,8 @@ exports.BLADE_CROSS_SECTIONS = {
     "lenticular": exports.LENTICULAR,
     "fuller": exports.FULLER,
     "doule_fuller": exports.DOUBLE_FULLER,
-    "broad_fuller": exports.BROAD_FULLER
+    "broad_fuller": exports.BROAD_FULLER,
+    "single_edge": exports.SINGLE_EDGE
 };
 function getCrossSection(style) {
     if (isSupportedCrossSection(style)) {

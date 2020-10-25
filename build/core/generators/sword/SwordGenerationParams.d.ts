@@ -9,9 +9,9 @@ export interface BladeParams {
     randomNumControlPoints?: boolean;
     maxSplineControlPoints?: number;
     minSplineControlPoints?: number;
-    baseSplineSampleRes?: number;
-    midSplineSampleRes?: number;
-    tipSplineSampleRes?: number;
+    baseSplineSamples?: number;
+    midSplineSamples?: number;
+    tipSplineSamples?: number;
     evenSpacedBaseCPs?: boolean;
     evenSpacedMidCPs?: boolean;
     evenSpacedTipCPs?: boolean;
@@ -28,7 +28,6 @@ export interface HandleParams {
     crossSection?: string;
     length?: number;
     radius?: number;
-    hands?: number;
 }
 export interface PommelParams {
     color?: number | string;

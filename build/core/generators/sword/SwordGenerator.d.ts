@@ -11,4 +11,5 @@ export declare class SwordGenerator extends Generator {
     private buildGuard;
     private buildHandle;
     private buildPommel;
+    private CreateEdgeSpline;
 }

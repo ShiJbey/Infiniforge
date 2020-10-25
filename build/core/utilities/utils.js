@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HextoRGB = exports.normalizeRGB = exports.parseHexColorString = exports.setPrecision = exports.getSlope = exports.getRandomFloat = exports.getRandomInt = void 0;
+exports.HextoRGB = exports.normalizeRGB = exports.parseHexColorString = exports.divideValue = exports.setPrecision = exports.getSlope = exports.getRandomFloat = exports.getRandomInt = void 0;
 function getRandomInt(prng, min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -19,6 +19,40 @@ function setPrecision(value, digits) {
     return Number.parseFloat(value.toFixed(digits));
 }
 exports.setPrecision = setPrecision;
+function divideValue(value, nDivisions, equalDivs, prng) {
+    var divisions = [];
+    if (!equalDivs && prng == undefined) {
+        console.warn("No PRNG supplied. Using Default Math.random.");
+        prng = Math.random;
+    }
+    var equalDivSize = value / nDivisions;
+    if (equalDivs) {
+        for (let i = 0; i < nDivisions; i++) {
+            divisions.push(equalDivSize);
+        }
+    }
+    else {
+        var remainder = value;
+        var divisionTotal = 0;
+        for (let i = 0; i < nDivisions; i++) {
+            if (i == nDivisions - 1) {
+                divisions.push(remainder);
+            }
+            else {
+                var minDivSize = equalDivSize * 0.25;
+                var maxDivSize = equalDivSize * 1.25;
+                var randSize = getRandomFloat(prng, minDivSize, maxDivSize);
+                var sizeCap = remainder - (minDivSize * (nDivisions - i));
+                var divSize = Math.min(randSize, sizeCap);
+                divisions.push(divSize);
+                divisionTotal += divSize;
+                remainder -= divSize;
+            }
+        }
+    }
+    return divisions;
+}
+exports.divideValue = divideValue;
 function parseHexColorString(color) {
     color = color.trim();
     if (isNaN(Number(color)) && color[0] == "#") {

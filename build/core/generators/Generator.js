@@ -10,6 +10,9 @@ class Generator {
     setSeed(seed) {
         this._prng = seedrandom(seed);
     }
+    setVerbose(verbose) {
+        this._verbose = verbose;
+    }
     generate(options) {
         return new Promise((resolve, reject) => {
             reject("Generate function is not implemented");

@@ -15,6 +15,9 @@ export declare class GeometryData {
     setCrossSection(crossSection: CrossSection, color?: THREE.Color): this;
     setColor(color: THREE.Color): this;
     fromGeometry(geometry: THREE.Geometry, color?: THREE.Color): this;
+    translate(distance: THREE.Vector3 | number): this;
+    scale(scaleFactor: THREE.Vector2 | number): this;
+    rotate(quaternion: THREE.Quaternion): this;
     extrude(direction: THREE.Vector3 | number): this;
     toGlTF(): Promise<any>;
     toMesh(): THREE.Mesh;
