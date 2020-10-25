@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Vector3 } from 'three';
 
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
@@ -91,7 +90,7 @@ export class CrossSection {
         return verts;
     }
 
-    setVertexLocal(index: number, pos: Vector3) {
+    setVertexLocal(index: number, pos: THREE.Vector3) {
         if (index < 0 || index > this._vertices.length) {
             throw new Error("Vertex index out of range");
         }
