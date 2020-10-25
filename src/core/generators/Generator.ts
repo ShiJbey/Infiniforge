@@ -21,7 +21,7 @@ export class Generator {
 
     generate(options: any) {
         return new Promise((resolve, reject) => {
-            reject("Generate function is not implemented")
+            reject("Generate function is not implemented");
         });
     }
 }
