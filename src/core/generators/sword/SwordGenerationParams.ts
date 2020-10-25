@@ -98,19 +98,12 @@ export interface BladeParams {
      * from the template
      */
     edgeScaleTolerance?: number;
-
-    /**
-     * Type of spline used to define edge geometry
-     *
-     * Example:
-     * "linear" | "random" |
-     */
-    edgeSplineType?: string;
-
-    length?: number | string;
 };
 
 export interface GuardParams {
+    /**
+     * Vertex color as a Hex number or CSS color string
+     */
     color?: number | string;
     crossSection?: string;
     thickness?: number;
@@ -118,16 +111,18 @@ export interface GuardParams {
 };
 
 export interface HandleParams {
+    /**
+     * Vertex color as a Hex number or CSS color string
+     */
     color?: number | string;
     crossSection?: string;
     length?: number;
     radius?: number;
-    hands?: number;
 };
 
 export interface PommelParams {
     /**
-     * Vertex color
+     * Vertex color as a Hex number or CSS color string
      */
     color?: number | string;
 

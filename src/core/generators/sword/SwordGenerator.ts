@@ -8,7 +8,6 @@ import { BladeParams, HandleParams, GuardParams, PommelParams, SwordGenerationPa
 import { GeometryData } from '../../modeling/GeometryData';
 import { CrossSection } from '../../modeling/CrossSection';
 import { BladeGeometry } from './BladeGeometery';
-import { Vector2 } from 'three';
 
 export class SwordGenerator extends Generator {
 
@@ -109,7 +108,6 @@ export class SwordGenerator extends Generator {
 
             crossSection: "random",
 
-            length: 0.975,
             bladeBaseProportion: 0.4,
             bladeMidProportion: 0.5,
 
@@ -133,6 +131,8 @@ export class SwordGenerator extends Generator {
 
             edgeScaleTolerance: 0
         }
+
+
 
         params = Object.assign(DEFAULT_PARAMS, params);
 
@@ -193,7 +193,6 @@ export class SwordGenerator extends Generator {
         bladeGeometry.extrude(midSectionLength)
         bladeGeometry.scale(0.8)
         bladeGeometry.createTip("clip", tipSectionLength);
-
 
         sword.add(bladeGeometry);
     }
@@ -296,7 +295,7 @@ export class SwordGenerator extends Generator {
         // the width of the blade's edge when measured from
         // the center of the cross-section
 
-        var splinePoints: Vector2[] = [
+        var splinePoints: THREE.Vector2[] = [
             new THREE.Vector2(0, 0)
         ];
 

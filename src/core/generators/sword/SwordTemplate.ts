@@ -1,14 +1,13 @@
 import * as THREE from 'three';
-import { Vector2 } from 'three';
 
 /**
  * Template parameters for building
- * swords within the generator.
+ * swords within the generator
  *
  * @note Units are measured in meters
  */
 export interface SwordTemplate {
-    name?: string;
+    bladeLength: number;
     handleLength: number;
     baseBladeWidth: number;
     minBladeLength: number;
@@ -20,6 +19,7 @@ export interface SwordTemplate {
 }
 
 export const SHORT_SWORD: SwordTemplate = {
+    bladeLength: 0.40,
     baseBladeWidth: 0.1,
     minBladeLength: 0.5,
     maxBladeLength: 0.5,
@@ -28,12 +28,13 @@ export const SHORT_SWORD: SwordTemplate = {
     handleLength: .15,
     bladeThickness: 0.05,
     extrusionCurve: new THREE.SplineCurve([
-        new Vector2(0, 0),
-        new Vector2(0, 1)
+        new THREE.Vector2(0, 0),
+        new THREE.Vector2(0, 1)
     ])
 }
 
 export const LONG_SWORD:  SwordTemplate = {
+    bladeLength: 1.11,
     baseBladeWidth: 0.1,
     minBladeLength: 0.85,
     maxBladeLength: 1.1,
@@ -42,37 +43,39 @@ export const LONG_SWORD:  SwordTemplate = {
     handleLength: .22,
     bladeThickness: 0.05,
     extrusionCurve: new THREE.SplineCurve([
-        new Vector2(0, 0),
-        new Vector2(0, 1)
+        new THREE.Vector2(0, 0),
+        new THREE.Vector2(0, 1)
     ])
 }
 
 export const GREAT_SWORD: SwordTemplate = {
-    baseBladeWidth: 0.5,
-    minBladeLength: 0.9,
-    maxBladeLength: 1.1,
-    minHandleLength: 0.3,
-    maxHandleLength: 0.5,
+    bladeLength: 1.55,
+    baseBladeWidth: 0.064,
+    minBladeLength: 1.27,
+    maxBladeLength: 1.83,
+    minHandleLength: 0.457,
+    maxHandleLength: 0.533,
     handleLength: .3,
     bladeThickness: 0.05,
     extrusionCurve: new THREE.SplineCurve([
-        new Vector2(0, 0),
-        new Vector2(0, 1)
+        new THREE.Vector2(0, 0),
+        new THREE.Vector2(0, 1)
     ])
 }
 
 export const KATANA: SwordTemplate = {
+    bladeLength: 1.05,
     baseBladeWidth: 0.1,
-    minBladeLength: 0.8,
-    maxBladeLength: 0.8,
-    handleLength: 0.22,
-    minHandleLength: 0.22,
-    maxHandleLength: 0.22,
+    minBladeLength: 1.00,
+    maxBladeLength: 1.10,
+    handleLength: 0.3,
+    minHandleLength: 0.3,
+    maxHandleLength: 0.3,
     bladeThickness: 0.05,
     extrusionCurve: new THREE.QuadraticBezierCurve(
-        new Vector2(0, 0),
-        new Vector2(0.02, 0.8),
-        new Vector2(-0.15, 1)
+        new THREE.Vector2(0, 0),
+        new THREE.Vector2(0.02, 0.8),
+        new THREE.Vector2(-0.15, 1)
     )
 }
 
@@ -83,12 +86,9 @@ export const SWORD_TEMPLATES: any = {
     "katana": KATANA
 }
 
-export function getTemplate(style: string) {
-    if (isSupportedTemplate(style)) {
+export function getTemplate(style: string): SwordTemplate | null {
+    if (Object.keys(SWORD_TEMPLATES).indexOf(style) >= 0) {
         return SWORD_TEMPLATES[style] as SwordTemplate;
     }
-}
-
-export function isSupportedTemplate(style: string) {
-    return Object.keys(SWORD_TEMPLATES).indexOf(style) >= 0;
+    return null;
 }
