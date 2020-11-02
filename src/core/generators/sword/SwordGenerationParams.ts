@@ -15,6 +15,11 @@ export interface BladeParams {
     crossSection?: string;
 
     /**
+     * Tip geometry
+     */
+    tip?: string;
+
+    /**
      * Percentage of the blade devoted to the tip of the blade
      */
     bladeBaseProportion?: number;

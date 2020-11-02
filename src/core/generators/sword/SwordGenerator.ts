@@ -7,7 +7,7 @@ import { BladeCrossSection, getCrossSection, BLADE_CROSS_SECTIONS } from './Blad
 import { BladeParams, HandleParams, GuardParams, PommelParams, SwordGenerationParams } from './SwordGenerationParams';
 import { GeometryData } from '../../modeling/GeometryData';
 import { CrossSection } from '../../modeling/CrossSection';
-import { BladeGeometry } from './BladeGeometery';
+import { BladeGeometry, TIP_GEOMETRIES } from './BladeGeometery';
 
 export class SwordGenerator extends Generator {
 
@@ -95,6 +95,11 @@ export class SwordGenerator extends Generator {
         return BLADE_CROSS_SECTIONS[crossSectionName];
     }
 
+    private randomTip(): string {
+        let randomIndex = utils.getRandomInt(this._prng, 0, Object.keys(TIP_GEOMETRIES).length - 1);
+        return TIP_GEOMETRIES[randomIndex];
+    }
+
     /**
      * Generates geometry data for the blade of the sword
      *
@@ -103,58 +108,37 @@ export class SwordGenerator extends Generator {
      */
     private buildBlade(sword: GeometryData, template: SwordTemplate, params?: BladeParams) {
 
-        const DEFAULT_PARAMS: BladeParams = {
-            color: "rgb(127, 127, 127)",
-
-            crossSection: "random",
-
-            bladeBaseProportion: 0.4,
-            bladeMidProportion: 0.5,
-
-            baseSplineControlPoints: 3,
-            evenSpacedBaseCPs: true,
-
-            midSplineControlPoints: 5,
-            evenSpacedMidCPs: true,
-
-            tipSplineControlPoints: 2,
-            evenSpacedTipCPs: true,
-
-
-            randomNumControlPoints: true,
-            minSplineControlPoints: 2,
-            maxSplineControlPoints: 7,
-
-            baseSplineSamples: 4,
-            midSplineSamples: 4,
-            tipSplineSamples: 0,
-
-            edgeScaleTolerance: 0
-        }
-
-
-
-        params = Object.assign(DEFAULT_PARAMS, params);
-
+        let color = params?.color ??  "rgb(128, 128, 128)";
+        let tip = (params?.tip) ? ((params.tip == "random") ? this.randomTip() : params.tip) : "standard";
+        let edgeScaleTolerance = params?.edgeScaleTolerance ?? 0.5;
+        let randomNumControlPoints = params?.randomNumControlPoints ?? true;
+        let minSplineControlPoints = params?.minSplineControlPoints ?? 2;
+        let maxSplineControlPoints = params?.maxSplineControlPoints ?? 7;
+        let evenSpacedBaseCPs = params?.evenSpacedBaseCPs ?? true;
+        let evenSpacedMidCPs = params?.evenSpacedMidCPs?? true;
+        let evenSpacedTipCPs = params?.evenSpacedTipCPs ?? true;
+        let baseSplineSamples = params?.baseSplineSamples ?? 4;
+        let midSplineSamples = params?.baseSplineSamples ?? 4;
+        let tipSplineSamples = params?.baseSplineSamples ?? 4;
+        let baseSplineControlPoints = params?.baseSplineControlPoints ?? 3;
+        let midSplineControlPoints = params?.baseSplineControlPoints ?? 5;
+        let tipSplineControlPoints = params?.baseSplineControlPoints ?? 5;
+        let bladeBaseProportion = params?.bladeBaseProportion ?? 0.4;
+        let bladeMidProportion = params?.bladeMidProportion ?? 0.5;
         let crossSection = this.getBladeCrossSection(params?.crossSection);
-
-        let bladeColor = (params?.color) ? new THREE.Color(params.color): new THREE.Color("rgb(127, 127, 127)");
 
         /////////////////////////////////////////////////////////////////
         //                    BLADE SECTION LENGTHS                    //
         /////////////////////////////////////////////////////////////////
 
-        if (!params.bladeBaseProportion)
-            throw new Error("No blade base proportion defined");
-
-        if (!params.bladeMidProportion)
-            throw new Error("No blade mid proportion defined");
+        if (bladeBaseProportion + bladeMidProportion > 1.0)
+            throw new Error("Blade middle and base section proportions larger than 1.0");
 
         let bladeLength = utils.getRandomFloat(this._prng, template.minBladeLength, template.maxBladeLength);
 
-        let baseSectionLength = bladeLength * params.bladeBaseProportion;
+        let baseSectionLength = bladeLength * bladeBaseProportion;
 
-        let midSectionLength = bladeLength * params.bladeMidProportion;
+        let midSectionLength = bladeLength * bladeMidProportion;
 
         let tipSectionLength = bladeLength - (baseSectionLength + midSectionLength);
 
@@ -162,37 +146,50 @@ export class SwordGenerator extends Generator {
         //                        BUILD SECTIONS                       //
         /////////////////////////////////////////////////////////////////
 
-        var nControlPoints = 0;
+        if (template.name === "katana") {
+            crossSection = this.getBladeCrossSection("single_edge");
+            tip = "clip";
+            edgeScaleTolerance = 0;
 
-        if (params.randomNumControlPoints) {
-            nControlPoints = utils.getRandomInt(
-                this._prng,
-                params.minSplineControlPoints ?? 2,
-                params.maxSplineControlPoints ?? 10)
+            var edgeSpline = new THREE.SplineCurve([
+                new THREE.Vector2(0, 0),
+                new THREE.Vector2(0, 1)
+            ]);
+        } else {
+
+            let nControlPoints = baseSplineControlPoints;
+
+            if (randomNumControlPoints) {
+                nControlPoints = utils.getRandomInt(
+                    this._prng,
+                    minSplineControlPoints,
+                    maxSplineControlPoints)
+            }
+
+            var edgeSpline = this.CreateEdgeSpline(
+                nControlPoints,
+                edgeScaleTolerance,
+                evenSpacedBaseCPs);
         }
 
-        var edgeSpline = this.CreateEdgeSpline(
-            nControlPoints,
-            params.edgeScaleTolerance ?? .2,
-            params.evenSpacedBaseCPs);
-
-        let bladeGeometry = new BladeGeometry(bladeLength, template.extrusionCurve);
-
-        bladeGeometry.setBladeCrossSection(new CrossSection(crossSection), crossSection.edgeVertices, bladeColor)
-
-        bladeGeometry.scale(new THREE.Vector2(
-            template.bladeThickness / crossSection.thickness,
-            template.baseBladeWidth / crossSection.width))
-
-        bladeGeometry.extrudeSection(
-            edgeSpline,
-            params.baseSplineSamples ?? 5,
-            baseSectionLength
-        )
-
-        bladeGeometry.extrude(midSectionLength)
-        bladeGeometry.scale(0.8)
-        bladeGeometry.createTip("clip", tipSectionLength);
+        let bladeGeometry = new BladeGeometry(bladeLength, template.extrusionCurve)
+            .setBladeCrossSection(
+                new CrossSection(crossSection),
+                crossSection.edgeVertices,
+                new THREE.Color(color))
+            // Scale the cross section to fit the template
+            .scale(
+                new THREE.Vector2(
+                    template.bladeThickness / crossSection.thickness,
+                    template.baseBladeWidth / crossSection.width))
+            // Extrude the base section of the blade
+            .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength)
+            // Extrude the mid section of the blade
+            .extrude(midSectionLength)
+            // Scale down the cross-section
+            .scale(0.8)
+            // Create blade tip
+            .createTip(tip, tipSectionLength);
 
         sword.add(bladeGeometry);
     }

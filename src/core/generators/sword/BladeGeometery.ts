@@ -3,6 +3,8 @@ import { GeometryData } from '../../modeling/GeometryData';
 import { BladeCrossSection } from './BladeCrossSection';
 import { CrossSection } from '../../modeling/CrossSection';
 
+export const TIP_GEOMETRIES = ["standard", "rounded", "square", "clip"];
+
 /**
  * Swords are the core of this API and manage information about
  * their 3D geometry
@@ -116,9 +118,10 @@ export class BladeGeometry extends GeometryData{
         if (style === "standard") {
             this.extrude(length);
             this.scale(0);
+            return this;
         }
 
-        else if (style === "rounded") {
+        if (style === "rounded") {
             var tipCurve = new THREE.QuadraticBezierCurve(
                 new THREE.Vector2(1, 0),
                 new THREE.Vector2(0.7, 0.2),
@@ -136,18 +139,21 @@ export class BladeGeometry extends GeometryData{
 
                 this.scale(tipCurve.getPoint(subTotalHeight / length).x);
             }
+
+            return this;
         }
 
-        else if (style === "square") {
+        if (style === "square") {
             this.extrude(length);
             this.scale(new THREE.Vector2(0, 1));
+            return this;
         }
 
-        else if (style === "clip") {
-
+        if (style === "clip") {
             this.extrude(length);
             this.rotate(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI/3));
             this.scale(new THREE.Vector2(0, 1));
+            return this;
         }
 
         return this;
