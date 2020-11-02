@@ -171,7 +171,8 @@
             template: "random",
             bladeParams: {
                 color: "#7f7f7f",
-                crossSection: "random"
+                crossSection: "random",
+                tip: "random"
             },
             guardParams: {
                 color: "#7f5100"
@@ -224,6 +225,14 @@
             'Katana': 'katana'
         }
 
+        const supportedBladeTips = {
+            'Random': 'random',
+            'Standard': 'standard',
+            'Square': 'square',
+            'Rounded': 'rounded',
+            'Clip': 'clip'
+        }
+
         gui = new dat.GUI({
             "name": "Infiniforge Playground",
             "closeOnTop": "true"
@@ -246,6 +255,7 @@
 
         let bladeOptions = gui.addFolder("Blade Options");
         bladeOptions.add(forgeParams.bladeParams, "crossSection", supportedCrossSections);
+        bladeOptions.add(forgeParams.bladeParams, "tip", supportedBladeTips);
         bladeOptions.addColor(forgeParams.bladeParams, "color");
 
 
