@@ -7,6 +7,7 @@ import * as THREE from 'three';
  * @note Units are measured in meters
  */
 export interface SwordTemplate {
+    name: string;
     bladeLength: number;
     handleLength: number;
     baseBladeWidth: number;
@@ -19,6 +20,7 @@ export interface SwordTemplate {
 }
 
 export const SHORT_SWORD: SwordTemplate = {
+    name: "short_sword",
     bladeLength: 0.40,
     baseBladeWidth: 0.1,
     minBladeLength: 0.5,
@@ -34,6 +36,7 @@ export const SHORT_SWORD: SwordTemplate = {
 }
 
 export const LONG_SWORD:  SwordTemplate = {
+    name: "long_sword",
     bladeLength: 1.11,
     baseBladeWidth: 0.1,
     minBladeLength: 0.85,
@@ -49,6 +52,7 @@ export const LONG_SWORD:  SwordTemplate = {
 }
 
 export const GREAT_SWORD: SwordTemplate = {
+    name: "great_sword",
     bladeLength: 1.55,
     baseBladeWidth: 0.064,
     minBladeLength: 1.27,
@@ -64,6 +68,7 @@ export const GREAT_SWORD: SwordTemplate = {
 }
 
 export const KATANA: SwordTemplate = {
+    name: "katana",
     bladeLength: 1.05,
     baseBladeWidth: 0.1,
     minBladeLength: 1.00,
