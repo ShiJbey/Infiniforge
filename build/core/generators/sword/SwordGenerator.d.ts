@@ -7,6 +7,7 @@ export declare class SwordGenerator extends Generator {
     private getBladeCrossSection;
     private getRandomTemplate;
     private getRandomBladeCrossSection;
+    private randomTip;
     private buildBlade;
     private buildGuard;
     private buildHandle;

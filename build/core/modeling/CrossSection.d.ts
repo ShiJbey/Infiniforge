@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Vector3 } from 'three';
 export interface CrossSectionData {
     name?: string;
     vertices: number[];
@@ -16,7 +15,7 @@ export declare class CrossSection {
     getNorm(): THREE.Vector3;
     getTranslation(): THREE.Vector3;
     getVerticesLocal(): THREE.Vector3[];
-    setVertexLocal(index: number, pos: Vector3): void;
+    setVertexLocal(index: number, pos: THREE.Vector3): void;
     scaleVertex(index: number, scaleFactor: number): void;
     copyTransform(crossSection: CrossSection): void;
     setTranslation(direction: THREE.Vector3): void;

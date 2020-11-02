@@ -85,50 +85,59 @@ class SwordGenerator extends Generator_1.Generator {
         let crossSectionName = Object.keys(BladeCrossSection_1.BLADE_CROSS_SECTIONS)[randomIndex];
         return BladeCrossSection_1.BLADE_CROSS_SECTIONS[crossSectionName];
     }
+    randomTip() {
+        let randomIndex = utils.getRandomInt(this._prng, 0, Object.keys(BladeGeometery_1.TIP_GEOMETRIES).length - 1);
+        return BladeGeometery_1.TIP_GEOMETRIES[randomIndex];
+    }
     buildBlade(sword, template, params) {
-        var _a, _b, _c, _d;
-        const DEFAULT_PARAMS = {
-            color: "rgb(127, 127, 127)",
-            crossSection: "random",
-            bladeBaseProportion: 0.4,
-            bladeMidProportion: 0.5,
-            baseSplineControlPoints: 3,
-            evenSpacedBaseCPs: true,
-            midSplineControlPoints: 5,
-            evenSpacedMidCPs: true,
-            tipSplineControlPoints: 2,
-            evenSpacedTipCPs: true,
-            randomNumControlPoints: true,
-            minSplineControlPoints: 2,
-            maxSplineControlPoints: 7,
-            baseSplineSamples: 4,
-            midSplineSamples: 4,
-            tipSplineSamples: 0,
-            edgeScaleTolerance: 0
-        };
-        params = Object.assign(DEFAULT_PARAMS, params);
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        let color = (_a = params === null || params === void 0 ? void 0 : params.color) !== null && _a !== void 0 ? _a : "rgb(128, 128, 128)";
+        let tip = (params === null || params === void 0 ? void 0 : params.tip) ? ((params.tip == "random") ? this.randomTip() : params.tip) : "standard";
+        let edgeScaleTolerance = (_b = params === null || params === void 0 ? void 0 : params.edgeScaleTolerance) !== null && _b !== void 0 ? _b : 0.5;
+        let randomNumControlPoints = (_c = params === null || params === void 0 ? void 0 : params.randomNumControlPoints) !== null && _c !== void 0 ? _c : true;
+        let minSplineControlPoints = (_d = params === null || params === void 0 ? void 0 : params.minSplineControlPoints) !== null && _d !== void 0 ? _d : 2;
+        let maxSplineControlPoints = (_e = params === null || params === void 0 ? void 0 : params.maxSplineControlPoints) !== null && _e !== void 0 ? _e : 7;
+        let evenSpacedBaseCPs = (_f = params === null || params === void 0 ? void 0 : params.evenSpacedBaseCPs) !== null && _f !== void 0 ? _f : true;
+        let evenSpacedMidCPs = (_g = params === null || params === void 0 ? void 0 : params.evenSpacedMidCPs) !== null && _g !== void 0 ? _g : true;
+        let evenSpacedTipCPs = (_h = params === null || params === void 0 ? void 0 : params.evenSpacedTipCPs) !== null && _h !== void 0 ? _h : true;
+        let baseSplineSamples = (_j = params === null || params === void 0 ? void 0 : params.baseSplineSamples) !== null && _j !== void 0 ? _j : 4;
+        let midSplineSamples = (_k = params === null || params === void 0 ? void 0 : params.baseSplineSamples) !== null && _k !== void 0 ? _k : 4;
+        let tipSplineSamples = (_l = params === null || params === void 0 ? void 0 : params.baseSplineSamples) !== null && _l !== void 0 ? _l : 4;
+        let baseSplineControlPoints = (_m = params === null || params === void 0 ? void 0 : params.baseSplineControlPoints) !== null && _m !== void 0 ? _m : 3;
+        let midSplineControlPoints = (_o = params === null || params === void 0 ? void 0 : params.baseSplineControlPoints) !== null && _o !== void 0 ? _o : 5;
+        let tipSplineControlPoints = (_p = params === null || params === void 0 ? void 0 : params.baseSplineControlPoints) !== null && _p !== void 0 ? _p : 5;
+        let bladeBaseProportion = (_q = params === null || params === void 0 ? void 0 : params.bladeBaseProportion) !== null && _q !== void 0 ? _q : 0.4;
+        let bladeMidProportion = (_r = params === null || params === void 0 ? void 0 : params.bladeMidProportion) !== null && _r !== void 0 ? _r : 0.5;
         let crossSection = this.getBladeCrossSection(params === null || params === void 0 ? void 0 : params.crossSection);
-        let bladeColor = (params === null || params === void 0 ? void 0 : params.color) ? new THREE.Color(params.color) : new THREE.Color("rgb(127, 127, 127)");
-        if (!params.bladeBaseProportion)
-            throw new Error("No blade base proportion defined");
-        if (!params.bladeMidProportion)
-            throw new Error("No blade mid proportion defined");
+        if (bladeBaseProportion + bladeMidProportion > 1.0)
+            throw new Error("Blade middle and base section proportions larger than 1.0");
         let bladeLength = utils.getRandomFloat(this._prng, template.minBladeLength, template.maxBladeLength);
-        let baseSectionLength = bladeLength * params.bladeBaseProportion;
-        let midSectionLength = bladeLength * params.bladeMidProportion;
+        let baseSectionLength = bladeLength * bladeBaseProportion;
+        let midSectionLength = bladeLength * bladeMidProportion;
         let tipSectionLength = bladeLength - (baseSectionLength + midSectionLength);
-        var nControlPoints = 0;
-        if (params.randomNumControlPoints) {
-            nControlPoints = utils.getRandomInt(this._prng, (_a = params.minSplineControlPoints) !== null && _a !== void 0 ? _a : 2, (_b = params.maxSplineControlPoints) !== null && _b !== void 0 ? _b : 10);
+        if (template.name === "katana") {
+            crossSection = this.getBladeCrossSection("single_edge");
+            tip = "clip";
+            edgeScaleTolerance = 0;
+            var edgeSpline = new THREE.SplineCurve([
+                new THREE.Vector2(0, 0),
+                new THREE.Vector2(0, 1)
+            ]);
         }
-        var edgeSpline = this.CreateEdgeSpline(nControlPoints, (_c = params.edgeScaleTolerance) !== null && _c !== void 0 ? _c : .2, params.evenSpacedBaseCPs);
-        let bladeGeometry = new BladeGeometery_1.BladeGeometry(bladeLength, template.extrusionCurve);
-        bladeGeometry.setBladeCrossSection(new CrossSection_1.CrossSection(crossSection), crossSection.edgeVertices, bladeColor);
-        bladeGeometry.scale(new THREE.Vector2(template.bladeThickness / crossSection.thickness, template.baseBladeWidth / crossSection.width));
-        bladeGeometry.extrudeSection(edgeSpline, (_d = params.baseSplineSamples) !== null && _d !== void 0 ? _d : 5, baseSectionLength);
-        bladeGeometry.extrude(midSectionLength);
-        bladeGeometry.scale(0.8);
-        bladeGeometry.createTip("clip", tipSectionLength);
+        else {
+            let nControlPoints = baseSplineControlPoints;
+            if (randomNumControlPoints) {
+                nControlPoints = utils.getRandomInt(this._prng, minSplineControlPoints, maxSplineControlPoints);
+            }
+            var edgeSpline = this.CreateEdgeSpline(nControlPoints, edgeScaleTolerance, evenSpacedBaseCPs);
+        }
+        let bladeGeometry = new BladeGeometery_1.BladeGeometry(bladeLength, template.extrusionCurve)
+            .setBladeCrossSection(new CrossSection_1.CrossSection(crossSection), crossSection.edgeVertices, new THREE.Color(color))
+            .scale(new THREE.Vector2(template.bladeThickness / crossSection.thickness, template.baseBladeWidth / crossSection.width))
+            .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength)
+            .extrude(midSectionLength)
+            .scale(0.8)
+            .createTip(tip, tipSectionLength);
         sword.add(bladeGeometry);
     }
     buildGuard(sword, template, params) {

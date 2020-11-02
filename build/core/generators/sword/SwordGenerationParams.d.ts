@@ -1,6 +1,7 @@
 export interface BladeParams {
     color?: number | string;
     crossSection?: string;
+    tip?: string;
     bladeBaseProportion?: number;
     bladeMidProportion?: number;
     baseSplineControlPoints?: number;

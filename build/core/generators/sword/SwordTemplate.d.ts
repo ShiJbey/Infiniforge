@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 export interface SwordTemplate {
+    name: string;
     bladeLength: number;
     handleLength: number;
     baseBladeWidth: number;

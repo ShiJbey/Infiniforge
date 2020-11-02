@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BladeGeometry = void 0;
+exports.BladeGeometry = exports.TIP_GEOMETRIES = void 0;
 const THREE = require("three");
 const GeometryData_1 = require("../../modeling/GeometryData");
+exports.TIP_GEOMETRIES = ["standard", "rounded", "square", "clip"];
 class BladeGeometry extends GeometryData_1.GeometryData {
     constructor(length, extrusionCurve) {
         super();
@@ -63,8 +64,9 @@ class BladeGeometry extends GeometryData_1.GeometryData {
         if (style === "standard") {
             this.extrude(length);
             this.scale(0);
+            return this;
         }
-        else if (style === "rounded") {
+        if (style === "rounded") {
             var tipCurve = new THREE.QuadraticBezierCurve(new THREE.Vector2(1, 0), new THREE.Vector2(0.7, 0.2), new THREE.Vector2(0, 1));
             var subTotalHeight = 0;
             for (let i = 0; i < nSubdivisions; i++) {
@@ -76,15 +78,18 @@ class BladeGeometry extends GeometryData_1.GeometryData {
                 }
                 this.scale(tipCurve.getPoint(subTotalHeight / length).x);
             }
+            return this;
         }
-        else if (style === "square") {
+        if (style === "square") {
             this.extrude(length);
             this.scale(new THREE.Vector2(0, 1));
+            return this;
         }
-        else if (style === "clip") {
+        if (style === "clip") {
             this.extrude(length);
             this.rotate(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 3));
             this.scale(new THREE.Vector2(0, 1));
+            return this;
         }
         return this;
     }

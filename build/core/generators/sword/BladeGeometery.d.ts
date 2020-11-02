@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GeometryData } from '../../modeling/GeometryData';
 import { CrossSection } from '../../modeling/CrossSection';
+export declare const TIP_GEOMETRIES: string[];
 export declare class BladeGeometry extends GeometryData {
     private readonly _totalLength;
     private _currentLength;

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTemplate = exports.SWORD_TEMPLATES = exports.KATANA = exports.GREAT_SWORD = exports.LONG_SWORD = exports.SHORT_SWORD = void 0;
 const THREE = require("three");
 exports.SHORT_SWORD = {
+    name: "short_sword",
     bladeLength: 0.40,
     baseBladeWidth: 0.1,
     minBladeLength: 0.5,
@@ -17,6 +18,7 @@ exports.SHORT_SWORD = {
     ])
 };
 exports.LONG_SWORD = {
+    name: "long_sword",
     bladeLength: 1.11,
     baseBladeWidth: 0.1,
     minBladeLength: 0.85,
@@ -31,6 +33,7 @@ exports.LONG_SWORD = {
     ])
 };
 exports.GREAT_SWORD = {
+    name: "great_sword",
     bladeLength: 1.55,
     baseBladeWidth: 0.064,
     minBladeLength: 1.27,
@@ -45,6 +48,7 @@ exports.GREAT_SWORD = {
     ])
 };
 exports.KATANA = {
+    name: "katana",
     bladeLength: 1.05,
     baseBladeWidth: 0.1,
     minBladeLength: 1.00,
