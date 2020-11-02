@@ -1,21 +1,21 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "resolveJsonModule": true,
-    "strict":true,
-    "lib": ["dom", "es5"],
-    "outDir": "./build",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "declaration": true,
-    "declarationMap": true,
-    "importHelpers": true,
-    "sourceMap": true,
-    "removeComments": true
-  },
-  "include": [
-    "src/**/*/"
-  ],
-  "compileOnSave": true
+	"compilerOptions": {
+        "strict": true,
+		"target": "es6",
+        "moduleResolution": "node",
+        "outDir": "build",
+        "module": "CommonJS",
+        "rootDir": "src",
+        "resolveJsonModule": true,
+        "allowJs": true,
+        "declaration": true,
+        "sourceMap": true,
+        "removeComments": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.js",
+        "src/**/*.d.ts",
+        "src/**/*.json"
+    ],
 }
