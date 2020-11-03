@@ -172,7 +172,8 @@
             bladeParams: {
                 color: "#7f7f7f",
                 crossSection: "random",
-                tip: "random"
+                tip: "random",
+                edgeScaleTolerance: 0.1
             },
             guardParams: {
                 color: "#7f5100"
@@ -256,6 +257,7 @@
         let bladeOptions = gui.addFolder("Blade Options");
         bladeOptions.add(forgeParams.bladeParams, "crossSection", supportedCrossSections);
         bladeOptions.add(forgeParams.bladeParams, "tip", supportedBladeTips);
+        bladeOptions.add(forgeParams.bladeParams, "edgeScaleTolerance", 0, 0.5);
         bladeOptions.addColor(forgeParams.bladeParams, "color");
 
 

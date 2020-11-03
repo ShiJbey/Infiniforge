@@ -93,21 +93,21 @@ class SwordGenerator extends Generator_1.Generator {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         let color = (_a = params === null || params === void 0 ? void 0 : params.color) !== null && _a !== void 0 ? _a : "rgb(128, 128, 128)";
         let tip = (params === null || params === void 0 ? void 0 : params.tip) ? ((params.tip == "random") ? this.randomTip() : params.tip) : "standard";
-        let edgeScaleTolerance = (_b = params === null || params === void 0 ? void 0 : params.edgeScaleTolerance) !== null && _b !== void 0 ? _b : 0.5;
-        let randomNumControlPoints = (_c = params === null || params === void 0 ? void 0 : params.randomNumControlPoints) !== null && _c !== void 0 ? _c : true;
+        let edgeScaleTolerance = (_b = params === null || params === void 0 ? void 0 : params.edgeScaleTolerance) !== null && _b !== void 0 ? _b : 0.1;
+        let randomNumControlPoints = (_c = params === null || params === void 0 ? void 0 : params.randomNumControlPoints) !== null && _c !== void 0 ? _c : false;
         let minSplineControlPoints = (_d = params === null || params === void 0 ? void 0 : params.minSplineControlPoints) !== null && _d !== void 0 ? _d : 2;
         let maxSplineControlPoints = (_e = params === null || params === void 0 ? void 0 : params.maxSplineControlPoints) !== null && _e !== void 0 ? _e : 7;
-        let evenSpacedBaseCPs = (_f = params === null || params === void 0 ? void 0 : params.evenSpacedBaseCPs) !== null && _f !== void 0 ? _f : true;
-        let evenSpacedMidCPs = (_g = params === null || params === void 0 ? void 0 : params.evenSpacedMidCPs) !== null && _g !== void 0 ? _g : true;
-        let evenSpacedTipCPs = (_h = params === null || params === void 0 ? void 0 : params.evenSpacedTipCPs) !== null && _h !== void 0 ? _h : true;
-        let baseSplineSamples = (_j = params === null || params === void 0 ? void 0 : params.baseSplineSamples) !== null && _j !== void 0 ? _j : 4;
+        let evenSpacedBaseCPs = (_f = params === null || params === void 0 ? void 0 : params.evenSpacedBaseCPs) !== null && _f !== void 0 ? _f : false;
+        let evenSpacedMidCPs = (_g = params === null || params === void 0 ? void 0 : params.evenSpacedMidCPs) !== null && _g !== void 0 ? _g : false;
+        let evenSpacedTipCPs = (_h = params === null || params === void 0 ? void 0 : params.evenSpacedTipCPs) !== null && _h !== void 0 ? _h : false;
+        let baseSplineSamples = (_j = params === null || params === void 0 ? void 0 : params.baseSplineSamples) !== null && _j !== void 0 ? _j : 8;
         let midSplineSamples = (_k = params === null || params === void 0 ? void 0 : params.baseSplineSamples) !== null && _k !== void 0 ? _k : 4;
         let tipSplineSamples = (_l = params === null || params === void 0 ? void 0 : params.baseSplineSamples) !== null && _l !== void 0 ? _l : 4;
-        let baseSplineControlPoints = (_m = params === null || params === void 0 ? void 0 : params.baseSplineControlPoints) !== null && _m !== void 0 ? _m : 3;
+        let baseSplineControlPoints = (_m = params === null || params === void 0 ? void 0 : params.baseSplineControlPoints) !== null && _m !== void 0 ? _m : 7;
         let midSplineControlPoints = (_o = params === null || params === void 0 ? void 0 : params.baseSplineControlPoints) !== null && _o !== void 0 ? _o : 5;
         let tipSplineControlPoints = (_p = params === null || params === void 0 ? void 0 : params.baseSplineControlPoints) !== null && _p !== void 0 ? _p : 5;
         let bladeBaseProportion = (_q = params === null || params === void 0 ? void 0 : params.bladeBaseProportion) !== null && _q !== void 0 ? _q : 0.4;
-        let bladeMidProportion = (_r = params === null || params === void 0 ? void 0 : params.bladeMidProportion) !== null && _r !== void 0 ? _r : 0.5;
+        let bladeMidProportion = (_r = params === null || params === void 0 ? void 0 : params.bladeMidProportion) !== null && _r !== void 0 ? _r : 0.45;
         let crossSection = this.getBladeCrossSection(params === null || params === void 0 ? void 0 : params.crossSection);
         if (bladeBaseProportion + bladeMidProportion > 1.0)
             throw new Error("Blade middle and base section proportions larger than 1.0");
@@ -134,9 +134,11 @@ class SwordGenerator extends Generator_1.Generator {
         let bladeGeometry = new BladeGeometery_1.BladeGeometry(bladeLength, template.extrusionCurve)
             .setBladeCrossSection(new CrossSection_1.CrossSection(crossSection), crossSection.edgeVertices, new THREE.Color(color))
             .scale(new THREE.Vector2(template.bladeThickness / crossSection.thickness, template.baseBladeWidth / crossSection.width))
-            .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength)
-            .extrude(midSectionLength)
-            .scale(0.8)
+            .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength, 0.2)
+            .extrudeSection(new THREE.SplineCurve([
+            new THREE.Vector2(0, 0),
+            new THREE.Vector2(0, 1)
+        ]), midSplineSamples, midSectionLength, 0.3)
             .createTip(tip, tipSectionLength);
         sword.add(bladeGeometry);
     }
@@ -188,10 +190,13 @@ class SwordGenerator extends Generator_1.Generator {
             let point = new THREE.Vector2();
             if (i == spacing.length - 1) {
                 point.y = 1.0;
+                point.x = 0.0;
             }
-            totalSpaceing += spacing[i];
-            point.y = totalSpaceing;
-            point.x = utils.getRandomFloat(this._prng, -widthTolerance / 2, widthTolerance);
+            else {
+                totalSpaceing += spacing[i];
+                point.y = totalSpaceing;
+                point.x = utils.getRandomFloat(this._prng, -widthTolerance, widthTolerance);
+            }
             splinePoints.push(point);
         }
         return new THREE.SplineCurve(splinePoints);

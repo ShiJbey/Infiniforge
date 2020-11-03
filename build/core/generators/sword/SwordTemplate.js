@@ -57,7 +57,7 @@ exports.KATANA = {
     minHandleLength: 0.3,
     maxHandleLength: 0.3,
     bladeThickness: 0.05,
-    extrusionCurve: new THREE.QuadraticBezierCurve(new THREE.Vector2(0, 0), new THREE.Vector2(0.02, 0.8), new THREE.Vector2(-0.15, 1))
+    extrusionCurve: new THREE.QuadraticBezierCurve(new THREE.Vector2(0, 0), new THREE.Vector2(0.0, 0.7), new THREE.Vector2(-0.1, 1))
 };
 exports.SWORD_TEMPLATES = {
     "short": exports.SHORT_SWORD,

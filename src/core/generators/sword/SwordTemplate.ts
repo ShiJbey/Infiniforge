@@ -79,8 +79,8 @@ export const KATANA: SwordTemplate = {
     bladeThickness: 0.05,
     extrusionCurve: new THREE.QuadraticBezierCurve(
         new THREE.Vector2(0, 0),
-        new THREE.Vector2(0.02, 0.8),
-        new THREE.Vector2(-0.15, 1)
+        new THREE.Vector2(0.0, 0.7),
+        new THREE.Vector2(-0.1, 1)
     )
 }
 
