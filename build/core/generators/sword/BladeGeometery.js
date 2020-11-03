@@ -91,6 +91,8 @@ class BladeGeometry extends GeometryData_1.GeometryData {
             this.scale(new THREE.Vector2(0, 1));
             return this;
         }
+        this.extrude(length);
+        this.scale(0);
         return this;
     }
     modifyEdgeVerts(samplePoint) {

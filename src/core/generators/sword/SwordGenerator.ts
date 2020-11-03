@@ -110,21 +110,21 @@ export class SwordGenerator extends Generator {
 
         let color = params?.color ??  "rgb(128, 128, 128)";
         let tip = (params?.tip) ? ((params.tip == "random") ? this.randomTip() : params.tip) : "standard";
-        let edgeScaleTolerance = params?.edgeScaleTolerance ?? 0.5;
-        let randomNumControlPoints = params?.randomNumControlPoints ?? true;
+        let edgeScaleTolerance = params?.edgeScaleTolerance ?? 0.1;
+        let randomNumControlPoints = params?.randomNumControlPoints ?? false;
         let minSplineControlPoints = params?.minSplineControlPoints ?? 2;
         let maxSplineControlPoints = params?.maxSplineControlPoints ?? 7;
-        let evenSpacedBaseCPs = params?.evenSpacedBaseCPs ?? true;
-        let evenSpacedMidCPs = params?.evenSpacedMidCPs?? true;
-        let evenSpacedTipCPs = params?.evenSpacedTipCPs ?? true;
-        let baseSplineSamples = params?.baseSplineSamples ?? 4;
+        let evenSpacedBaseCPs = params?.evenSpacedBaseCPs ?? false;
+        let evenSpacedMidCPs = params?.evenSpacedMidCPs?? false;
+        let evenSpacedTipCPs = params?.evenSpacedTipCPs ?? false;
+        let baseSplineSamples = params?.baseSplineSamples ?? 8;
         let midSplineSamples = params?.baseSplineSamples ?? 4;
         let tipSplineSamples = params?.baseSplineSamples ?? 4;
-        let baseSplineControlPoints = params?.baseSplineControlPoints ?? 3;
+        let baseSplineControlPoints = params?.baseSplineControlPoints ?? 7;
         let midSplineControlPoints = params?.baseSplineControlPoints ?? 5;
         let tipSplineControlPoints = params?.baseSplineControlPoints ?? 5;
         let bladeBaseProportion = params?.bladeBaseProportion ?? 0.4;
-        let bladeMidProportion = params?.bladeMidProportion ?? 0.5;
+        let bladeMidProportion = params?.bladeMidProportion ?? 0.45;
         let crossSection = this.getBladeCrossSection(params?.crossSection);
 
         /////////////////////////////////////////////////////////////////
@@ -183,11 +183,19 @@ export class SwordGenerator extends Generator {
                     template.bladeThickness / crossSection.thickness,
                     template.baseBladeWidth / crossSection.width))
             // Extrude the base section of the blade
-            .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength)
+            .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength, 0.2)
             // Extrude the mid section of the blade
-            .extrude(midSectionLength)
+            // .extrude(midSectionLength)
+            .extrudeSection(
+                new THREE.SplineCurve([
+                    new THREE.Vector2(0, 0),
+                    new THREE.Vector2(0, 1)
+                ]),
+                midSplineSamples,
+                midSectionLength,
+                0.3)
             // Scale down the cross-section
-            .scale(0.8)
+            // .scale(0.7)
             // Create blade tip
             .createTip(tip, tipSectionLength);
 
@@ -306,11 +314,12 @@ export class SwordGenerator extends Generator {
             let point = new THREE.Vector2();
             if (i == spacing.length - 1) {
                 point.y = 1.0;
+                point.x = 0.0;
+            } else {
+                totalSpaceing += spacing[i];
+                point.y = totalSpaceing;
+                point.x = utils.getRandomFloat(this._prng, -widthTolerance, widthTolerance);
             }
-            totalSpaceing += spacing[i];
-            point.y = totalSpaceing;
-            // Chose horizontal position of point
-            point.x = utils.getRandomFloat(this._prng, -widthTolerance/2, widthTolerance);
             splinePoints.push(point);
         }
 

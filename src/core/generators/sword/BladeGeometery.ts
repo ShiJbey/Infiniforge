@@ -156,6 +156,9 @@ export class BladeGeometry extends GeometryData{
             return this;
         }
 
+        // standard tip
+        this.extrude(length);
+        this.scale(0);
         return this;
     }
 
