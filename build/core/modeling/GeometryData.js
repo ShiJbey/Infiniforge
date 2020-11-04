@@ -74,6 +74,29 @@ class GeometryData {
         this._activeCrossSection = undefined;
         return this;
     }
+    fill() {
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to translate.");
+        }
+        let csShape = new THREE.Shape(this._activeCrossSection.getVerticesLocal());
+        let geometry = new THREE.ShapeGeometry(csShape);
+        let verts = this._activeCrossSection.getVertices();
+        let vertIdxs = _.range(this._vertices.length - verts.length, this._vertices.length);
+        let newCrossSection = new CrossSection_1.CrossSection();
+        for (let i = 0; i < verts.length; i++) {
+            let v = verts[i].clone();
+            newCrossSection.addVertex(v);
+            this._vertices.push(v);
+            this._colors.push(this._colors[vertIdxs[i]].clone());
+        }
+        newCrossSection.copyTransform(this._activeCrossSection);
+        this._activeCrossSection = newCrossSection;
+        for (let i = 0; i < geometry.faces.length; i++) {
+            let face = geometry.faces[i];
+            this._triangles.push(new THREE.Vector3(vertIdxs[face.a], vertIdxs[face.b], vertIdxs[face.c]));
+        }
+        return this;
+    }
     translate(distance) {
         if (this._activeCrossSection == undefined) {
             throw new Error("GeometryData does not have an active cross section to translate.");

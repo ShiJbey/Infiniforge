@@ -115,6 +115,48 @@ export class GeometryData {
         return this;
     }
 
+    fill(): this {
+        // Check that there is a cross section to extrude
+        if (this._activeCrossSection == undefined) {
+            throw new Error("GeometryData does not have an active cross section to translate.");
+        }
+
+        // Construct a THREE.ShapeGeometry from the
+        // points of the active cross-section
+        let csShape = new THREE.Shape(this._activeCrossSection.getVerticesLocal());
+        let geometry = new THREE.ShapeGeometry(csShape);
+
+        // Create copies of vertices for sharp edges
+        let verts = this._activeCrossSection.getVertices();
+
+        let vertIdxs: number[] = _.range(
+            this._vertices.length - verts.length,
+            this._vertices.length);
+
+        let newCrossSection = new CrossSection();
+
+        // Push vertices into the _vertices array prior to the
+        // current cross section
+        for (let i = 0; i < verts.length; i++) {
+            let v = verts[i].clone();
+            newCrossSection.addVertex(v);
+            this._vertices.push(v);
+            this._colors.push(this._colors[vertIdxs[i]].clone());
+        }
+
+        newCrossSection.copyTransform(this._activeCrossSection);
+        this._activeCrossSection = newCrossSection;
+
+
+        // Copy the triangles data to this GeometryData object
+        for (let i = 0; i < geometry.faces.length; i++) {
+            let face = geometry.faces[i];
+            this._triangles.push(new THREE.Vector3(vertIdxs[face.a], vertIdxs[face.b], vertIdxs[face.c]));
+        }
+
+        return this
+    }
+
     translate(distance: THREE.Vector3 | number): this {
 
         // Check that there is a cross section to extrude

@@ -14,7 +14,7 @@ export declare class CrossSection {
     getVertices(): THREE.Vector3[];
     getNorm(): THREE.Vector3;
     getTranslation(): THREE.Vector3;
-    getVerticesLocal(): THREE.Vector3[];
+    getVerticesLocal(): THREE.Vector2[];
     setVertexLocal(index: number, pos: THREE.Vector3): void;
     scaleVertex(index: number, scaleFactor: number): void;
     copyTransform(crossSection: CrossSection): void;
@@ -25,5 +25,4 @@ export declare class CrossSection {
     rotate(quaternion: THREE.Quaternion): void;
     scale(scaleFactor: THREE.Vector2 | number): void;
     translate(direction: THREE.Vector3): void;
-    fill(): void;
 }

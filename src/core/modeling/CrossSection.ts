@@ -72,7 +72,7 @@ export class CrossSection {
     getVerticesLocal() {
         var M = new THREE.Matrix4().compose(this._translation, this._rotation, this._scale);
         var M_inverse = new THREE.Matrix4().getInverse(M);
-        var verts: THREE.Vector3[] = [];
+        var verts: THREE.Vector2[] = [];
 
         for (let i = 0; i < this._vertices.length; i++) {
 
@@ -83,7 +83,7 @@ export class CrossSection {
             let localVert = objectVert.clone()
                 .applyMatrix4(M_inverse);
 
-            verts.push(localVert)
+            verts.push(new THREE.Vector2(localVert.x, localVert.z));
         }
 
 
@@ -168,7 +168,7 @@ export class CrossSection {
         // Loop though the shape vertices and add
         // them to the new cross section
         for (let i = 0; i < geometry.vertices.length; i++) {
-            crossSection._vertices.push(geometry.vertices[i]);
+            crossSection._vertices.push(new THREE.Vector3(geometry.vertices[i].x, 0, geometry.vertices[i].y));
         }
 
         return crossSection;
@@ -255,12 +255,5 @@ export class CrossSection {
         }
 
         this._translation.add(direction);
-    }
-
-    /**
-     * Fills the Cross section, making it a solid shape
-     */
-    public fill() {
-
     }
 }

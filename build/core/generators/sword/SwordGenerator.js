@@ -154,27 +154,41 @@ class SwordGenerator extends Generator_1.Generator {
         sword.add(guardGeometryData);
     }
     buildHandle(sword, template, params) {
-        var _a;
-        const DEFAULT_PARAMS = {
-            color: "#cc5100",
-            radius: 0.015
-        };
-        params = Object.assign(DEFAULT_PARAMS, params);
-        var handleGeometry = new THREE.CylinderGeometry(params.radius, (_a = params.radius) !== null && _a !== void 0 ? _a : 0 * 0.75, template.handleLength, 8);
-        handleGeometry.translate(0, -template.handleLength / 2, 0);
-        var handleGeometryData = new GeometryData_1.GeometryData().fromGeometry(handleGeometry, new THREE.Color(params.color));
+        var _a, _b;
+        let color = (_a = params === null || params === void 0 ? void 0 : params.color) !== null && _a !== void 0 ? _a : "#cc5100";
+        let radius = (_b = params === null || params === void 0 ? void 0 : params.radius) !== null && _b !== void 0 ? _b : 0.015;
+        let handlesCsShape = new THREE.Shape()
+            .setFromPoints(new THREE.EllipseCurve(0, 0, radius, radius * 2, 0, 2 * Math.PI, false, 0).getPoints(8));
+        var handleGeometryData = new GeometryData_1.GeometryData()
+            .setCrossSection(CrossSection_1.CrossSection.createFromShape(handlesCsShape), new THREE.Color(color))
+            .translate(-template.handleLength);
+        if (template.name !== "katana") {
+            handleGeometryData.scale(1.0 / 2.0);
+        }
+        handleGeometryData
+            .extrude(new THREE.Vector3(0, template.handleLength, 0));
+        if (template.name !== "katana") {
+            handleGeometryData.scale(2);
+        }
         sword.add(handleGeometryData);
     }
     buildPommel(sword, template, params) {
-        const DEFAULT_PARAMS = {
-            color: "#e5cc59",
-            pommelBladeWidthRatio: 0.50,
-        };
-        params = Object.assign(DEFAULT_PARAMS, params);
-        var pommelRadius = 0.025;
+        var _a, _b;
+        let color = (_a = params === null || params === void 0 ? void 0 : params.color) !== null && _a !== void 0 ? _a : "#e5cc59";
+        let pommelBladeWidthRatio = (_b = params === null || params === void 0 ? void 0 : params.pommelBladeWidthRatio) !== null && _b !== void 0 ? _b : 0.50;
+        var pommelRadius = 0.03;
         var geometry = new THREE.SphereGeometry(pommelRadius, 5, 5);
         geometry.translate(0, -template.handleLength, 0);
-        var pommelGeometryData = new GeometryData_1.GeometryData().fromGeometry(geometry, new THREE.Color(params.color));
+        var pommelGeometryData = new GeometryData_1.GeometryData().fromGeometry(geometry, new THREE.Color(color));
+        if (template.name === "katana") {
+            let pommelCsShape = new THREE.Shape()
+                .setFromPoints(new THREE.EllipseCurve(0, 0, 0.016, 0.016 * 2, 0, 2 * Math.PI, false, 0).getPoints(8));
+            var pommelGeometryData = new GeometryData_1.GeometryData()
+                .setCrossSection(CrossSection_1.CrossSection.createFromShape(pommelCsShape), new THREE.Color(color))
+                .translate(-template.handleLength)
+                .fill()
+                .extrude(new THREE.Vector3(0, 0.03, 0));
+        }
         sword.add(pommelGeometryData);
     }
     CreateEdgeSpline(nPoints, widthTolerance, evenSpacing = true) {

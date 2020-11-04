@@ -37,7 +37,7 @@ class CrossSection {
             let objectVert = this._vertices[i];
             let localVert = objectVert.clone()
                 .applyMatrix4(M_inverse);
-            verts.push(localVert);
+            verts.push(new THREE.Vector2(localVert.x, localVert.z));
         }
         return verts;
     }
@@ -83,7 +83,7 @@ class CrossSection {
         let crossSection = new CrossSection();
         let geometry = new THREE.ShapeGeometry(shape);
         for (let i = 0; i < geometry.vertices.length; i++) {
-            crossSection._vertices.push(geometry.vertices[i]);
+            crossSection._vertices.push(new THREE.Vector3(geometry.vertices[i].x, 0, geometry.vertices[i].y));
         }
         return crossSection;
     }
@@ -125,8 +125,6 @@ class CrossSection {
             this._vertices[i].add(direction);
         }
         this._translation.add(direction);
-    }
-    fill() {
     }
 }
 exports.CrossSection = CrossSection;

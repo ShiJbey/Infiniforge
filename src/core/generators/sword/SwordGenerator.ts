@@ -233,24 +233,35 @@ export class SwordGenerator extends Generator {
      */
     private buildHandle(sword: GeometryData, template: SwordTemplate, params?: HandleParams) {
 
-        const DEFAULT_PARAMS: HandleParams = {
-            color: "#cc5100",
-            radius: 0.015
-        }
+        let color = params?.color ?? "#cc5100";
+        let radius = params?.radius ?? 0.015;
 
-        params = Object.assign(DEFAULT_PARAMS, params);
+        let handlesCsShape = new THREE.Shape()
+            .setFromPoints(new THREE.EllipseCurve(
+                0, 0,
+                radius, radius * 2,
+                0,  2 * Math.PI,  // aStartAngle, aEndAngle
+                false,            // aClockwise
+                0                // aRotation
+            ).getPoints(8));
 
-        var handleGeometry = new THREE.CylinderGeometry(
-            params.radius,
-            params.radius ?? 0 * 0.75,
-            template.handleLength,
-            8);
+        var handleGeometryData = new GeometryData()
+            .setCrossSection(CrossSection.createFromShape(handlesCsShape), new THREE.Color(color))
+            .translate(-template.handleLength)
 
-        // Moves translates the handle to fall below the guard and blade
-        handleGeometry.translate(0,-template.handleLength / 2, 0);
+            if (template.name !== "katana") {
+               handleGeometryData.scale(1.0/2.0);
+            }
 
-        // Convert the box to a buffer geometry
-        var handleGeometryData = new GeometryData().fromGeometry(handleGeometry, new THREE.Color(params.color));
+            handleGeometryData
+                .extrude(new THREE.Vector3(0,template.handleLength,0));
+
+            if (template.name !== "katana") {
+               handleGeometryData.scale(2);
+            }
+
+
+
 
         sword.add(handleGeometryData);
     }
@@ -263,21 +274,35 @@ export class SwordGenerator extends Generator {
      */
     private buildPommel(sword: GeometryData, template: SwordTemplate, params?: PommelParams) {
 
-        const DEFAULT_PARAMS: PommelParams = {
-            color: "#e5cc59",
-            pommelBladeWidthRatio: 0.50,
-        }
+        let color = params?.color ?? "#e5cc59";
+        let pommelBladeWidthRatio = params?.pommelBladeWidthRatio ?? 0.50;
+        var pommelRadius = 0.03;
 
-        params = Object.assign(DEFAULT_PARAMS, params);
 
-        var pommelRadius = 0.025;
         var geometry = new THREE.SphereGeometry(pommelRadius, 5, 5);
 
         // Translates the pommel to fall below the handle
         geometry.translate(0, -template.handleLength, 0);
 
         // Convert the box to a buffer geometry
-        var pommelGeometryData = new GeometryData().fromGeometry(geometry, new THREE.Color(params.color));
+        var pommelGeometryData = new GeometryData().fromGeometry(geometry, new THREE.Color(color));
+
+        if (template.name === "katana") {
+            let pommelCsShape = new THREE.Shape()
+                .setFromPoints(new THREE.EllipseCurve(
+                    0, 0,
+                    0.016, 0.016 * 2,
+                    0,  2 * Math.PI,  // aStartAngle, aEndAngle
+	                false,            // aClockwise
+	                0                 // aRotation
+                ).getPoints(8));
+
+            var pommelGeometryData = new GeometryData()
+                .setCrossSection(CrossSection.createFromShape(pommelCsShape), new THREE.Color(color))
+                .translate(-template.handleLength)
+                .fill()
+                .extrude(new THREE.Vector3(0,0.03,0));
+        }
 
         // Add the pommel's geometry data to the sword
         sword.add(pommelGeometryData);
