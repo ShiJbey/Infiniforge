@@ -23,8 +23,8 @@
         </header>
 
 
-        <div id="container" class="w3-border w3-card canvas-container" >
-            <canvas id="threejs-canvas"></canvas>
+        <div id="container" class="w3-border w3-card canvas-container">
+            <canvas id="threejs-canvas" tabindex="1"></canvas>
             <a href="javascript: void(0)" download="sword.gltf">
                 <button  id="download-button" class="w3-button w3-grey" disabled>
                     <strong>Download glTF</strong>
@@ -34,11 +34,12 @@
     </div>
 
     <script type="module">
-        import * as dat from '/node_modules/dat.gui.module.js';
-        import * as THREE from '/node_modules/three.module.js';
-        import { GLTFLoader } from '/js/GLTFLoader.js';
-        import { OrbitControls } from '/js/OrbitControls.js';
-        import { getRandomInt, randomSeed } from '/js/utils.js';
+        import * as dat from '/node_modules/three/examples/jsm/libs/dat.gui.module.js';
+        import * as THREE from '/node_modules/three/build/three.module.js';
+        import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+        import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
+        import { getRandomInt, randomSeed } from './js/utils.js';
+
         let ThreeJSCanvas;
         let scene, camera, renderer, controls;
         let swordModel, material, importedMaterial;
@@ -138,13 +139,41 @@
 
             var light = new THREE.AmbientLight( 0x222222 );
             scene.add( light );
+
+            window.addEventListener( 'resize', onWindowResize, false );
+            ThreeJSCanvas.addEventListener('keydown', onKeyDown, false);
+        }
+
+        function onKeyDown(e) {
+
+            if (e.key === "ArrowUp" && swordModel) {
+                swordModel.position.y += 0.015;
+            }
+
+            if (e.key === "ArrowDown" && swordModel) {
+                swordModel.position.y -= 0.015;
+            }
+        }
+
+        function onWindowResize() {
+
+            ThreeJSCanvas.style.width='100%';
+            ThreeJSCanvas.style.height='100%';
+            ThreeJSCanvas.width  = ThreeJSCanvas.offsetWidth;
+            ThreeJSCanvas.height = ThreeJSCanvas.offsetHeight;
+
+            camera.aspect = ThreeJSCanvas.width / ThreeJSCanvas.height;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( ThreeJSCanvas.width, ThreeJSCanvas.height );
+
         }
 
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
             render();
-        };
+        }
 
         function render() {
             renderer.render(scene, camera);

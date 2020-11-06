@@ -26,11 +26,9 @@ function configureStaticAssets(app) {
     app.use('/style', express.static(path.join(__dirname, 'www', 'style')));
     app.use('/build', express.static(path.join(__dirname, '..', 'build')));
     app.use('/docs', express.static(path.join(__dirname, '..', 'docs')));
-    app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'build')));
-    app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'jsm','exporters')));
-    app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'jsm','loaders')));
-    app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'jsm','libs')));
-    app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules', 'jquery', 'dist')));
+    app.use('/node_modules/three/build', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'build')));
+    app.use('/node_modules/three/examples/jsm', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'jsm')));
+    app.use('/node_modules/three/examples/js', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'js')));
 }
 
 /**
