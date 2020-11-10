@@ -111,6 +111,8 @@ async function startServer(options) {
         "verbose": VERBOSE
     });
 
+    swordGenerator.setVerbose(VERBOSE);
+
     // Starts the base endpoint
     let server = app.listen(PORT, HOST, (err) => {
         if (err) { throw err }

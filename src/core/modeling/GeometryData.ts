@@ -267,14 +267,14 @@ export class GeometryData {
         return this;
     }
 
-    toGlTF(): Promise<any> {
+    toGlTF(verbose=false): Promise<any> {
         let gltfExporter = new GLTFExporter();
 
         // Parse the swords mesh and create a new promise to access the result
         return new Promise((resolve, reject) => {
             gltfExporter.parse(this.toMesh(), (gltf: any) => {
                 resolve(gltf);
-            }, {});
+            }, {verbose: verbose});
         });
     }
 
