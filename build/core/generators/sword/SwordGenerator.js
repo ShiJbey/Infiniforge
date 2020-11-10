@@ -37,7 +37,7 @@ class SwordGenerator extends Generator_1.Generator {
                 return sword.toMesh();
             }
             else {
-                return yield sword.toGlTF();
+                return yield sword.toGlTF(this._verbose);
             }
         });
     }
@@ -90,7 +90,7 @@ class SwordGenerator extends Generator_1.Generator {
         return BladeGeometery_1.TIP_GEOMETRIES[randomIndex];
     }
     buildBlade(sword, template, params) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
         let color = (_a = params === null || params === void 0 ? void 0 : params.color) !== null && _a !== void 0 ? _a : "rgb(128, 128, 128)";
         let tip = (params === null || params === void 0 ? void 0 : params.tip) ? ((params.tip == "random") ? this.randomTip() : params.tip) : "standard";
         let edgeScaleTolerance = (_b = params === null || params === void 0 ? void 0 : params.edgeScaleTolerance) !== null && _b !== void 0 ? _b : 0.1;
@@ -132,7 +132,7 @@ class SwordGenerator extends Generator_1.Generator {
             var edgeSpline = this.CreateEdgeSpline(nControlPoints, edgeScaleTolerance, evenSpacedBaseCPs);
         }
         let bladeGeometry = new BladeGeometery_1.BladeGeometry(bladeLength, template.extrusionCurve)
-            .setBladeCrossSection(new CrossSection_1.CrossSection(crossSection), crossSection.edgeVertices, new THREE.Color(color))
+            .setBladeCrossSection(new CrossSection_1.CrossSection(crossSection), crossSection.edgeVertices, new THREE.Color(color), (_s = crossSection.normEdgeVertices) !== null && _s !== void 0 ? _s : [], true)
             .scale(new THREE.Vector2(template.bladeThickness / crossSection.thickness, template.baseBladeWidth / crossSection.width))
             .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength, 0.2)
             .extrudeSection(new THREE.SplineCurve([

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BladeGeometry = exports.TIP_GEOMETRIES = void 0;
 const THREE = require("three");
 const GeometryData_1 = require("../../modeling/GeometryData");
+const CrossSection_1 = require("../../modeling/CrossSection");
 exports.TIP_GEOMETRIES = ["standard", "rounded", "square", "clip"];
 class BladeGeometry extends GeometryData_1.GeometryData {
     constructor(length, extrusionCurve) {
@@ -108,9 +109,36 @@ class BladeGeometry extends GeometryData_1.GeometryData {
         }
         return this;
     }
-    setBladeCrossSection(crossSection, edgeVerts, color) {
-        super.setCrossSection(crossSection, color);
-        this._bladeEdgeVertices = edgeVerts;
+    setBladeCrossSection(crossSection, edgeVerts, color, normEdges, duplicate_verts = false) {
+        if (!duplicate_verts) {
+            super.setCrossSection(crossSection, color);
+            this._bladeEdgeVertices = edgeVerts;
+            return this;
+        }
+        let offset = 0;
+        let dupedVerts = [];
+        let newEdgeVerts = [];
+        for (let i = 0; i < crossSection.getVertices().length; i++) {
+            if (edgeVerts.includes(i)) {
+                newEdgeVerts.push(dupedVerts.length);
+                newEdgeVerts.push(dupedVerts.length + 1);
+                dupedVerts.push(crossSection.getVertices()[i].clone());
+            }
+            else if (normEdges === null || normEdges === void 0 ? void 0 : normEdges.includes(i)) {
+                dupedVerts.push(crossSection.getVertices()[i].clone());
+            }
+            dupedVerts.push(crossSection.getVertices()[i].clone());
+        }
+        let verts = [];
+        for (let i = 0; i < dupedVerts.length; i++) {
+            verts.push(dupedVerts[i].x);
+            verts.push(dupedVerts[i].z);
+        }
+        let modifiedCrossSection = new CrossSection_1.CrossSection({
+            vertices: verts
+        });
+        super.setCrossSection(modifiedCrossSection);
+        this._bladeEdgeVertices = newEdgeVerts;
         return this;
     }
 }

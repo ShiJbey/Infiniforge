@@ -94,6 +94,7 @@ export interface GLTFExporterOptions {
     forcePowerOfTwoTextures?: boolean;
     includeCustomExtensions?: boolean;
     maxTextureSize?: number;
+    verbose?: boolean;
 }
 
 export interface GLTFJSON {
@@ -189,7 +190,8 @@ export class GLTFExporter {
             maxTextureSize: Infinity,
             animations: [],
             forcePowerOfTwoTextures: false,
-            includeCustomExtensions: false
+            includeCustomExtensions: false,
+            verbose: false
         };
 
         options = Object.assign( {}, DEFAULT_OPTIONS, options );
@@ -485,9 +487,9 @@ export class GLTFExporter {
                 }
 
             } catch ( error ) {
-
-                console.warn( 'THREE.GLTFExporter: userData of \'' + object.name + '\' ' +
-                    'won\'t be serialized because of JSON.stringify error - ' + error.message );
+                if (options.verbose)
+                    console.warn( 'THREE.GLTFExporter: userData of \'' + object.name + '\' ' +
+                        'won\'t be serialized because of JSON.stringify error - ' + error.message );
 
             }
 
@@ -759,8 +761,8 @@ export class GLTFExporter {
             }
 
             if ( material instanceof ShaderMaterial ) {
-
-                console.warn( 'GLTFExporter: THREE.ShaderMaterial not supported.' );
+                if (options.verbose)
+                    console.warn( 'GLTFExporter: THREE.ShaderMaterial not supported.' );
                 return null;
 
             }
@@ -785,8 +787,8 @@ export class GLTFExporter {
                 extensionsUsed[ 'KHR_materials_unlit' ] = true;
 
             } else if ( !(material instanceof MeshStandardMaterial) ) {
-
-                console.warn( 'GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results.' );
+                if (options.verbose)
+                    console.warn( 'GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results.' );
 
             }
 
@@ -877,8 +879,8 @@ export class GLTFExporter {
 
 
             if ( !(geometry instanceof BufferGeometry ) ) {
-
-                console.warn( 'GLTFExporter: Exporting THREE.Geometry will increase file size. Use BufferGeometry instead.' );
+                if (options.verbose)
+                    console.warn( 'GLTFExporter: Exporting THREE.Geometry will increase file size. Use BufferGeometry instead.' );
                 geometry = new BufferGeometry().setFromObject( mesh );
 
             }
@@ -904,7 +906,8 @@ export class GLTFExporter {
 
             if ( originalNormal !== undefined && ! isNormalizedNormalAttribute( originalNormal ) ) {
 
-                console.warn( 'THREE.GLTFExporter: Creating normalized normal attribute from the non-normalized one.' );
+                if (options.verbose)
+                    console.warn( 'THREE.GLTFExporter: Creating normalized normal attribute from the non-normalized one.' );
 
                 geometry.setAttribute( 'normal', createNormalizedNormalAttribute( originalNormal ) );
 
@@ -946,7 +949,8 @@ export class GLTFExporter {
                     ! ( array instanceof Uint16Array ) &&
                     ! ( array instanceof Uint8Array ) ) {
 
-                    console.warn( 'GLTFExporter: Attribute "skinIndex" converted to type UNSIGNED_SHORT.' );
+                    if (options.verbose)
+                        console.warn( 'GLTFExporter: Attribute "skinIndex" converted to type UNSIGNED_SHORT.' );
                     modifiedAttribute = new BufferAttribute( new Uint16Array( array ), attribute.itemSize, attribute.normalized );
 
                 }
@@ -1001,8 +1005,8 @@ export class GLTFExporter {
                         if ( attributeName !== 'position' && attributeName !== 'normal' ) {
 
                             if ( ! warned ) {
-
-                                console.warn( 'GLTFExporter: Only POSITION and NORMAL morph are supported.' );
+                                if (options.verbose)
+                                    console.warn( 'GLTFExporter: Only POSITION and NORMAL morph are supported.' );
                                 warned = true;
 
                             }
