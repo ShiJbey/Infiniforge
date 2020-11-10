@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GeometryData } from '../../modeling/GeometryData';
 import { BladeCrossSection } from './BladeCrossSection';
 import { CrossSection } from '../../modeling/CrossSection';
+import * as _ from 'lodash';
 
 export const TIP_GEOMETRIES = ["standard", "rounded", "square", "clip"];
 
@@ -186,9 +187,46 @@ export class BladeGeometry extends GeometryData{
         return this;
     }
 
-    setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color): this {
-        super.setCrossSection(crossSection, color);
-        this._bladeEdgeVertices = edgeVerts;
+    setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color, normEdges?: number[], duplicate_verts=false): this {
+        if (!duplicate_verts) {
+            super.setCrossSection(crossSection, color);
+            this._bladeEdgeVertices = edgeVerts;
+            return this;
+        }
+
+        // Maintain an offset for adjusting edgeVerts
+        let offset = 0;
+
+        // Array of duplicated vertices
+        let dupedVerts: THREE.Vector3[] = [];
+        let newEdgeVerts: number[] = [];
+
+        // Loop through vers in original cross-section
+        for (let i = 0; i < crossSection.getVertices().length; i++) {
+            if (edgeVerts.includes(i)) {
+                newEdgeVerts.push(dupedVerts.length);
+                newEdgeVerts.push(dupedVerts.length + 1);
+                dupedVerts.push(crossSection.getVertices()[i].clone());
+            }
+            else if (normEdges?.includes(i)) {
+                dupedVerts.push(crossSection.getVertices()[i].clone());
+            }
+            dupedVerts.push(crossSection.getVertices()[i].clone());
+        }
+
+        // Convert the duplicated vertices to an array of numbers
+        let verts: number[] = []
+        for (let i = 0; i < dupedVerts.length; i++) {
+            verts.push(dupedVerts[i].x);
+            verts.push(dupedVerts[i].z);
+        }
+
+        let modifiedCrossSection = new CrossSection({
+            vertices: verts
+        });
+
+        super.setCrossSection(modifiedCrossSection);
+        this._bladeEdgeVertices = newEdgeVerts;
         return this;
     }
 }

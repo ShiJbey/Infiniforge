@@ -6,6 +6,7 @@ export interface BladeCrossSection {
     name: string
     vertices: number[]      // (x,z) coordinates for vertices
     edgeVertices: number[]  // Indices of vertices are on the cutting edges
+    normEdgeVertices?: number[] // Indices of vertices that should be duplicated for proper normals
     width: number,          // Distance between the vertices on cutting edges
     thickness: number       // Distance between vertices on the axis orthogonal to width
 }
@@ -21,6 +22,9 @@ export const DIAMOND: BladeCrossSection = {
     "edgeVertices": [
         0,
         2
+    ],
+    "normEdgeVertices": [
+        1,3
     ],
     "width": 1.0,
     "thickness": 0.3
@@ -46,6 +50,9 @@ export const HALLOW_GROUND: BladeCrossSection = {
         0,
         6
     ],
+    "normEdgeVertices": [
+        3,9
+    ],
     "width": 1.0,
     "thickness": 0.3
 }
@@ -63,6 +70,8 @@ export const HEXAGONAL: BladeCrossSection = {
         "edgeVertices": [
             0,
             3
+        ],"normEdgeVertices": [
+            1,2,4,5
         ],
         "width": 1,
         "thickness": 0.2
@@ -79,6 +88,9 @@ export const THICKENED_DIAMOND: BladeCrossSection = {
     "edgeVertices": [
         0,
         2
+    ],
+    "normEdgeVertices": [
+        1,3
     ],
     "width": 1.0,
     "thickness": 1.3
@@ -136,10 +148,12 @@ export const FULLER: BladeCrossSection = {
         -0.10, 0.1,
         -0.04, 0.4
     ],
-
     "edgeVertices": [
         0,
         8
+    ],
+    "normEdgeVertices": [
+        3,4,5,11,12,13
     ],
     "width": 1.0,
     "thickness": 0.3
@@ -173,6 +187,8 @@ export const DOUBLE_FULLER: BladeCrossSection = {
     "edgeVertices": [
         0,
         9
+    ],"normEdgeVertices": [
+        2,3,4,5,6,7,11,12,13,15,16,17
     ],
     "width": 1.0,
     "thickness": 0.3
@@ -197,6 +213,9 @@ export const BROAD_FULLER: BladeCrossSection = {
         0,
         4
     ],
+    "normEdgeVertices": [
+        1,2,3,5,6,7
+    ],
     "width": 1.0,
     "thickness": 0.04
 }
@@ -212,6 +231,9 @@ export const SINGLE_EDGE: BladeCrossSection = {
     ],
     "edgeVertices": [
         0
+    ],
+    "normEdgeVertices": [
+        2,3
     ],
     "width": 1,
     "thickness": 0.02
