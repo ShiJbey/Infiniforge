@@ -13,6 +13,9 @@ exports.DIAMOND = {
         0,
         2
     ],
+    "normEdgeVertices": [
+        1, 3
+    ],
     "width": 1.0,
     "thickness": 0.3
 };
@@ -36,6 +39,9 @@ exports.HALLOW_GROUND = {
         0,
         6
     ],
+    "normEdgeVertices": [
+        3, 9
+    ],
     "width": 1.0,
     "thickness": 0.3
 };
@@ -52,6 +58,8 @@ exports.HEXAGONAL = {
     "edgeVertices": [
         0,
         3
+    ], "normEdgeVertices": [
+        1, 2, 4, 5
     ],
     "width": 1,
     "thickness": 0.2
@@ -67,6 +75,9 @@ exports.THICKENED_DIAMOND = {
     "edgeVertices": [
         0,
         2
+    ],
+    "normEdgeVertices": [
+        1, 3
     ],
     "width": 1.0,
     "thickness": 1.3
@@ -120,6 +131,9 @@ exports.FULLER = {
         0,
         8
     ],
+    "normEdgeVertices": [
+        3, 4, 5, 11, 12, 13
+    ],
     "width": 1.0,
     "thickness": 0.3
 };
@@ -148,6 +162,8 @@ exports.DOUBLE_FULLER = {
     "edgeVertices": [
         0,
         9
+    ], "normEdgeVertices": [
+        2, 3, 4, 5, 6, 7, 11, 12, 13, 15, 16, 17
     ],
     "width": 1.0,
     "thickness": 0.3
@@ -168,6 +184,9 @@ exports.BROAD_FULLER = {
         0,
         4
     ],
+    "normEdgeVertices": [
+        1, 2, 3, 5, 6, 7
+    ],
     "width": 1.0,
     "thickness": 0.04
 };
@@ -182,6 +201,9 @@ exports.SINGLE_EDGE = {
     ],
     "edgeVertices": [
         0
+    ],
+    "normEdgeVertices": [
+        2, 3
     ],
     "width": 1,
     "thickness": 0.02

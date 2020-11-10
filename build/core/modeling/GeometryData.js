@@ -168,12 +168,12 @@ class GeometryData {
         }
         return this;
     }
-    toGlTF() {
+    toGlTF(verbose = false) {
         let gltfExporter = new GLTFExporter_1.GLTFExporter();
         return new Promise((resolve, reject) => {
             gltfExporter.parse(this.toMesh(), (gltf) => {
                 resolve(gltf);
-            }, {});
+            }, { verbose: verbose });
         });
     }
     toMesh() {

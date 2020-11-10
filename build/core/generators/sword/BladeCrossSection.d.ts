@@ -2,6 +2,7 @@ export interface BladeCrossSection {
     name: string;
     vertices: number[];
     edgeVertices: number[];
+    normEdgeVertices?: number[];
     width: number;
     thickness: number;
 }

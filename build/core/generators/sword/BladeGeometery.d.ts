@@ -15,5 +15,5 @@ export declare class BladeGeometry extends GeometryData {
     extrudeSection(edgeCurve: THREE.Curve<THREE.Vector2>, nSubdivisions: number, length: number, taper?: number | THREE.Vector2): this;
     createTip(style: string, length: number, nSubdivisions?: number): this;
     modifyEdgeVerts(samplePoint: number): this;
-    setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color): this;
+    setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color, normEdges?: number[], duplicate_verts?: boolean): this;
 }

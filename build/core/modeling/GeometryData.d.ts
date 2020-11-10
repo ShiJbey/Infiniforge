@@ -20,6 +20,6 @@ export declare class GeometryData {
     scale(scaleFactor: THREE.Vector2 | number): this;
     rotate(quaternion: THREE.Quaternion): this;
     extrude(direction: THREE.Vector3 | number): this;
-    toGlTF(): Promise<any>;
+    toGlTF(verbose?: boolean): Promise<any>;
     toMesh(): THREE.Mesh;
 }
