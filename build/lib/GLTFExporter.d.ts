@@ -10,6 +10,7 @@ export interface GLTFExporterOptions {
     forcePowerOfTwoTextures?: boolean;
     includeCustomExtensions?: boolean;
     maxTextureSize?: number;
+    verbose?: boolean;
 }
 export interface GLTFJSON {
     asset: {

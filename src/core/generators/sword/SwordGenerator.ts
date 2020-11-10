@@ -42,7 +42,7 @@ export class SwordGenerator extends Generator {
         if (params.output === "mesh") {
             return sword.toMesh();
         } else {
-            return await sword.toGlTF();
+            return await sword.toGlTF(this._verbose);
         }
     }
 
@@ -176,7 +176,9 @@ export class SwordGenerator extends Generator {
             .setBladeCrossSection(
                 new CrossSection(crossSection),
                 crossSection.edgeVertices,
-                new THREE.Color(color))
+                new THREE.Color(color),
+                crossSection.normEdgeVertices ?? [],
+                true)
             // Scale the cross section to fit the template
             .scale(
                 new THREE.Vector2(
