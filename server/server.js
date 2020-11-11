@@ -2,6 +2,7 @@
 
 const colors = require('colors');
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
 const serveStatic = require('serve-static');
 const process = require('process');
@@ -41,6 +42,9 @@ function configureRoutes(app, options) {
 
     const VERBOSE_OUTPUT = (options && options.verbose) ? true : false;
 
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
+
     ////////////////////////////////////////////////////////
     //                     HELP PAGES                     //
     ////////////////////////////////////////////////////////
@@ -75,6 +79,31 @@ function configureRoutes(app, options) {
     app.post('/api/forge/sword', (req, res) => {
 
         let options = req.body
+        // Always export gltf JSON from REST API
+        options.output = "gltf"
+
+        swordGenerator.generate(options)
+            .then((result) => {
+                res.status(200).json(result);
+
+                if (VERBOSE_OUTPUT) {
+                    console.log(`${new Date().toISOString()}> Sword Request Complete`);
+                }
+            })
+            .catch((err) => {
+                res.status(400).json({ "error": err.message });
+
+                if (VERBOSE_OUTPUT) {
+                    console.log(`${new Date().toISOString()}> Error:: ${err.message}`);
+                }
+            });
+    });
+
+    // Request for a sword mesh
+    app.get('/api/forge/sword/:options?', (req, res) => {
+
+
+        let options = (req.params.options) ? JSON.parse(req.params.options) : {};
         // Always export gltf JSON from REST API
         options.output = "gltf"
 
