@@ -225,7 +225,7 @@ export class BladeGeometry extends GeometryData{
             vertices: verts
         });
 
-        super.setCrossSection(modifiedCrossSection);
+        super.setCrossSection(modifiedCrossSection, color);
         this._bladeEdgeVertices = newEdgeVerts;
         return this;
     }

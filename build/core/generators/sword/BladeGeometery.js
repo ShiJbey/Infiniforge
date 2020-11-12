@@ -137,7 +137,7 @@ class BladeGeometry extends GeometryData_1.GeometryData {
         let modifiedCrossSection = new CrossSection_1.CrossSection({
             vertices: verts
         });
-        super.setCrossSection(modifiedCrossSection);
+        super.setCrossSection(modifiedCrossSection, color);
         this._bladeEdgeVertices = newEdgeVerts;
         return this;
     }
