@@ -1,10 +1,11 @@
 {
   "name": "infiniforge",
   "private": false,
-  "version": "2.0.1",
-  "description": "Typescript library for procedurally generating is 3D fantasy swords",
+  "version": "2.0.2",
+  "description": "Typescript/Javascript library for procedurally generating 3D fantasy swords",
   "main": "./build/cjs/index.js",
   "module": "./build/esm/index.js",
+  "readme": "README.md",
   "scripts": {
     "start": "node server/server.js",
     "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json",

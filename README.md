@@ -2,7 +2,7 @@
 
 ![screenshot](screenshot.png)
 
-Typescript library for procedurally generating 3D fantasy swords.
+Typescript/Javascript library for procedurally generating 3D fantasy swords.
 
 This project was originally made as part of the August 2016 Reddit procedural generation challenge
 Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
