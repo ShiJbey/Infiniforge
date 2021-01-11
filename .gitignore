@@ -5,6 +5,7 @@ node_modules/
 build/
 docs/
 built/*
+build/
 tests/cases/rwc/*
 tests/cases/test262/*
 tests/cases/perf/*
