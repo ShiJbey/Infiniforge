@@ -10,26 +10,18 @@ const favicon = require('serve-favicon');
 const commander = require('commander');
 const infiniforge = require('../build/cjs/index');
 
-// Define Generators
-const swordGenerator = new infiniforge.SwordGenerator();
-
 /**
  * Configure Express app to serve static files like a http server
  *
  * @param {express.Application} app
  */
 function configureStaticAssets(app) {
-    app.use(serveStatic(path.join(__dirname, 'www', 'views'), { 'index' : ['help.html']}));
+    app.use(serveStatic(path.join(__dirname, 'www', 'views'), { 'index' : ['index.html']}));
     app.use(favicon(path.join(__dirname, 'www','anvil.png')));
     app.use('/', express.static(path.join(__dirname, 'www')));
     app.use('/', express.static(path.join(__dirname, 'www', 'views')));
     app.use('/js', express.static(path.join(__dirname, 'www', 'js')));
     app.use('/style', express.static(path.join(__dirname, 'www', 'style')));
-    app.use('/build', express.static(path.join(__dirname, '..', 'build')));
-    app.use('/docs', express.static(path.join(__dirname, '..', 'docs')));
-    app.use('/node_modules/three/build', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'build')));
-    app.use('/node_modules/three/examples/jsm', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'jsm')));
-    app.use('/node_modules/three/examples/js', express.static(path.join(__dirname, '..', 'node_modules', 'three', 'examples', 'js')));
 }
 
 /**
@@ -50,23 +42,9 @@ function configureRoutes(app, options) {
     ////////////////////////////////////////////////////////
 
     app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'www', 'views', 'help.html'));
+        res.sendFile(path.join(__dirname, 'www', 'views', 'index.html'));
     });
 
-    app.get('/api', (req, res) => {
-        res.sendFile(path.join(__dirname, 'www', 'views', 'help.html'));
-    });
-
-    app.get('/help', (req, res) => {
-        res.sendFile(path.join(__dirname, 'www', 'views', 'help.html'));
-    });
-
-    ////////////////////////////////////////////////////////
-    //                      TOOLS                         //
-    ////////////////////////////////////////////////////////
-
-    // Return the page where users can live test the API without
-    // importing the models into an external program
     app.get('/tools/sandbox', (req, res) => {
         res.sendFile(path.join(__dirname, 'www', 'views', 'sandbox.html'));
     });
@@ -77,6 +55,8 @@ function configureRoutes(app, options) {
 
     // Request for a sword mesh
     app.post('/api/forge/sword', (req, res) => {
+        const swordGenerator = new infiniforge.SwordGenerator();
+        swordGenerator.setVerbose(VERBOSE_OUTPUT);
 
         let options = req.body
         // Always export gltf JSON from REST API
@@ -101,7 +81,8 @@ function configureRoutes(app, options) {
 
     // Request for a sword mesh
     app.get('/api/forge/sword/:options?', (req, res) => {
-
+        const swordGenerator = new infiniforge.SwordGenerator();
+        swordGenerator.setVerbose(VERBOSE_OUTPUT);
 
         let options = (req.params.options) ? JSON.parse(req.params.options) : {};
         // Always export gltf JSON from REST API
@@ -129,7 +110,7 @@ async function startServer(options) {
 
     const PORT = (options.port) ? options.port : 8080;
     const VERBOSE = (options.verbose) ? true : false;
-    const HOST = '0.0.0.0';
+    const HOST = 'localhost';
 
     // Configure Express Application
     let app = express();
@@ -140,7 +121,7 @@ async function startServer(options) {
         "verbose": VERBOSE
     });
 
-    swordGenerator.setVerbose(VERBOSE);
+
 
     // Starts the base endpoint
     let server = app.listen(PORT, HOST, (err) => {
@@ -148,8 +129,7 @@ async function startServer(options) {
         let host = server.address().address;
         let port = server.address().port;
 
-        console.log(colors.green(`\nServer listening at`), colors.yellow(`http://${host}:${port}`),
-        colors.green(`\nFor help use route`), colors.yellow(`http://${host}:${port}/help`));
+        console.log(colors.green(`\nServer listening at`), colors.yellow(`http://${host}:${port}`));
     });
 
     var lastSocketKey = -1;

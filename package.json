@@ -1,16 +1,18 @@
 {
   "name": "infiniforge",
   "private": false,
-  "version": "2.0.0",
-  "description": "Typescript library for procedurally gernerating is 3D fanstasy swords",
+  "version": "2.0.1",
+  "description": "Typescript library for procedurally generating is 3D fantasy swords",
   "main": "./build/cjs/index.js",
   "module": "./build/esm/index.js",
   "scripts": {
     "start": "node server/server.js",
     "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json",
+    "build:server": "npx webpack --config webpack.config.js",
+    "build:all": "npm run build && npm run build:server",
     "build:check": "tsc --noEmit",
     "build:watch": "tsc --noEmit --watch",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build:all",
     "typedoc": "typedoc --out docs ./src/"
   },
   "bin": {
@@ -68,6 +70,8 @@
     "eslint-plugin-prettier": "^3.3.1",
     "prettier": "^2.2.1",
     "typedoc": "^0.20.14",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "webpack": "^5.12.3",
+    "webpack-cli": "^4.3.1"
   }
 }

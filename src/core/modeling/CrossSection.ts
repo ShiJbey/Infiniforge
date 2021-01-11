@@ -67,7 +67,7 @@ export class CrossSection {
         return this._translation;
     }
 
-    /** Get the positions of the verices relatice to the center of the cross-section */
+    /** Get the positions of the vertices relative to the center of the cross-section */
     getVerticesLocal(): THREE.Vector2[] {
         const mInverse = new THREE.Matrix4()
             .compose(this._translation, this._rotation, this._scale)
@@ -136,7 +136,7 @@ export class CrossSection {
         objectVert.copy(localVert);
     }
 
-    /** Copy the transforma information of a given cross-section */
+    /** Copy the transformation information of a given cross-section */
     copyTransform(crossSection: CrossSection): void {
         this._norm = crossSection._norm.clone();
         this._rotation = crossSection._rotation.clone();

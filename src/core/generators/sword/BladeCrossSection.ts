@@ -239,6 +239,7 @@ const SINGLE_EDGE: BladeCrossSection = {
     "thickness": 0.02
 }
 
+/** map of supported blade cross-sections */
 export const  BLADE_CROSS_SECTIONS: {[name: string]: BladeCrossSection} = {
     "diamond": DIAMOND,
     "hallow_ground": HALLOW_GROUND,
@@ -246,7 +247,7 @@ export const  BLADE_CROSS_SECTIONS: {[name: string]: BladeCrossSection} = {
     "thickened_diamond": THICKENED_DIAMOND,
     "lenticular": LENTICULAR,
     "fuller": FULLER,
-    "doule_fuller": DOUBLE_FULLER,
+    "double_fuller": DOUBLE_FULLER,
     "broad_fuller": BROAD_FULLER,
     "single_edge": SINGLE_EDGE
 }

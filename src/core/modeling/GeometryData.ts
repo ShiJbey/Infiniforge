@@ -34,7 +34,7 @@ export default class GeometryData {
     }
 
     /** Get Triangles Array */
-    getTrianges(): THREE.Vector3[] {
+    getTriangles(): THREE.Vector3[] {
         return this._triangles;
     }
 
@@ -98,7 +98,7 @@ export default class GeometryData {
             }
         }
 
-        // Add triangle face infomation
+        // Add triangle face information
         for (let i = 0; i < geometry.faces.length; i++) {
             const face = geometry.faces[i];
             this._triangles.push(new THREE.Vector3(face.a, face.b, face.c));

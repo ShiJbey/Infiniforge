@@ -4,3 +4,4 @@ tsconfig.json
 tsconfig.esm.json
 tsconfig.cjs.json
 src
+webpack.config.js

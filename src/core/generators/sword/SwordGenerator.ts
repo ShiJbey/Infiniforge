@@ -6,7 +6,7 @@ import { BladeCrossSection, BLADE_CROSS_SECTIONS } from './BladeCrossSection';
 import { BladeParams, HandleParams, GuardParams, PommelParams, SwordGenerationParams } from './SwordGenerationParams';
 import GeometryData from '../../modeling/GeometryData';
 import { CrossSection } from '../../modeling/CrossSection';
-import BladeGeometry from './BladeGeometery';
+import BladeGeometry from './BladeGeometry';
 
 export default class SwordGenerator extends Generator {
 
@@ -206,7 +206,7 @@ export default class SwordGenerator extends Generator {
     }
 
     /**
-     * Creates a box-shapped guard and merges it with the swords geometry.
+     * Creates a box-shaped guard and merges it with the swords geometry.
      *
      * @param sword
      * @param params
@@ -314,7 +314,7 @@ export default class SwordGenerator extends Generator {
     /**
      * Creates a SplineCurve for edge geometry
      *
-     * @param nPoints Number of points in the curve not includin ends
+     * @param nPoints Number of points in the curve not including ends
      */
     private CreateEdgeSpline(nPoints: number, widthTolerance: number, evenSpacing = true): THREE.SplineCurve {
 
@@ -335,7 +335,7 @@ export default class SwordGenerator extends Generator {
         // Spacings are the vertical distance between control points on the spline curve
         const spacing = utils.divideValue(1.0, nPoints + 1, evenSpacing, this._prng);
 
-        let totalSpaceing = 0;
+        let totalSpacing = 0;
 
         for (let i = 0; i < spacing.length; i++) {
             // Space the point vertically
@@ -344,8 +344,8 @@ export default class SwordGenerator extends Generator {
                 point.y = 1.0;
                 point.x = 0.0;
             } else {
-                totalSpaceing += spacing[i];
-                point.y = totalSpaceing;
+                totalSpacing += spacing[i];
+                point.y = totalSpacing;
                 point.x = utils.getRandomFloat(this._prng, -widthTolerance, widthTolerance);
             }
             splinePoints.push(point);

@@ -68,7 +68,7 @@ export function normalizeRGB(rgbColor: number[]): [number, number, number] {
 }
 
 /** Convert Hex color to RGB values  */
-export function HextoRGB(hexColor: number) : [number, number, number] {
+export function hexToRGB(hexColor: number) : [number, number, number] {
     const RED_MASK = 0xFF0000;
     const GREEN_MASK = 0x00FF00;
     const BLUE_MASK = 0x0000FF;

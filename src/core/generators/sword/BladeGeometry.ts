@@ -30,7 +30,7 @@ export default class BladeGeometry extends GeometryData {
         this._extrusionCurve = extrusionCurve;
     }
 
-    /** Set the edge cureve for extrusion */
+    /** Set the edge curve for extrusion */
     setEdgeCurve(curve: THREE.Curve<THREE.Vector2>): this {
         this._activeEdgeCurve = curve;
         return this;
@@ -71,7 +71,7 @@ export default class BladeGeometry extends GeometryData {
     }
 
     /**
-     * Extrude the active crossection along a given extrusion curve
+     * Extrude the active cross-section along a given extrusion curve
      * while also modifying the edge vertices to match the given edge curve.
      */
     extrudeSection(
