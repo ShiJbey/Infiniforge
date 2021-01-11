@@ -19,7 +19,7 @@ export interface SwordTemplate {
     extrusionCurve: THREE.Curve<THREE.Vector2>
 }
 
-export const SHORT_SWORD: SwordTemplate = {
+const SHORT_SWORD: SwordTemplate = {
     name: "short_sword",
     bladeLength: 0.40,
     baseBladeWidth: 0.1,
@@ -35,7 +35,7 @@ export const SHORT_SWORD: SwordTemplate = {
     ])
 }
 
-export const LONG_SWORD:  SwordTemplate = {
+const LONG_SWORD:  SwordTemplate = {
     name: "long_sword",
     bladeLength: 1.11,
     baseBladeWidth: 0.1,
@@ -51,7 +51,7 @@ export const LONG_SWORD:  SwordTemplate = {
     ])
 }
 
-export const GREAT_SWORD: SwordTemplate = {
+const GREAT_SWORD: SwordTemplate = {
     name: "great_sword",
     bladeLength: 1.55,
     baseBladeWidth: 0.064,
@@ -67,7 +67,7 @@ export const GREAT_SWORD: SwordTemplate = {
     ])
 }
 
-export const KATANA: SwordTemplate = {
+const KATANA: SwordTemplate = {
     name: "katana",
     bladeLength: 1.05,
     baseBladeWidth: 0.1,
@@ -84,16 +84,9 @@ export const KATANA: SwordTemplate = {
     )
 }
 
-export const SWORD_TEMPLATES: any = {
+export const SWORD_TEMPLATES: {[name: string]: SwordTemplate}= {
     "short": SHORT_SWORD,
     "long": LONG_SWORD,
     "great": GREAT_SWORD,
     "katana": KATANA
-}
-
-export function getTemplate(style: string): SwordTemplate | null {
-    if (Object.keys(SWORD_TEMPLATES).indexOf(style) >= 0) {
-        return SWORD_TEMPLATES[style] as SwordTemplate;
-    }
-    return null;
 }

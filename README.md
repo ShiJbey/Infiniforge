@@ -1,9 +1,10 @@
 # ![](server/www/anvil.png) Infiniforge 2.0
 
+![screenshot](screenshot.png)
+
 InfiniForge is a NodeJS REST API that returns JSON
 representations of procedurally generated 3D fanstasy swords.
 
-![screenshot](screenshot.png)
 
 This project was originally made as part of the August 2016 Reddit procedural generation challenge
 Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
@@ -14,7 +15,7 @@ Infiniforge 2.0 features a revamped generation process that
 is much easier to maintain, and has the ability to produce
 a wider array of weapons.
 
-## How to Build and Run Locally
+## How to run Infiniforge server
 
 1. ```$ git clone https://github.com/ShiJbey/Infiniforge```
 2. ```$ cd Infiniforge```
@@ -23,20 +24,15 @@ a wider array of weapons.
 5. ```$ npm start```
 6. Open your web browser and go to ```localhost:8080```
 
-## How to Build and Run on Docker
-
-1. ```$ sudo docker build -t infiniforge .```
-2. ```$ sudo docker run -d -p 8080:8080 infiniforge```
-3. Open your web browser and go to ```localhost:8080```
-
 ## Building the Documentation
 
 The documentation is generated using [Typedoc](https://typedoc.org)
  ```$ npm run typedoc``
 
-## Example
+## Example Usage
 
 ```javascript
+// NodeJs Example using Javascript
 
 const Infiniforge = require('infiniforge');
 

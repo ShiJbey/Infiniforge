@@ -1,9 +1,10 @@
-import * as seedrandom from 'seedrandom';
+import seedrandom from 'seedrandom';
 
 /** Base class for all types of weapon generators */
-export class Generator {
+export default abstract class Generator {
 
     protected _prng: seedrandom.prng;
+
     protected _verbose: boolean;
 
     constructor(verbose = false) {
@@ -11,19 +12,16 @@ export class Generator {
         this._verbose = verbose;
     }
 
-    setSeed(seed: string) {
+    /** Set seed value for random number generator */
+    setSeed(seed: string): void {
         this._prng = seedrandom(seed);
     }
 
-    setVerbose(verbose: boolean) {
+    /** Allow verbose output during generation */
+    setVerbose(verbose: boolean): void {
         this._verbose = verbose;
     }
 
-    generate(options: any) {
-        return new Promise((resolve, reject) => {
-            reject("Generate function is not implemented");
-        });
-    }
+    /** Generate new GeometryData */
+    abstract generate(params: any): Promise<any>;
 }
-
-export default { Generator }

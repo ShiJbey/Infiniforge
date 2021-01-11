@@ -1,142 +1,81 @@
-/////////////////////////////////////////////////////////////////
-//                      RANDOM NUMBERS                         //
-/////////////////////////////////////////////////////////////////
+import seedrandom from 'seedrandom';
 
-type NumGenerator = seedrandom.prng | (() => number);
+/** Number generator Function */
+type NumGeneratorFn = seedrandom.prng | (() => number);
 
-/**
- * Given a random number generator and a min and max value,
- * returns a random int that is in the range [min,max)
- *
- * @param prng
- * @param min
- * @param max
- */
-export function getRandomInt(prng : NumGenerator, min : number, max : number) : number {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return  Math.floor(prng() * (max - min)) + min;
+/** Return a random int that is in the range [min,max) */
+export function getRandomInt(prng: NumGeneratorFn, min: number, max: number): number {
+    return  Math.floor(prng() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min);
 }
 
-/**
- * Given a random number generator and a min and max value,
- * returns a random float that is in the range [min,max)
- *
- * @param prng seedrandom pseudo-random number generator
- * @param min
- * @param max
- */
-export function getRandomFloat(prng : NumGenerator, min : number, max : number) : number {
+/** Return a random float that is in the range [min,max) */
+export function getRandomFloat(prng: NumGeneratorFn, min: number, max: number): number {
     return prng() * (max - min) + min;
 }
 
-/////////////////////////////////////////////////////////////////
-//                    ALGEBRA FUNCTIONS                        //
-/////////////////////////////////////////////////////////////////
-
-/**
- * Given the x and y coordinates of two points in 2D space,
- * Returns the slope between the two points
- *
- * @param x1
- * @param y1
- * @param x2
- * @param y2
- */
-export function getSlope(x1 : number,  y1 : number, x2 : number, y2 : number) : number {
+/** Return the slope between the two points */
+export function getSlope(x1: number,  y1: number, x2: number, y2: number): number {
     return (y2 - y1) / (x2 - x1);
 }
 
-/////////////////////////////////////////////////////////////////
-//                       MISC FUNCTIONS                        //
-/////////////////////////////////////////////////////////////////
-
-/**
- * Sets the number of digits after the decimal place
- * @param n
- * @param digits
- */
-export function setPrecision(value: number, digits: number) {
+/** Set the number of digits after the decimal place */
+export function setPrecision(value: number, digits: number): number {
     return Number.parseFloat(value.toFixed(digits));
 }
 
-export function divideValue(value: number, nDivisions: number, equalDivs: boolean, prng?: NumGenerator): number[] {
-    var divisions: number[] = [];
-
-    if (!equalDivs && prng == undefined) {
-        console.warn("No PRNG supplied. Using Default Math.random.");
-        prng = Math.random;
-    }
-
-    var equalDivSize = value / nDivisions;
+/** Subdivide a number value into a given number of divisions */
+export function divideValue(value: number, nDivisions: number, equalDivs: boolean, prng?: NumGeneratorFn): number[] {
+    const divisions: number[] = [];
+    const prngFn = (!equalDivs && prng) ? Math.random : prng;
+    const equalDivSize = value / nDivisions;
 
     if (equalDivs) {
         for (let i = 0; i < nDivisions; i++) {
             divisions.push(equalDivSize);
         }
     } else {
-        var remainder = value;
-        var divisionTotal = 0;
-
+        let remainder = value;
         for (let i = 0; i < nDivisions; i++) {
-            if (i == nDivisions - 1) {
+            if (i === nDivisions - 1) {
                 divisions.push(remainder);
             } else {
-                var minDivSize = equalDivSize * 0.25;
-                var maxDivSize = equalDivSize * 1.25;
-                var randSize = getRandomFloat(prng as NumGenerator, minDivSize, maxDivSize);
-                var sizeCap = remainder - (minDivSize * (nDivisions - i));
-                var divSize = Math.min(randSize, sizeCap);
+                const minDivSize = equalDivSize * 0.25;
+                const maxDivSize = equalDivSize * 1.25;
+                const randSize = getRandomFloat(prngFn as NumGeneratorFn, minDivSize, maxDivSize);
+                const sizeCap = remainder - (minDivSize * (nDivisions - i));
+                const divSize = Math.min(randSize, sizeCap);
 
                 divisions.push(divSize);
-
-                divisionTotal += divSize;
                 remainder -= divSize;
             }
         }
     }
 
-
     return divisions;
 }
 
-/////////////////////////////////////////////////////////////////
-//                   HEX STRING FUNCTIONS                      //
-/////////////////////////////////////////////////////////////////
-
-export function parseHexColorString(color: string): number {
-    // Remove beginning and trailing white space
-    color = color.trim();
-    // Check if the value is a number
-    if (isNaN(Number(color)) && color[0] == "#") {
-        color = "0x" + color.substring(1);
-        if (isNaN(Number(color))) {
-            throw Error("Invalid color string given.");
-        }
-    }
-    var colorHex = Number.parseInt(color, 16);
-    return colorHex;
-}
-
+/** Normalize magnitude of color vector to be 1 */
 export function normalizeRGB(rgbColor: number[]): [number, number, number] {
     if (rgbColor.length < 3 ) {
         throw Error("Invalid RBG color Given. Too few values");
     }
-    rgbColor[0] = (rgbColor[0] > 1.0) ? rgbColor[0] / 255.0 : rgbColor[0];
-    rgbColor[1] = (rgbColor[1] > 1.0) ? rgbColor[1] / 255.0 : rgbColor[1];
-    rgbColor[2] = (rgbColor[2] > 1.0) ? rgbColor[2] / 255.0 : rgbColor[2];
 
-    return [ rgbColor[0], rgbColor[1], rgbColor[2] ];
+    const red = (rgbColor[0] > 1.0) ? rgbColor[0] / 255.0 : rgbColor[0];
+    const green = (rgbColor[1] > 1.0) ? rgbColor[1] / 255.0 : rgbColor[1];
+    const blue = (rgbColor[2] > 1.0) ? rgbColor[2] / 255.0 : rgbColor[2];
+
+    return [red, green, blue];
 }
 
+/** Convert Hex color to RGB values  */
 export function HextoRGB(hexColor: number) : [number, number, number] {
     const RED_MASK = 0xFF0000;
     const GREEN_MASK = 0x00FF00;
     const BLUE_MASK = 0x0000FF;
 
-    var red = (hexColor & RED_MASK) >> 16;
-    var green = (hexColor & GREEN_MASK) >> 8;
-    var blue = hexColor & BLUE_MASK;
+    const red = (hexColor & RED_MASK) >> 16;
+    const green = (hexColor & GREEN_MASK) >> 8;
+    const blue = hexColor & BLUE_MASK;
 
     return [ red / 255.0 , green / 255.0 , blue / 255.0 ];
 }

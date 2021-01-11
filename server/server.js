@@ -8,10 +8,10 @@ const serveStatic = require('serve-static');
 const process = require('process');
 const favicon = require('serve-favicon');
 const commander = require('commander');
-const Infiniforge = require('../build/Infiniforge');
+const infiniforge = require('../build/cjs/index');
 
 // Define Generators
-const swordGenerator = new Infiniforge.SwordGenerator.SwordGenerator();
+const swordGenerator = new infiniforge.SwordGenerator();
 
 /**
  * Configure Express app to serve static files like a http server

@@ -1,21 +1,19 @@
+import * as THREE from 'three';
+import _ from 'lodash';
 import { CrossSection } from './CrossSection';
 import { GLTFExporter } from '../../lib/GLTFExporter';
-import * as THREE from 'three';
-import * as _ from 'lodash';
 
-/**
- * Organizes and manages vertex information
- */
-export class GeometryData {
+/** Custom class for organizing/modifying 3D mesh information  */
+export default class GeometryData {
 
-    // References to vertices within the model
     protected _vertices: THREE.Vector3[];
+
     protected _triangles: THREE.Vector3[];
+
     protected _colors: THREE.Color[];
 
     protected _activeColor: THREE.Color;
 
-    // CrossSection that will be modified by method calls
     protected _activeCrossSection?: CrossSection;
 
     constructor() {
@@ -25,24 +23,24 @@ export class GeometryData {
         this._activeColor = new THREE.Color();
     }
 
-    getColors() {
+    /** Get Colors Array */
+    getColors(): THREE.Color[] {
         return this._colors;
     }
 
-    getVertices() {
+    /** Get vertices Array */
+    getVertices(): THREE.Vector3[] {
         return this._vertices;
     }
 
-    getTrianges() {
+    /** Get Triangles Array */
+    getTrianges(): THREE.Vector3[] {
         return this._triangles;
     }
 
-    /**
-     * Combines the GeometryData objects
-     * @param geometry
-     */
+    /** Combine the GeometryData objects */
     add(geometry: GeometryData): this {
-        let vertsBeforeMerge: number = this._vertices.length;
+        const vertsBeforeMerge: number = this._vertices.length;
 
         this._vertices.push(...geometry._vertices);
         this._colors.push(...geometry._colors);
@@ -60,11 +58,13 @@ export class GeometryData {
         return this;
     }
 
+    /** Get the cross section used during transformations */
     clearActiveCrossSection(): this {
         this._activeCrossSection = undefined;
         return this;
     }
 
+    /** Set the current cross section of the geometry */
     setCrossSection(crossSection: CrossSection, color?: THREE.Color): this {
         if (color) { this.setColor(color); }
 
@@ -76,16 +76,13 @@ export class GeometryData {
         return this;
     }
 
-    /**
-     * Set the vertex color for active cross section
-     *
-     * @param color
-     */
+    /** Set the vertex color for active cross section */
     setColor(color: THREE.Color): this {
         this._activeColor = color;
         return this;
     }
 
+    /** Construct GeometryData object from threejs Geometry */
     fromGeometry(geometry: THREE.Geometry, color?: THREE.Color): this {
         this._vertices = [];
         this._colors = [];
@@ -103,7 +100,7 @@ export class GeometryData {
 
         // Add triangle face infomation
         for (let i = 0; i < geometry.faces.length; i++) {
-            let face = geometry.faces[i];
+            const face = geometry.faces[i];
             this._triangles.push(new THREE.Vector3(face.a, face.b, face.c));
             if (color === undefined && face.vertexColors.length === 3) {
                 this._colors[face.a] = (face.vertexColors[0].clone());
@@ -115,30 +112,30 @@ export class GeometryData {
         return this;
     }
 
+    /** Fill the active cross-section */
     fill(): this {
-        // Check that there is a cross section to extrude
-        if (this._activeCrossSection == undefined) {
+        if (!this._activeCrossSection) {
             throw new Error("GeometryData does not have an active cross section to translate.");
         }
 
         // Construct a THREE.ShapeGeometry from the
         // points of the active cross-section
-        let csShape = new THREE.Shape(this._activeCrossSection.getVerticesLocal());
-        let geometry = new THREE.ShapeGeometry(csShape);
+        const csShape = new THREE.Shape(this._activeCrossSection.getVerticesLocal());
+        const geometry = new THREE.ShapeGeometry(csShape);
 
         // Create copies of vertices for sharp edges
-        let verts = this._activeCrossSection.getVertices();
+        const verts = this._activeCrossSection.getVertices();
 
-        let vertIdxs: number[] = _.range(
+        const vertIdxs: number[] = _.range(
             this._vertices.length - verts.length,
             this._vertices.length);
 
-        let newCrossSection = new CrossSection();
+        const newCrossSection = new CrossSection();
 
         // Push vertices into the _vertices array prior to the
         // current cross section
         for (let i = 0; i < verts.length; i++) {
-            let v = verts[i].clone();
+            const v = verts[i].clone();
             newCrossSection.addVertex(v);
             this._vertices.push(v);
             this._colors.push(this._colors[vertIdxs[i]].clone());
@@ -150,23 +147,22 @@ export class GeometryData {
 
         // Copy the triangles data to this GeometryData object
         for (let i = 0; i < geometry.faces.length; i++) {
-            let face = geometry.faces[i];
+            const face = geometry.faces[i];
             this._triangles.push(new THREE.Vector3(vertIdxs[face.a], vertIdxs[face.b], vertIdxs[face.c]));
         }
 
         return this
     }
 
+    /** Translate the active cross-section */
     translate(distance: THREE.Vector3 | number): this {
-
-        // Check that there is a cross section to extrude
-        if (this._activeCrossSection == undefined) {
+        if (!this._activeCrossSection) {
             throw new Error("GeometryData does not have an active cross section to translate.");
         }
 
-        let translationVector: THREE.Vector3 = new THREE.Vector3();
+        const translationVector: THREE.Vector3 = new THREE.Vector3();
 
-        if (typeof(distance) == 'number') {
+        if (typeof(distance) === 'number') {
             translationVector.copy(this._activeCrossSection.getNorm().normalize());
             translationVector.multiplyScalar(distance);
         } else {
@@ -178,64 +174,56 @@ export class GeometryData {
         return this;
     }
 
+    /** Scale the active cross-section */
     scale(scaleFactor: THREE.Vector2 | number): this {
-        // Check that there is a cross section to extrude
-        if (this._activeCrossSection == undefined) {
+        if (!this._activeCrossSection) {
             throw new Error("GeometryData does not have an active cross section to scale");
         }
         this._activeCrossSection.scale(scaleFactor);
         return this;
     }
 
+    /** Rotate the active cross-section */
     rotate(quaternion: THREE.Quaternion): this {
-        // Check that there is a cross section to extrude
-        if (this._activeCrossSection == undefined) {
+        if (!this._activeCrossSection) {
             throw new Error("GeometryData does not have an active cross section to rotate");
         }
         this._activeCrossSection.rotate(quaternion);
         return this;
     }
 
-    /**
-     * @description Extrudes the active cross section of a GeometryData object
-     *
-     * @note Quads are defined using clock-wise triangles
-     *
-     * @param direction
-     */
+    /** Extrude the active cross section of a GeometryData object */
     extrude(direction: THREE.Vector3 | number): this {
 
         // Check that there is a cross section to extrude
-        if (this._activeCrossSection == undefined) {
+        if (!this._activeCrossSection) {
             throw new Error("GeometryData does not have an active cross section to extrude");
         }
 
-        let newCrossSection = new CrossSection();
+        const newCrossSection = new CrossSection();
         let translationVector: THREE.Vector3 = new THREE.Vector3();
 
         // Check the type of the direction variable
-        if (typeof(direction) == 'object') {
+        if (typeof(direction) === 'object') {
             if (direction instanceof THREE.Vector3) {
                 translationVector = direction;
             }
-        } else {
-            if (typeof(direction) == 'number') {
-                translationVector.copy(this._activeCrossSection.getNorm());
-                translationVector.multiplyScalar(direction);
-            }
+        } else if (typeof(direction) === 'number') {
+            translationVector.copy(this._activeCrossSection.getNorm());
+            translationVector.multiplyScalar(direction);
         }
 
-        let previousVertIdxs: number[] = _.range(
+        const previousVertIdxs: number[] = _.range(
             this._vertices.length - this._activeCrossSection.getVertices().length,
             this._vertices.length);
 
-        let newVertIdxs: number[] = _.range(
+        const newVertIdxs: number[] = _.range(
             this._vertices.length,
             this._vertices.length + this._activeCrossSection.getVertices().length);
 
         // Add new set of vertices to the list
         for (let i = 0; i < previousVertIdxs.length; i++) {
-            let vert = new THREE.Vector3();
+            const vert = new THREE.Vector3();
             vert.copy(this._vertices[previousVertIdxs[i]]);
             vert.add(translationVector);
             this._vertices.push(vert);
@@ -250,7 +238,7 @@ export class GeometryData {
 
         // Create quads
         for (let i = 0; i < previousVertIdxs.length; i++) {
-            if (i == previousVertIdxs.length - 1) {
+            if (i === previousVertIdxs.length - 1) {
                 // Bottom-left triangle
                 this._triangles.push(new THREE.Vector3(previousVertIdxs[i], previousVertIdxs[0], newVertIdxs[i]));
                 // Top-right triangle
@@ -263,39 +251,40 @@ export class GeometryData {
             }
         }
 
-
         return this;
     }
 
+    /** Covert to GLTF data */
     toGlTF(verbose=false): Promise<any> {
-        let gltfExporter = new GLTFExporter();
+        const gltfExporter = new GLTFExporter();
 
         // Parse the swords mesh and create a new promise to access the result
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve,) => {
             gltfExporter.parse(this.toMesh(), (gltf: any) => {
                 resolve(gltf);
-            }, {verbose: verbose});
+            }, {verbose});
         });
     }
 
+    /** Convert to threejs Mesh */
     toMesh(): THREE.Mesh {
         if (this._vertices.length === 0) {
             throw new Error("Geometry data has no vertices");
         }
 
-        let geometry = new THREE.BufferGeometry;
+        const geometry = new THREE.BufferGeometry();
 
-        let verts: number[] = [];
+        const verts: number[] = [];
         for (let i = 0; i < this._vertices.length; i++) {
             verts.push(...this._vertices[i].toArray());
         }
 
-        let tris: number[] = [];
+        const tris: number[] = [];
         for (let i = 0; i < this._triangles.length; i++) {
             tris.push(...this._triangles[i].toArray());
         }
 
-        let colors: number[] = [];
+        const colors: number[] = [];
         for (let i = 0; i < this._colors.length; i++) {
             colors.push(...this._colors[i].toArray());
         }
@@ -310,12 +299,12 @@ export class GeometryData {
 
         geometry.computeVertexNormals();
 
-        let material = new THREE.MeshStandardMaterial({
+        const material = new THREE.MeshStandardMaterial({
             vertexColors: true,
             side: THREE.DoubleSide
         });
 
-        let mesh = new THREE.Mesh( geometry, material );
+        const mesh = new THREE.Mesh( geometry, material );
 
         return mesh;
     }

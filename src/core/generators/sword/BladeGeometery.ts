@@ -1,29 +1,27 @@
 import * as THREE from 'three';
-import { GeometryData } from '../../modeling/GeometryData';
-import { BladeCrossSection } from './BladeCrossSection';
+import GeometryData from '../../modeling/GeometryData';
 import { CrossSection } from '../../modeling/CrossSection';
-import * as _ from 'lodash';
-
-export const TIP_GEOMETRIES = ["standard", "rounded", "square", "clip"];
 
 /**
  * Swords are the core of this API and manage information about
  * their 3D geometry
  */
-export class BladeGeometry extends GeometryData{
+export default class BladeGeometry extends GeometryData {
+
+    static TIP_GEOMETRIES = ["standard", "rounded", "square", "clip"];
 
     private readonly _totalLength: number;
+
     private _currentLength: number;
+
     private _color?: THREE.Color;
+
     private _bladeEdgeVertices: number[];
+
     private _activeEdgeCurve?: THREE.Curve<THREE.Vector2>;
+
     private _extrusionCurve?: THREE.Curve<THREE.Vector2>;
 
-    /**
-     * Creates an instance of sword
-     *
-     * @constructor
-     */
     constructor(length: number, extrusionCurve?: THREE.Curve<THREE.Vector2>) {
         super();
         this._totalLength = length;
@@ -32,42 +30,40 @@ export class BladeGeometry extends GeometryData{
         this._extrusionCurve = extrusionCurve;
     }
 
+    /** Set the edge cureve for extrusion */
     setEdgeCurve(curve: THREE.Curve<THREE.Vector2>): this {
         this._activeEdgeCurve = curve;
         return this;
     }
 
-    /**
-     * Extrudes the blade along the extrusion curve
-     * @param distance
-     */
+    /** Extrudes the blade along the extrusion curve */
     extrude(distance: number): this {
 
-        if (this._activeCrossSection === undefined) {
+        if (!this._activeCrossSection) {
             throw new Error("BladeGeometry does not have an active cross section");
         }
 
-        if (this._extrusionCurve === undefined) {
+        if (!this._extrusionCurve) {
             super.extrude(distance);
             return this;
         }
 
         this._currentLength += distance;
-        var t = this._currentLength / this._totalLength;
+        const t = this._currentLength / this._totalLength;
 
         super.extrude(distance);
 
-        var extrusionPoint2D = this._extrusionCurve.getPoint(t).multiplyScalar(this._totalLength);
-        var extrusionPoint3D = new THREE.Vector3(0, extrusionPoint2D.y, extrusionPoint2D.x);
-        var crossSectionPos = this._activeCrossSection.getTranslation();
-        var toExtrusionPoint = new THREE.Vector3().subVectors(extrusionPoint3D, crossSectionPos);
+        const extrusionPoint2D = this._extrusionCurve.getPoint(t).multiplyScalar(this._totalLength);
+        const extrusionPoint3D = new THREE.Vector3(0, extrusionPoint2D.y, extrusionPoint2D.x);
+        const crossSectionPos = this._activeCrossSection.getTranslation();
+        const toExtrusionPoint = new THREE.Vector3().subVectors(extrusionPoint3D, crossSectionPos);
 
         this.translate(toExtrusionPoint);
 
-        var extrusionNorm2D = this._extrusionCurve.getTangent(t);
-        var extrusionNorm3D = new THREE.Vector3(0, extrusionNorm2D.y, extrusionNorm2D.x);
-        var crossSectionNorm = this._activeCrossSection.getNorm().normalize();
-        var rotateAngle = new THREE.Quaternion().setFromUnitVectors(crossSectionNorm, extrusionNorm3D);
+        const extrusionNorm2D = this._extrusionCurve.getTangent(t);
+        const extrusionNorm3D = new THREE.Vector3(0, extrusionNorm2D.y, extrusionNorm2D.x);
+        const crossSectionNorm = this._activeCrossSection.getNorm().normalize();
+        const rotateAngle = new THREE.Quaternion().setFromUnitVectors(crossSectionNorm, extrusionNorm3D);
 
         this.rotate(rotateAngle);
 
@@ -75,12 +71,8 @@ export class BladeGeometry extends GeometryData{
     }
 
     /**
-     * Extrudes the active crossection along a given extrusion curve
+     * Extrude the active crossection along a given extrusion curve
      * while also modifying the edge vertices to match the given edge curve.
-     *
-     * @param edgeCurve
-     * @param samplingResolution
-     * @param length
      */
     extrudeSection(
         edgeCurve: THREE.Curve<THREE.Vector2>,
@@ -91,8 +83,8 @@ export class BladeGeometry extends GeometryData{
         this.setEdgeCurve(edgeCurve);
 
         // distance of each intermediate extrusion along the curve
-        var sampleInterval = length / nSubdivisions;
-        var taperInterval: number | THREE.Vector2 = 1;
+        const sampleInterval = length / nSubdivisions;
+        let taperInterval: number | THREE.Vector2 = 1;
 
         if (typeof(taper) === 'number') {
             taperInterval = 1 - (taper / nSubdivisions);
@@ -110,6 +102,7 @@ export class BladeGeometry extends GeometryData{
         return this;
     }
 
+    /** Create tip at the end of the blade */
     createTip(style: string, length: number, nSubdivisions = 5): this {
 
         if (this._activeCrossSection === undefined) {
@@ -123,17 +116,17 @@ export class BladeGeometry extends GeometryData{
         }
 
         if (style === "rounded") {
-            var tipCurve = new THREE.QuadraticBezierCurve(
+            const tipCurve = new THREE.QuadraticBezierCurve(
                 new THREE.Vector2(1, 0),
                 new THREE.Vector2(0.7, 0.2),
                 new THREE.Vector2(0, 1)
             );
 
-            var subTotalHeight = 0;
+            let subTotalHeight = 0;
             for (let i = 0; i < nSubdivisions; i++) {
                 this.extrude(length / nSubdivisions);
                 subTotalHeight += length / nSubdivisions;
-                if (i == nSubdivisions - 1) {
+                if (i === nSubdivisions - 1) {
                     this.scale(0);
                     continue;
                 }
@@ -167,7 +160,7 @@ export class BladeGeometry extends GeometryData{
      * Samples the active edge curve and sets the edge verts
      * of the active cross section accordingly
      *
-     * @param samplePoint Nubmber from [0, 1] used to sample the curve
+     * @param samplePoint Number from [0, 1] used to sample the curve
      */
     modifyEdgeVerts(samplePoint: number): this {
         if (this._activeCrossSection === undefined) {
@@ -178,7 +171,7 @@ export class BladeGeometry extends GeometryData{
             throw new Error("BladeGeometry does not have an active edge curve");
         }
 
-        let edgeScaleFactor = this._activeEdgeCurve.getPoint(samplePoint).x + 1;
+        const edgeScaleFactor = this._activeEdgeCurve.getPoint(samplePoint).x + 1;
 
         for (let i = 0; i < this._bladeEdgeVertices.length; i++) {
             this._activeCrossSection.scaleVertex(this._bladeEdgeVertices[i], edgeScaleFactor);
@@ -187,19 +180,17 @@ export class BladeGeometry extends GeometryData{
         return this;
     }
 
-    setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color, normEdges?: number[], duplicate_verts=false): this {
-        if (!duplicate_verts) {
+    /** Set the cross section for the blade */
+    setBladeCrossSection(crossSection: CrossSection, edgeVerts: number[], color?: THREE.Color, normEdges?: number[], duplicateVerts=false): this {
+        if (!duplicateVerts) {
             super.setCrossSection(crossSection, color);
             this._bladeEdgeVertices = edgeVerts;
             return this;
         }
 
-        // Maintain an offset for adjusting edgeVerts
-        let offset = 0;
-
         // Array of duplicated vertices
-        let dupedVerts: THREE.Vector3[] = [];
-        let newEdgeVerts: number[] = [];
+        const dupedVerts: THREE.Vector3[] = [];
+        const newEdgeVerts: number[] = [];
 
         // Loop through vers in original cross-section
         for (let i = 0; i < crossSection.getVertices().length; i++) {
@@ -215,13 +206,13 @@ export class BladeGeometry extends GeometryData{
         }
 
         // Convert the duplicated vertices to an array of numbers
-        let verts: number[] = []
+        const verts: number[] = []
         for (let i = 0; i < dupedVerts.length; i++) {
             verts.push(dupedVerts[i].x);
             verts.push(dupedVerts[i].z);
         }
 
-        let modifiedCrossSection = new CrossSection({
+        const modifiedCrossSection = new CrossSection({
             vertices: verts
         });
 

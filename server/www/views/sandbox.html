@@ -183,7 +183,11 @@
             var downloadButton = document.getElementById('download-button');
             if (enable) {
                 downloadButton.disabled = false;
-                downloadButton.parentElement.href = "data:application/json," + encodeURIComponent(swordglTF);
+                downloadButton.parentElement.href = URL.createObjectURL(
+                    new Blob(
+                        [swordglTF],
+                        {type: 'application/gltf;charset=utf-8'})
+                );
             }
             else {
                 downloadButton.parentElement.href = "javascript: void(0)"

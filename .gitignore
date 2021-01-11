@@ -2,7 +2,8 @@
 
 node_modules/
 .node_modules/
-build/**/*.js.map
+build/
+docs/
 built/*
 tests/cases/rwc/*
 tests/cases/test262/*

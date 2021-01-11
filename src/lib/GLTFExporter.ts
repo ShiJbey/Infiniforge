@@ -1398,9 +1398,9 @@ export class GLTFExporter {
 
                 var glbData = Buffer.concat( [
                     Buffer.from(header),
-                    Buffer.from([jsonChunkPrefix]),
+                    Buffer.from(jsonChunkPrefix.buffer),
                     Buffer.from(jsonChunk),
-                    Buffer.from([binaryChunkPrefix]),
+                    Buffer.from(binaryChunkPrefix.buffer),
                     Buffer.from(binaryChunk)
                 ]);
 

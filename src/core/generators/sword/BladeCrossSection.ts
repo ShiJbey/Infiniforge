@@ -11,7 +11,7 @@ export interface BladeCrossSection {
     thickness: number       // Distance between vertices on the axis orthogonal to width
 }
 
-export const DIAMOND: BladeCrossSection = {
+const DIAMOND: BladeCrossSection = {
     "name": "Diamond",
     "vertices": [
         0.0, 0.5,
@@ -30,7 +30,7 @@ export const DIAMOND: BladeCrossSection = {
     "thickness": 0.3
 }
 
-export const HALLOW_GROUND: BladeCrossSection = {
+const HALLOW_GROUND: BladeCrossSection = {
     "name":"HallowGround",
     "vertices": [
         0.0, 0.5,
@@ -57,7 +57,7 @@ export const HALLOW_GROUND: BladeCrossSection = {
     "thickness": 0.3
 }
 
-export const HEXAGONAL: BladeCrossSection = {
+const HEXAGONAL: BladeCrossSection = {
     "name": "Hexagonal",
         "vertices": [
             0.0, 0.5,
@@ -77,7 +77,7 @@ export const HEXAGONAL: BladeCrossSection = {
         "thickness": 0.2
 }
 
-export const THICKENED_DIAMOND: BladeCrossSection = {
+const THICKENED_DIAMOND: BladeCrossSection = {
     "name": "ThickenedDiamond",
     "vertices": [
         0.0, 0.5,
@@ -96,7 +96,7 @@ export const THICKENED_DIAMOND: BladeCrossSection = {
     "thickness": 1.3
 }
 
-export const LENTICULAR: BladeCrossSection = {
+const LENTICULAR: BladeCrossSection = {
     "name": "Lenticular",
     "vertices": [
         0.0, 0.5,
@@ -125,7 +125,7 @@ export const LENTICULAR: BladeCrossSection = {
     "thickness": 0.3
 }
 
-export const FULLER: BladeCrossSection = {
+const FULLER: BladeCrossSection = {
     "name": "Fuller",
     "vertices": [
         0.0, 0.5,
@@ -159,7 +159,7 @@ export const FULLER: BladeCrossSection = {
     "thickness": 0.3
 }
 
-export const DOUBLE_FULLER: BladeCrossSection = {
+const DOUBLE_FULLER: BladeCrossSection = {
     "name": "DoubleFuller",
     "vertices": [
         0.0, 0.5,
@@ -194,7 +194,7 @@ export const DOUBLE_FULLER: BladeCrossSection = {
     "thickness": 0.3
 }
 
-export const BROAD_FULLER: BladeCrossSection = {
+const BROAD_FULLER: BladeCrossSection = {
     "name": "BroadFuller",
     "vertices": [
         0.0, 0.5,
@@ -220,7 +220,7 @@ export const BROAD_FULLER: BladeCrossSection = {
     "thickness": 0.04
 }
 
-export const SINGLE_EDGE: BladeCrossSection = {
+const SINGLE_EDGE: BladeCrossSection = {
     "name": "katana",
     "vertices": [
         0.0, 0.5,
@@ -239,7 +239,7 @@ export const SINGLE_EDGE: BladeCrossSection = {
     "thickness": 0.02
 }
 
-export const  BLADE_CROSS_SECTIONS: any = {
+export const  BLADE_CROSS_SECTIONS: {[name: string]: BladeCrossSection} = {
     "diamond": DIAMOND,
     "hallow_ground": HALLOW_GROUND,
     "hexagonal": HEXAGONAL,
@@ -249,14 +249,4 @@ export const  BLADE_CROSS_SECTIONS: any = {
     "doule_fuller": DOUBLE_FULLER,
     "broad_fuller": BROAD_FULLER,
     "single_edge": SINGLE_EDGE
-}
-
-export function getCrossSection(style: string) {
-    if (isSupportedCrossSection(style)) {
-        return BLADE_CROSS_SECTIONS[style] as BladeCrossSection;
-    }
-}
-
-export function isSupportedCrossSection(style: string): boolean {
-    return Object.keys(BLADE_CROSS_SECTIONS).indexOf(style) >= 0;
 }
