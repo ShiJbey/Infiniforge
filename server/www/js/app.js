@@ -1,31 +1,35 @@
-import * as dat from 'three/examples/jsm/libs/dat.gui.module.js';
-import * as THREE from 'three/build/three.module.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { getRandomInt, randomSeed } from './utils.js';
+import * as dat from 'three/examples/jsm/libs/dat.gui.module';
+import * as THREE from 'three/build/three.module';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { randomSeed } from './utils';
 
-let ThreeJSCanvas;
-let scene, camera, renderer, controls;
-let swordModel, material, importedMaterial;
-let useWireFrame;
-let generationParams;
+let canvas;
+let scene, camera, renderer;
 let gui;
-let seedController, baseWidthController;
-let swordglTF;
-
+let seedController;
 let wireFrameEnabled = false;
+let orbitControl, transformControl;
+
+let swordglTF, swordModel, importedMaterial;
 let wireframeMaterial = new THREE.MeshBasicMaterial({
   color: 0x050505,
   wireframe: true,
 });
 
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const onUpPosition = new THREE.Vector2();
+const onDownPosition = new THREE.Vector2();
+
 init();
 animate();
 
 function forgeSword() {
-  var data = JSON.stringify(forgeParams);
+  let data = JSON.stringify(forgeParams);
 
-  var xhr = new XMLHttpRequest();
+  let xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
 
   xhr.addEventListener('readystatechange', function () {
@@ -40,14 +44,14 @@ function forgeSword() {
 }
 
 function loadModel(json) {
-  var loader = new GLTFLoader();
+  let loader = new GLTFLoader();
   loader.parse(
     json,
     '',
     (gltf) => {
       scene.remove(swordModel);
       swordModel = gltf.scene.children[0];
-      swordModel.rotation.y += Math.PI / 2;
+      // swordModel.rotation.y += Math.PI / 2;
       importedMaterial = swordModel.material;
       scene.add(swordModel);
       // Save the json
@@ -62,80 +66,131 @@ function loadModel(json) {
 }
 
 function init() {
-  ThreeJSCanvas = document.getElementById('threejs-canvas');
+  canvas = document.getElementById('threejs-canvas');
 
   renderer = new THREE.WebGLRenderer({
-    canvas: ThreeJSCanvas,
+    canvas: canvas,
     antialias: true,
   });
-  var renderer_rect = renderer.domElement.getBoundingClientRect();
+  let renderer_rect = renderer.domElement.getBoundingClientRect();
   renderer.setSize(renderer_rect.width, renderer_rect.height);
   renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
 
-  var aspect = renderer_rect.width / renderer_rect.height;
-  camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf0f0f0);
+
+  // Camera
+  let aspect = renderer_rect.width / renderer_rect.height;
+  camera = new THREE.PerspectiveCamera(70, aspect, 0.1, 1000);
   camera.position.z = 2;
   camera.position.y = 1;
   camera.updateProjectionMatrix();
+  scene.add(camera);
 
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x53698a);
+  // Floor Plane
+  const planeGeometry = new THREE.PlaneBufferGeometry(200, 200);
+  planeGeometry.rotateX(-Math.PI / 2);
+  const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.position.y = -10;
+  plane.receiveShadow = true;
+  scene.add(plane);
 
-  // controls
-
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.screenSpacePanning = false;
-  controls.minDistance = 0.5;
-  controls.maxDistance = 3;
-  controls.enableZoom = true;
-  controls.autoRotate = true;
-  controls.enableRotate = true;
-  controls.enableKeys = false;
+  const helper = new THREE.GridHelper(200, 100);
+  helper.position.y = -9.9;
+  helper.material.opacity = 0.25;
+  helper.material.transparent = true;
+  scene.add(helper);
 
   // Lights
+  let light;
 
-  var light = new THREE.DirectionalLight(0xffffff);
+  light = new THREE.DirectionalLight(0xffffff);
   light.position.set(1, 1, 1);
   scene.add(light);
 
-  var light = new THREE.DirectionalLight(0xcccccc);
+  light = new THREE.DirectionalLight(0xcccccc);
   light.position.set(-1, -1, -1);
   scene.add(light);
 
-  var light = new THREE.AmbientLight(0x222222);
-  scene.add(light);
+  scene.add(new THREE.AmbientLight(0x222222));
+
+  // controls
+  orbitControl = new OrbitControls(camera, canvas);
+  orbitControl.damping = 0.3;
+  orbitControl.enableDamping = true;
+  orbitControl.dampingFactor = 0.05;
+  // orbitControl.screenSpacePanning = false;
+  orbitControl.minDistance = 0.5;
+  // orbitControl.maxDistance = 3;
+  orbitControl.enableZoom = true;
+  // orbitControl.autoRotate = true;
+  // orbitControl.autoRotateSpeed = 1.0;
+  orbitControl.enableRotate = true;
+  orbitControl.enableKeys = true;
+  orbitControl.addEventListener('change', render);
+
+  transformControl = new TransformControls(camera, canvas);
+  transformControl.addEventListener('change', render);
+  transformControl.addEventListener('dragging-changed', (event) => {
+    orbitControl.enabled = !event.value;
+  });
+  scene.add(transformControl);
 
   window.addEventListener('resize', onWindowResize, false);
-  ThreeJSCanvas.addEventListener('keydown', onKeyDown, false);
+  document.addEventListener('pointerdown', onPointerDown, false);
+  document.addEventListener('pointerup', onPointerUp, false);
 }
 
-function onKeyDown(e) {
-  if (e.key === 'ArrowUp' && swordModel) {
-    swordModel.position.y += 0.015;
+function onPointerDown(event) {
+  onDownPosition.x = event.offsetX;
+  onDownPosition.y = event.offsetY;
+}
+
+function onPointerUp(event) {
+  onUpPosition.x = event.offsetX;
+  onUpPosition.y = event.offsetY;
+
+  if (onDownPosition.distanceTo(onUpPosition) === 0) transformControl.detach();
+
+  if (!swordModel) {
+    return;
   }
 
-  if (e.key === 'ArrowDown' && swordModel) {
-    swordModel.position.y -= 0.015;
+  pointer.x = (event.offsetX / canvas.offsetWidth) * 2 - 1;
+  pointer.y = -(event.offsetY / canvas.offsetHeight) * 2 + 1;
+
+  raycaster.setFromCamera(pointer, camera);
+
+  const intersects = raycaster.intersectObjects([swordModel]);
+
+  if (intersects.length > 0) {
+    const obj = intersects[0].object;
+    if (obj !== transformControl.object) {
+      transformControl.attach(obj);
+    }
   }
 }
 
 function onWindowResize() {
-  ThreeJSCanvas.style.width = '100%';
-  ThreeJSCanvas.style.height = '100%';
-  ThreeJSCanvas.width = ThreeJSCanvas.offsetWidth;
-  ThreeJSCanvas.height = ThreeJSCanvas.offsetHeight;
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
 
-  camera.aspect = ThreeJSCanvas.width / ThreeJSCanvas.height;
+  camera.aspect = canvas.width / canvas.height;
   camera.updateProjectionMatrix();
 
-  renderer.setSize(ThreeJSCanvas.width, ThreeJSCanvas.height);
+  renderer.setSize(canvas.width, canvas.height);
 }
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
+  orbitControl.update();
+  if (swordModel) {
+    swordModel.rotation.y += Math.PI / 60.0 / 3;
+  }
   render();
 }
 
@@ -144,7 +199,7 @@ function render() {
 }
 
 function setGlTFDownload(enable) {
-  var downloadButton = document.getElementById('download-button');
+  let downloadButton = document.getElementById('download-button');
   if (enable) {
     downloadButton.disabled = false;
     downloadButton.parentElement.href = URL.createObjectURL(
@@ -159,7 +214,7 @@ function setGlTFDownload(enable) {
 //                    GUI CONTROLS                       //
 ///////////////////////////////////////////////////////////
 
-export var forgeParams = {
+const forgeParams = {
   output: 'gltf',
   seed: 'Enter a seed value',
   template: 'random',
@@ -167,7 +222,7 @@ export var forgeParams = {
     color: '#7f7f7f',
     crossSection: 'random',
     tip: 'random',
-    edgeScaleTolerance: 0.1,
+    edgeScaleTolerance: 0.5,
   },
   guardParams: {
     color: '#7f5100',
@@ -207,7 +262,7 @@ const supportedCrossSections = {
   'Thickened Diamond': 'thickened_diamond',
   Lenticular: 'lenticular',
   Fuller: 'fuller',
-  'Doule Fuller': 'doule_fuller',
+  'Doule Fuller': 'double_fuller',
   'Broad Fuller': 'broad_fuller',
   'Single edge': 'single_edge',
 };
@@ -254,7 +309,7 @@ bladeOptions.add(
   supportedCrossSections
 );
 bladeOptions.add(forgeParams.bladeParams, 'tip', supportedBladeTips);
-bladeOptions.add(forgeParams.bladeParams, 'edgeScaleTolerance', 0, 0.5);
+bladeOptions.add(forgeParams.bladeParams, 'edgeScaleTolerance', 0, 1);
 bladeOptions.addColor(forgeParams.bladeParams, 'color');
 
 let guardOptions = gui.addFolder('Guard Options');
