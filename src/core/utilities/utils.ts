@@ -3,6 +3,21 @@ import seedrandom from 'seedrandom';
 /** Number generator Function */
 type NumGeneratorFn = seedrandom.prng | (() => number);
 
+/** Interpolate given a float on the given interval
+ *
+ * @param t float on the interval [0,1] to interpolate
+ * @param min lowerbound of interval
+ * @param max upperbound of interval
+ */
+export function interpolate(t: number, min: number, max: number): number {
+  if (min >= max) {
+    throw new Error(
+      `Invalid interval. Min (${min}) should be less than max (${max}).`
+    );
+  }
+  return min + (max - min) * t;
+}
+
 /** Return a random int that is in the range [min,max) */
 export function getRandomInt(
   prng: NumGeneratorFn,

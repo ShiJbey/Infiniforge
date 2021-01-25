@@ -13,6 +13,128 @@ import {
 import GeometryData from '../../modeling/GeometryData';
 import { CrossSection } from '../../modeling/CrossSection';
 import BladeGeometry from './BladeGeometry';
+import { wfc } from '../../../lib/wavefunctioncollapse/wfc';
+
+interface CreateCurveOptions {
+  tolerance: [min: number, max: number];
+  slope?: number;
+  evenSampling?: boolean;
+  prng?: () => number;
+}
+
+function sampleFlatCurve(
+  slope: number,
+  tolerance: [number, number]
+): THREE.Vector2[] {
+  const [minX, maxX] = tolerance;
+  const points = [new THREE.Vector2(0, 0), new THREE.Vector2(0, 1)];
+
+  if (slope > 1) {
+    points[1].x = maxX / 2;
+  } else if (slope < 1) {
+    points[1].x = minX / 2;
+  }
+
+  return points;
+}
+
+/**
+ * Create a spline cure by sampling from a sin function
+ *
+ * @param nPoints number of points to sample
+ * @param tolerance [min, max] x values for spline
+ * @param evenSampling should sampled points be spaced evenly apart
+ * @param prng (optional) randon number generator function
+ */
+function sampleSinCurve(
+  nPoints: number,
+  tolerance: [number, number],
+  evenSampling: boolean,
+  prng?: () => number
+): THREE.Vector2[] {
+  const [minX, maxX] = tolerance;
+  const points: THREE.Vector2[] = new Array<THREE.Vector2>(nPoints + 1);
+
+  // Sample points from Sin curve (scaled within interval)
+  const spacing = utils.divideValue(1.0, nPoints + 1, evenSampling, prng);
+  let totalSpacing = 0;
+  for (let i = 0; i < spacing.length; i++) {
+    if (i === spacing.length - 1) {
+      points[i] = new THREE.Vector2(0, 1);
+    } else {
+      let x = Math.sin(totalSpacing * Math.PI * 2);
+      // normalize x to be between [0,1]
+      // sin value range from [-1, 1]
+      x = (x + 1) / 2;
+      x = utils.interpolate(x, minX, maxX);
+      points[i] = new THREE.Vector2(x, totalSpacing);
+    }
+    totalSpacing += spacing[i];
+  }
+  return points;
+}
+
+function edgeSplineFromCurveTypes(
+  types: string[],
+  options: CreateCurveOptions
+): THREE.SplineCurve {
+  const points: THREE.Vector2[] = [];
+
+  for (let i = 0; i < types.length; i++) {
+    let sampledPoints: THREE.Vector2[] = [];
+    switch (types[i]) {
+      case 'edge/flat':
+        sampledPoints = sampleFlatCurve(
+          options.slope ?? 0,
+          options.tolerance
+        ).map((v) => {
+          v.y += i;
+          return v;
+        });
+        break;
+      case 'edge/flat-pos':
+        sampledPoints = sampleFlatCurve(
+          options.slope ?? 1,
+          options.tolerance
+        ).map((v) => {
+          v.y += i;
+          return v;
+        });
+        break;
+      case 'edge/flat-neg':
+        sampledPoints = sampleFlatCurve(
+          options.slope ?? -1,
+          options.tolerance
+        ).map((v) => {
+          v.y += i;
+          return v;
+        });
+        break;
+      case 'edge/sin':
+        sampledPoints = sampleSinCurve(
+          5,
+          options.tolerance,
+          options.evenSampling ?? true,
+          options.prng
+        ).map((v) => {
+          v.y += i;
+          return v;
+        });
+        break;
+      default:
+        sampledPoints = sampleFlatCurve(0, options.tolerance).map((v) => {
+          v.y += i;
+          return v;
+        });
+    }
+    if (i !== 0) {
+      sampledPoints = sampledPoints.slice(1);
+    }
+    points.push(...sampledPoints);
+  }
+
+  return new THREE.SplineCurve(points);
+}
 
 export default class SwordGenerator extends Generator {
   constructor(verbose = false) {
@@ -127,8 +249,8 @@ export default class SwordGenerator extends Generator {
     };
 
     const color = params?.color ?? 'rgb(128, 128, 128)';
-    let tip = determineTip(params?.tip);
-    let edgeScaleTolerance = params?.edgeScaleTolerance ?? 0.1;
+    const tip = determineTip(params?.tip);
+    const edgeScaleTolerance = params?.edgeScaleTolerance ?? 0.1;
     const randomNumControlPoints = params?.randomNumControlPoints ?? false;
     const minSplineControlPoints = params?.minSplineControlPoints ?? 2;
     const maxSplineControlPoints = params?.maxSplineControlPoints ?? 7;
@@ -136,14 +258,14 @@ export default class SwordGenerator extends Generator {
     const evenSpacedMidCPs = params?.evenSpacedMidCPs ?? false;
     const evenSpacedTipCPs = params?.evenSpacedTipCPs ?? false;
     const baseSplineSamples = params?.baseSplineSamples ?? 8;
-    const midSplineSamples = params?.baseSplineSamples ?? 4;
+    const midSplineSamples = params?.baseSplineSamples ?? 5;
     const tipSplineSamples = params?.baseSplineSamples ?? 4;
     const baseSplineControlPoints = params?.baseSplineControlPoints ?? 7;
     const midSplineControlPoints = params?.baseSplineControlPoints ?? 5;
     const tipSplineControlPoints = params?.baseSplineControlPoints ?? 5;
     const bladeBaseProportion = params?.bladeBaseProportion ?? 0.4;
     const bladeMidProportion = params?.bladeMidProportion ?? 0.45;
-    let crossSection = this.getBladeCrossSection(params?.crossSection);
+    const crossSection = this.getBladeCrossSection(params?.crossSection);
 
     /// //////////////////////////////////////////////////////////////
     //                    BLADE SECTION LENGTHS                    //
@@ -172,34 +294,46 @@ export default class SwordGenerator extends Generator {
     //                        BUILD SECTIONS                       //
     /// //////////////////////////////////////////////////////////////
 
-    let edgeSpline: THREE.SplineCurve;
+    let baseEdgeSpline: THREE.SplineCurve;
+    let midEdgeSpline: THREE.SplineCurve;
+    let nControlPoints = baseSplineControlPoints;
 
-    if (template.name === 'katana') {
-      crossSection = this.getBladeCrossSection('single_edge');
-      tip = 'clip';
-      edgeScaleTolerance = 0;
-
-      edgeSpline = new THREE.SplineCurve([
-        new THREE.Vector2(0, 0),
-        new THREE.Vector2(0, 1),
-      ]);
-    } else {
-      let nControlPoints = baseSplineControlPoints;
-
-      if (randomNumControlPoints) {
-        nControlPoints = utils.getRandomInt(
-          this.prng,
-          minSplineControlPoints,
-          maxSplineControlPoints
-        );
-      }
-
-      edgeSpline = this.CreateEdgeSpline(
-        nControlPoints,
-        edgeScaleTolerance,
-        evenSpacedBaseCPs
+    if (randomNumControlPoints) {
+      nControlPoints = utils.getRandomInt(
+        this.prng,
+        minSplineControlPoints,
+        maxSplineControlPoints
       );
     }
+
+    // edgeSpline = this.CreateEdgeSpline(
+    //   nControlPoints,
+    //   edgeScaleTolerance,
+    //   evenSpacedBaseCPs
+    // );
+
+    const edgeCurveSpec: string[] = wfc(6, this.prng);
+
+    baseEdgeSpline = edgeSplineFromCurveTypes(edgeCurveSpec.slice(0, 3), {
+      tolerance: [-edgeScaleTolerance, edgeScaleTolerance],
+      prng: this.prng,
+    });
+
+    midEdgeSpline = edgeSplineFromCurveTypes(edgeCurveSpec.slice(3), {
+      tolerance: [-edgeScaleTolerance, edgeScaleTolerance],
+      prng: this.prng,
+    });
+
+    // if (template.name === 'katana') {
+    //   crossSection = this.getBladeCrossSection('single_edge');
+    //   tip = 'clip';
+    //   edgeScaleTolerance = 0;
+
+    //   baseEdgeSpline = new THREE.SplineCurve([
+    //     new THREE.Vector2(0, 0),
+    //     new THREE.Vector2(0, 1),
+    //   ]);
+    // }
 
     const bladeGeometry = new BladeGeometry(
       bladeLength,
@@ -220,18 +354,10 @@ export default class SwordGenerator extends Generator {
         )
       )
       // Extrude the base section of the blade
-      .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength, 0.2)
+      .extrudeSection(baseEdgeSpline, baseSplineSamples, baseSectionLength, 0.2)
       // Extrude the mid section of the blade
       // .extrude(midSectionLength)
-      .extrudeSection(
-        new THREE.SplineCurve([
-          new THREE.Vector2(0, 0),
-          new THREE.Vector2(0, 1),
-        ]),
-        midSplineSamples,
-        midSectionLength,
-        0.3
-      )
+      .extrudeSection(midEdgeSpline, midSplineSamples, midSectionLength, 0.3)
       // Scale down the cross-section
       // .scale(0.7)
       // Create blade tip

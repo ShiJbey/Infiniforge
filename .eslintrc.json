@@ -38,7 +38,7 @@
         "operator-linebreak":"off"
     },
     "overrides": [{
-        "files": [".ts", ".tsx"],
+        "files": ["**/*.ts", "**/*.tsx"],
         "extends": [
             "prettier",
             "prettier/@typescript-eslint",
@@ -53,6 +53,7 @@
         ],
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
+            "project": "./tsconfig.json",
             "ecmaVersion": 2021,
             "sourceType": "module"
         },
@@ -60,7 +61,17 @@
             "@typescript-eslint/no-explicit-any": ["off"],
             "@typescript-eslint/no-unsafe-return": ["off"],
             "@typescript-eslint/comma-dangle": ["off"],
-            "@typescript-eslint/explicit-function-return-type": ["error"]
+            "@typescript-eslint/explicit-function-return-type": ["error"],
+            "no-bitwise": "off",
+            "no-underscore-dangle":"off",
+            "no-plusplus": "off",
+            "no-param-reassign": "off",
+            "no-continue": "off",
+            "no-var": "error",
+            "linebreak-style": "off",
+            "comma-dangle": "off",
+            "class-methods-use-this":"warn",
+            "operator-linebreak":"off"
         }
     }],
     "settings": {
@@ -69,5 +80,6 @@
               "extensions": [".js", ".jsx", ".ts", ".tsx"]
             }
         }
-    }
+    },
+    "ignorePatterns": ["./build", "./node_modules", ".vscode"]
 }

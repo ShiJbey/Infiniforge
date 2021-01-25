@@ -190,14 +190,17 @@ export default class BladeGeometry extends GeometryData {
       throw new Error('BladeGeometry does not have an active edge curve');
     }
 
+    // points on the curve should be between [-1, 1] so we add 1
     const edgeScaleFactor = this._activeEdgeCurve.getPoint(samplePoint).x + 1;
 
-    for (let i = 0; i < this._bladeEdgeVertices.length; i++) {
-      this._activeCrossSection.scaleVertex(
-        this._bladeEdgeVertices[i],
-        edgeScaleFactor
-      );
-    }
+    this._activeCrossSection.scale(new THREE.Vector2(1, edgeScaleFactor));
+
+    // for (let i = 0; i < this._bladeEdgeVertices.length; i++) {
+    //   this._activeCrossSection.scaleVertex(
+    //     this._bladeEdgeVertices[i],
+    //     edgeScaleFactor
+    //   );
+    // }
 
     return this;
   }
@@ -216,11 +219,9 @@ export default class BladeGeometry extends GeometryData {
       return this;
     }
 
-    // Array of duplicated vertices
     const dupedVerts: THREE.Vector3[] = [];
     const newEdgeVerts: number[] = [];
 
-    // Loop through vers in original cross-section
     for (let i = 0; i < crossSection.getVertices().length; i++) {
       if (edgeVerts.includes(i)) {
         newEdgeVerts.push(dupedVerts.length);
