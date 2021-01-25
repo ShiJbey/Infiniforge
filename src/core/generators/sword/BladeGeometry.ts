@@ -195,13 +195,6 @@ export default class BladeGeometry extends GeometryData {
 
     this._activeCrossSection.scale(new THREE.Vector2(1, edgeScaleFactor));
 
-    // for (let i = 0; i < this._bladeEdgeVertices.length; i++) {
-    //   this._activeCrossSection.scaleVertex(
-    //     this._bladeEdgeVertices[i],
-    //     edgeScaleFactor
-    //   );
-    // }
-
     return this;
   }
 
