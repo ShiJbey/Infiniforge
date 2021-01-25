@@ -7,15 +7,25 @@ import * as THREE from 'three';
  * @note Units are measured in meters
  */
 export interface SwordTemplate {
+  /** Template name */
   name: string;
-  bladeLength: number;
-  handleLength: number;
+  /** length of the blade (ignores min/maxBladeLengths) */
+  bladeLength?: number;
+  /** length of the handle (ignores min/maxHandleLengths) */
+  handleLength?: number;
+  /** starting width of the blade */
   baseBladeWidth: number;
+  /** minimum length the blade can be */
   minBladeLength: number;
+  /** maximum length the blade can be */
   maxBladeLength: number;
+  /** minimum length the handle can be */
   minHandleLength: number;
+  /** maximum length the handle can be */
   maxHandleLength: number;
+  /** thickness of the blade */
   bladeThickness: number;
+  /** curve that the blade's spine follows */
   extrusionCurve: THREE.Curve<THREE.Vector2>;
 }
 
