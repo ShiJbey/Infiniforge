@@ -57,13 +57,11 @@ const TILES: BladeTile[] = [
   },
 ];
 
-const TILE_WEIGHTS: number[] = ((): number[] => {
-  return TILES.map((tile) => tile.weight);
-})();
+const TILE_WEIGHTS: number[] = ((): number[] =>
+  TILES.map((tile) => tile.weight))();
 
-const TILE_WEIGHT_LOG_WEIGHTS: number[] = ((): number[] => {
-  return TILES.map((tile) => tile.weight * Math.log(tile.weight));
-})();
+const TILE_WEIGHT_LOG_WEIGHTS: number[] = ((): number[] =>
+  TILES.map((tile) => tile.weight * Math.log(tile.weight)))();
 
 /** Get the neighboring cel position given a direction */
 function neighbor(cellPosition: number, direction: string): number {
@@ -127,16 +125,22 @@ function containsAnyZeroCount(enablerCount: TileEnablerCount): boolean {
 class WFCCell {
   /** Tile index this cell has collapsed to */
   public tile: number;
+
   /** Has this cell been collapsed */
   public isCollapsed: boolean;
+
   /** Is the tile at an index valid for this cell */
   private possible: boolean[];
-  /** Cached the sum of the weights of all possible tiles*/
+
+  /** Cached the sum of the weights of all possible tiles */
   private sumOfPossibleTileWeights: number;
+
   /** Cache the sum of the weight*log(weight) for all possible tiles */
   private sumOfPossibleTileWeightLogWeights: number;
+
   /** Noise added to the entropy of this cell to help prevent ties */
   private entropyNoise: number;
+
   /** Count the number of enabling tiles in each direction for each tile */
   public tileEnablerCounts: TileEnablerCount[];
 
@@ -205,7 +209,7 @@ class WFCCell {
     let remaining = getRandomInt(rng, 0, this.sumOfPossibleTileWeights);
     const possibleTiles = this.getPossibleTiles();
     for (const tileIndex of possibleTiles) {
-      let weight = TILE_WEIGHTS[tileIndex];
+      const weight = TILE_WEIGHTS[tileIndex];
       if (remaining > weight) {
         remaining -= weight;
       } else {
@@ -251,14 +255,19 @@ interface TileRemovalUpdate {
 class WFCState {
   /** Single row grid of cells */
   grid: WFCCell[];
+
   /** Random number generator function */
   rng: () => number;
+
   /** Number of cells that have not been collapsed */
   remainingUncollapsedCells: number;
+
   /** Min Heap of cells ordered by entropy */
   entropyHeap: Heap<EntropyEntry>;
+
   /** Records of potential tiles being removed from cells */
   tileRemovals: TileRemovalUpdate[];
+
   /** Did the state encounter a contradiction */
   contradictionFound: boolean;
 
@@ -306,12 +315,10 @@ class WFCState {
 
     this.tileRemovals.push(
       ...removedPossibilties.map(
-        (tileIndex): TileRemovalUpdate => {
-          return {
-            tile: tileIndex,
-            cell: index,
-          };
-        }
+        (tileIndex): TileRemovalUpdate => ({
+          tile: tileIndex,
+          cell: index,
+        })
       )
     );
   }
@@ -352,7 +359,6 @@ class WFCState {
 
               if (neighborCell.getPossibleTiles().length === 0) {
                 // Contradiction
-                console.error('Contradiction encountered');
                 this.contradictionFound = true;
                 return;
               }
@@ -371,7 +377,7 @@ class WFCState {
 
               this.tileRemovals.push({
                 cell: neighborPosition,
-                tile: tile,
+                tile,
               });
             }
           }
@@ -428,7 +434,6 @@ export function wfc(size: number, rng: () => number = Math.random): string[] {
   while (!solutionFound) {
     solutionFound = state.run();
     if (!solutionFound) {
-      console.log('Starting new iteration');
       state = new WFCState(
         _.range(size).map(() => new WFCCell(rng() * 0.000001)),
         rng

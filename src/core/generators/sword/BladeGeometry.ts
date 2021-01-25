@@ -192,7 +192,6 @@ export default class BladeGeometry extends GeometryData {
 
     // points on the curve should be between [-1, 1] so we add 1
     const edgeScaleFactor = this._activeEdgeCurve.getPoint(samplePoint).x + 1;
-
     this._activeCrossSection.scale(new THREE.Vector2(1, edgeScaleFactor));
 
     return this;

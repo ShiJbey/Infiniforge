@@ -19,7 +19,8 @@ interface CreateCurveOptions {
   tolerance: [min: number, max: number];
   slope?: number;
   evenSampling?: boolean;
-  prng?: () => number;
+  nPoints?: number;
+  prng: () => number;
 }
 
 function sampleFlatCurve(
@@ -29,9 +30,9 @@ function sampleFlatCurve(
   const [minX, maxX] = tolerance;
   const points = [new THREE.Vector2(0, 0), new THREE.Vector2(0, 1)];
 
-  if (slope > 1) {
+  if (slope > 0) {
     points[1].x = maxX / 2;
-  } else if (slope < 1) {
+  } else if (slope < 0) {
     points[1].x = minX / 2;
   }
 
@@ -84,17 +85,14 @@ function edgeSplineFromCurveTypes(
     let sampledPoints: THREE.Vector2[] = [];
     switch (types[i]) {
       case 'edge/flat':
-        sampledPoints = sampleFlatCurve(
-          options.slope ?? 0,
-          options.tolerance
-        ).map((v) => {
+        sampledPoints = sampleFlatCurve(0, options.tolerance).map((v) => {
           v.y += i;
           return v;
         });
         break;
       case 'edge/flat-pos':
         sampledPoints = sampleFlatCurve(
-          options.slope ?? 1,
+          1 * options.prng(),
           options.tolerance
         ).map((v) => {
           v.y += i;
@@ -103,7 +101,7 @@ function edgeSplineFromCurveTypes(
         break;
       case 'edge/flat-neg':
         sampledPoints = sampleFlatCurve(
-          options.slope ?? -1,
+          -1 * options.prng(),
           options.tolerance
         ).map((v) => {
           v.y += i;
@@ -112,7 +110,7 @@ function edgeSplineFromCurveTypes(
         break;
       case 'edge/sin':
         sampledPoints = sampleSinCurve(
-          5,
+          options.nPoints ?? 5,
           options.tolerance,
           options.evenSampling ?? true,
           options.prng
@@ -294,46 +292,19 @@ export default class SwordGenerator extends Generator {
     //                        BUILD SECTIONS                       //
     /// //////////////////////////////////////////////////////////////
 
-    let baseEdgeSpline: THREE.SplineCurve;
-    let midEdgeSpline: THREE.SplineCurve;
-    let nControlPoints = baseSplineControlPoints;
-
-    if (randomNumControlPoints) {
-      nControlPoints = utils.getRandomInt(
-        this.prng,
-        minSplineControlPoints,
-        maxSplineControlPoints
-      );
-    }
-
-    // edgeSpline = this.CreateEdgeSpline(
-    //   nControlPoints,
-    //   edgeScaleTolerance,
-    //   evenSpacedBaseCPs
-    // );
-
     const edgeCurveSpec: string[] = wfc(6, this.prng);
 
-    baseEdgeSpline = edgeSplineFromCurveTypes(edgeCurveSpec.slice(0, 3), {
+    const baseEdgeSpline = edgeSplineFromCurveTypes(edgeCurveSpec.slice(0, 3), {
       tolerance: [-edgeScaleTolerance, edgeScaleTolerance],
       prng: this.prng,
+      nPoints: baseSplineControlPoints,
     });
 
-    midEdgeSpline = edgeSplineFromCurveTypes(edgeCurveSpec.slice(3), {
+    const midEdgeSpline = edgeSplineFromCurveTypes(edgeCurveSpec.slice(3), {
       tolerance: [-edgeScaleTolerance, edgeScaleTolerance],
       prng: this.prng,
+      nPoints: midSplineControlPoints,
     });
-
-    // if (template.name === 'katana') {
-    //   crossSection = this.getBladeCrossSection('single_edge');
-    //   tip = 'clip';
-    //   edgeScaleTolerance = 0;
-
-    //   baseEdgeSpline = new THREE.SplineCurve([
-    //     new THREE.Vector2(0, 0),
-    //     new THREE.Vector2(0, 1),
-    //   ]);
-    // }
 
     const bladeGeometry = new BladeGeometry(
       bladeLength,
