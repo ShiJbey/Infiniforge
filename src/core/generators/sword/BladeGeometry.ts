@@ -192,12 +192,7 @@ export default class BladeGeometry extends GeometryData {
 
     const edgeScaleFactor = this._activeEdgeCurve.getPoint(samplePoint).x + 1;
 
-    for (let i = 0; i < this._bladeEdgeVertices.length; i++) {
-      this._activeCrossSection.scaleVertex(
-        this._bladeEdgeVertices[i],
-        edgeScaleFactor
-      );
-    }
+    this._activeCrossSection.scale(new THREE.Vector2(1, edgeScaleFactor));
 
     return this;
   }
