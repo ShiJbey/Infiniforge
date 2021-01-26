@@ -1,5 +1,10 @@
 # ![](server/www/anvil.png) Infiniforge 2.0
 
+Typescript/Javascript library for procedurally generating 3D fantasy swords.
+
+This project was originally made as part of the August 2016 Reddit procedural generation challenge
+Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
+
 ## CMPM202 - Project 1
 
 I implemented a version of the [Wave Function Collapse algorithm]() adapted for generating a list of curves used during blade generation. Getting a good output from the algorithm involves tweaking the weights of edge cure types as well as the various parameters offered by the base Infiniforge API.
@@ -48,11 +53,6 @@ const TILES: BladeTile[] = [
   },
 ];
 ```
-
-Typescript/Javascript library for procedurally generating 3D fantasy swords.
-
-This project was originally made as part of the August 2016 Reddit procedural generation challenge
-Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
 
 ## Running the code
 
