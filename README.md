@@ -7,7 +7,7 @@ Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/com
 
 ## CMPM202 - Project 1
 
-I implemented a version of the [Wave Function Collapse algorithm]() adapted for generating a list of curves used during blade generation. Getting a good output from the algorithm involves tweaking the weights of edge cure types as well as the various parameters offered by the base Infiniforge API.
+I implemented a version of the [Wave Function Collapse algorithm](https://github.com/mxgmn/WaveFunctionCollapse) adapted for generating a list of curves used during blade generation. Getting a good output from the algorithm involves tweaking the weights of edge cure types as well as the various parameters offered by the base Infiniforge API.
 
 Group Members: Shi Johnson-Bey
 
@@ -117,3 +117,5 @@ in a unity game by taking advantage of the [UnityGLTF plugin](https://github.com
 - http://www.lordsandladies.org/middle-ages-weapons.htm
 
 - https://www.medievalswordsworld.com/
+
+- https://github.com/mxgmn/WaveFunctionCollapse
