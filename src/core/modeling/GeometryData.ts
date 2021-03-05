@@ -86,14 +86,20 @@ export default class GeometryData {
   }
 
   /** Construct GeometryData object from threejs Geometry */
-  fromGeometry(geometry: THREE.Geometry, color?: THREE.Color): this {
+  fromGeometry(geometry: THREE.BufferGeometry, color?: THREE.Color): this {
     this._vertices = [];
     this._colors = [];
     this._triangles = [];
 
+    const verts = geometry.getAttribute('position');
+    const colors = geometry.getAttribute('colors');
+    const faces = geometry.getIndex();
+
     // Add vertices and default vertex colors
-    for (let i = 0; i < geometry.vertices.length; i++) {
-      this._vertices.push(geometry.vertices[i]);
+    for (let i = 0; i < verts.count; i++) {
+      this._vertices.push(
+        new THREE.Vector3(verts.getX(i), verts.getY(i), verts.getZ(i))
+      );
       if (color) {
         this._colors.push(color.clone());
       } else {
@@ -101,16 +107,15 @@ export default class GeometryData {
       }
     }
 
-    // Add triangle face information
-    for (let i = 0; i < geometry.faces.length; i++) {
-      const face = geometry.faces[i];
-      this._triangles.push(new THREE.Vector3(face.a, face.b, face.c));
-      if (color === undefined && face.vertexColors.length === 3) {
-        this._colors[face.a] = face.vertexColors[0].clone();
-        this._colors[face.b] = face.vertexColors[1].clone();
-        this._colors[face.c] = face.vertexColors[2].clone();
+    if (faces) {
+      // Add triangle face information
+      for (let i = 0; i < faces.count; i++) {
+        this._triangles.push(
+          new THREE.Vector3(faces.getX(i), faces.getY(i), faces.getZ(i))
+        );
       }
     }
+
     this._activeCrossSection = undefined;
     return this;
   }
@@ -152,13 +157,16 @@ export default class GeometryData {
     newCrossSection.copyTransform(this._activeCrossSection);
     this._activeCrossSection = newCrossSection;
 
-    // Copy the triangles data to this GeometryData object
-    for (let i = 0; i < geometry.faces.length; i++) {
-      const face = geometry.faces[i];
-      this._triangles.push(
-        new THREE.Vector3(vertIdxs[face.a], vertIdxs[face.b], vertIdxs[face.c])
-      );
+    const faces = geometry.getIndex();
+    if (faces) {
+      // Copy the triangles data to this GeometryData object
+      for (let i = 0; i < faces.count; i++) {
+        this._triangles.push(
+          new THREE.Vector3(faces.getX(i), faces.getY(i), faces.getZ(i))
+        );
+      }
     }
+
 
     return this;
   }

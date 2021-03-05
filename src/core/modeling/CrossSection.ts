@@ -176,11 +176,13 @@ export class CrossSection {
     // Create geometry from shape
     const geometry = new THREE.ShapeGeometry(shape);
 
+    const verts = geometry.getAttribute('position');
+
     // Loop though the shape vertices and add
     // them to the new cross section
-    for (let i = 0; i < geometry.vertices.length; i++) {
+    for (let i = 0; i < verts.count; i++) {
       crossSection._vertices.push(
-        new THREE.Vector3(geometry.vertices[i].x, 0, geometry.vertices[i].y)
+        new THREE.Vector3(verts.getX(i), 0, verts.getY(i))
       );
     }
 

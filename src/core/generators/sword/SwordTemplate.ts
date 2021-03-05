@@ -10,9 +10,9 @@ export interface SwordTemplate {
   /** Template name */
   name: string;
   /** length of the blade (ignores min/maxBladeLengths) */
-  bladeLength?: number;
+  bladeLength: number;
   /** length of the handle (ignores min/maxHandleLengths) */
-  handleLength?: number;
+  handleLength: number;
   /** starting width of the blade */
   baseBladeWidth: number;
   /** minimum length the blade can be */
