@@ -51,7 +51,7 @@
     "seedrandom": "^3.0.5",
     "serve-favicon": "^2.5.0",
     "serve-static": "^1.14.1",
-    "three": "^0.126.1"
+    "three": "^0.137.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
