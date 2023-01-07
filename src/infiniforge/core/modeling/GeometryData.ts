@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import _ from 'lodash';
-import { CrossSection } from './CrossSection';
-import { GLTFExporter } from '../../lib/GLTFExporter';
+import * as THREE from "three";
+import _ from "lodash";
+import { CrossSection } from "./CrossSection";
+import { GLTFExporter } from "../../lib/GLTFExporter";
 
 /** Custom class for organizing/modifying 3D mesh information  */
 export default class GeometryData {
@@ -91,8 +91,8 @@ export default class GeometryData {
     this._colors = [];
     this._triangles = [];
 
-    const verts = geometry.getAttribute('position');
-    const colors = geometry.getAttribute('colors');
+    const verts = geometry.getAttribute("position");
+    const colors = geometry.getAttribute("colors");
     const faces = geometry.getIndex();
 
     // Add vertices and default vertex colors
@@ -124,7 +124,7 @@ export default class GeometryData {
   fill(): this {
     if (!this._activeCrossSection) {
       throw new Error(
-        'GeometryData does not have an active cross section to translate.'
+        "GeometryData does not have an active cross section to translate."
       );
     }
 
@@ -167,7 +167,6 @@ export default class GeometryData {
       }
     }
 
-
     return this;
   }
 
@@ -175,13 +174,13 @@ export default class GeometryData {
   translate(distance: THREE.Vector3 | number): this {
     if (!this._activeCrossSection) {
       throw new Error(
-        'GeometryData does not have an active cross section to translate.'
+        "GeometryData does not have an active cross section to translate."
       );
     }
 
     const translationVector: THREE.Vector3 = new THREE.Vector3();
 
-    if (typeof distance === 'number') {
+    if (typeof distance === "number") {
       translationVector.copy(this._activeCrossSection.getNorm().normalize());
       translationVector.multiplyScalar(distance);
     } else {
@@ -197,7 +196,7 @@ export default class GeometryData {
   scale(scaleFactor: THREE.Vector2 | number): this {
     if (!this._activeCrossSection) {
       throw new Error(
-        'GeometryData does not have an active cross section to scale'
+        "GeometryData does not have an active cross section to scale"
       );
     }
     this._activeCrossSection.scale(scaleFactor);
@@ -208,7 +207,7 @@ export default class GeometryData {
   rotate(quaternion: THREE.Quaternion): this {
     if (!this._activeCrossSection) {
       throw new Error(
-        'GeometryData does not have an active cross section to rotate'
+        "GeometryData does not have an active cross section to rotate"
       );
     }
     this._activeCrossSection.rotate(quaternion);
@@ -220,7 +219,7 @@ export default class GeometryData {
     // Check that there is a cross section to extrude
     if (!this._activeCrossSection) {
       throw new Error(
-        'GeometryData does not have an active cross section to extrude'
+        "GeometryData does not have an active cross section to extrude"
       );
     }
 
@@ -228,11 +227,11 @@ export default class GeometryData {
     let translationVector: THREE.Vector3 = new THREE.Vector3();
 
     // Check the type of the direction variable
-    if (typeof direction === 'object') {
+    if (typeof direction === "object") {
       if (direction instanceof THREE.Vector3) {
         translationVector = direction;
       }
-    } else if (typeof direction === 'number') {
+    } else if (typeof direction === "number") {
       translationVector.copy(this._activeCrossSection.getNorm());
       translationVector.multiplyScalar(direction);
     }
@@ -302,14 +301,14 @@ export default class GeometryData {
   }
 
   /** Covert to GLTF data */
-  toGlTF(verbose = false): Promise<any> {
+  toGlTF(verbose = false): Promise<object> {
     const gltfExporter = new GLTFExporter();
 
     // Parse the swords mesh and create a new promise to access the result
     return new Promise((resolve) => {
       gltfExporter.parse(
         this.toMesh(),
-        (gltf: any) => {
+        (gltf) => {
           resolve(gltf);
         },
         { verbose }
@@ -320,7 +319,7 @@ export default class GeometryData {
   /** Convert to threejs Mesh */
   toMesh(): THREE.Mesh {
     if (this._vertices.length === 0) {
-      throw new Error('Geometry data has no vertices');
+      throw new Error("Geometry data has no vertices");
     }
 
     const geometry = new THREE.BufferGeometry();
@@ -342,11 +341,11 @@ export default class GeometryData {
 
     geometry.setIndex(tris);
     geometry.setAttribute(
-      'position',
+      "position",
       new THREE.BufferAttribute(new Float32Array(verts), 3)
     );
     geometry.setAttribute(
-      'color',
+      "color",
       new THREE.BufferAttribute(new Float32Array(colors), 3)
     );
 

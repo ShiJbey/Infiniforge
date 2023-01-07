@@ -142,7 +142,7 @@ export interface SwordGenerationParams {
    * Final output of call to generate
    * (defaults to 'gltf')
    */
-  output?: 'gltf' | 'mesh';
+  output?: "gltf" | "mesh";
 
   /**
    * Style of sword to produce

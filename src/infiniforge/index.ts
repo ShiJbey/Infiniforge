@@ -1,13 +1,13 @@
-import Generator from './core/generators/Generator';
+import Generator from "./core/generators/Generator";
 
-import SwordGenerator from './core/generators/sword/SwordGenerator';
+import SwordGenerator from "./core/generators/sword/SwordGenerator";
 
 import {
   BladeCrossSection,
   BLADE_CROSS_SECTIONS,
-} from './core/generators/sword/BladeCrossSection';
+} from "./core/generators/sword/BladeCrossSection";
 
-import BladeGeometry from './core/generators/sword/BladeGeometry';
+import BladeGeometry from "./core/generators/sword/BladeGeometry";
 
 import {
   BladeParams,
@@ -15,16 +15,16 @@ import {
   HandleParams,
   PommelParams,
   SwordGenerationParams,
-} from './core/generators/sword/SwordGenerationParams';
+} from "./core/generators/sword/SwordGenerationParams";
 
 import {
   SwordTemplate,
   SWORD_TEMPLATES,
-} from './core/generators/sword/SwordTemplate';
+} from "./core/generators/sword/SwordTemplate";
 
-import { CrossSection, CrossSectionData } from './core/modeling/CrossSection';
+import { CrossSection, CrossSectionData } from "./core/modeling/CrossSection";
 
-import GeometryData from './core/modeling/GeometryData';
+import GeometryData from "./core/modeling/GeometryData";
 
 export {
   Generator,

@@ -1,5 +1,3 @@
-# From: https://github.com/Microsoft/TypeScript/blob/master/.gitignore
-
 # Node
 node_modules/
 .node_modules/
@@ -37,5 +35,7 @@ package-lock.json
 # ESLint
 .eslintcache
 
-# Samples folder used for testing
-samples/**/*
+# Non-Code
+CHANGELOG.md
+package.json
+README.md

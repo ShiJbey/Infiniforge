@@ -1,18 +1,18 @@
-import * as THREE from 'three';
-import * as utils from '../../utilities/utils';
-import Generator from '../Generator';
-import { SwordTemplate, SWORD_TEMPLATES } from './SwordTemplate';
-import { BladeCrossSection, BLADE_CROSS_SECTIONS } from './BladeCrossSection';
+import * as THREE from "three";
+import * as utils from "../../utilities/utils";
+import Generator from "../Generator";
+import { SwordTemplate, SWORD_TEMPLATES } from "./SwordTemplate";
+import { BladeCrossSection, BLADE_CROSS_SECTIONS } from "./BladeCrossSection";
 import {
   BladeParams,
   HandleParams,
   GuardParams,
   PommelParams,
   SwordGenerationParams,
-} from './SwordGenerationParams';
-import GeometryData from '../../modeling/GeometryData';
-import { CrossSection } from '../../modeling/CrossSection';
-import BladeGeometry from './BladeGeometry';
+} from "./SwordGenerationParams";
+import GeometryData from "../../modeling/GeometryData";
+import { CrossSection } from "../../modeling/CrossSection";
+import BladeGeometry from "./BladeGeometry";
 
 export default class SwordGenerator extends Generator {
   constructor(verbose = false) {
@@ -25,7 +25,7 @@ export default class SwordGenerator extends Generator {
    * @param params
    * @return
    */
-  async generate(params: SwordGenerationParams): Promise<any> {
+  async generate(params: SwordGenerationParams): Promise<object> {
     if (params.seed) {
       this.setSeed(params.seed);
     }
@@ -39,7 +39,7 @@ export default class SwordGenerator extends Generator {
     this.buildHandle(sword, template, params.handleParams);
     this.buildPommel(sword, template, params.pommelParams);
 
-    if (params.output === 'mesh') {
+    if (params.output === "mesh") {
       return sword.toMesh();
     }
 
@@ -48,7 +48,7 @@ export default class SwordGenerator extends Generator {
 
   private getSwordTemplate(templateName?: string): SwordTemplate {
     if (templateName) {
-      if (templateName === 'random') {
+      if (templateName === "random") {
         return this.getRandomTemplate();
       }
       const template = SWORD_TEMPLATES[templateName];
@@ -63,7 +63,7 @@ export default class SwordGenerator extends Generator {
 
   private getBladeCrossSection(crossSectionName?: string): BladeCrossSection {
     if (crossSectionName) {
-      if (crossSectionName === 'random') {
+      if (crossSectionName === "random") {
         return this.getRandomBladeCrossSection();
       }
       const crossSection = BLADE_CROSS_SECTIONS[crossSectionName];
@@ -118,15 +118,15 @@ export default class SwordGenerator extends Generator {
   ): void {
     const determineTip = (tipStyle?: string): string => {
       if (tipStyle) {
-        if (tipStyle === 'random') {
+        if (tipStyle === "random") {
           return this.randomTip();
         }
         return tipStyle;
       }
-      return 'standard';
+      return "standard";
     };
 
-    const color = params?.color ?? 'rgb(128, 128, 128)';
+    const color = params?.color ?? "rgb(128, 128, 128)";
     let tip = determineTip(params?.tip);
     let edgeScaleTolerance = params?.edgeScaleTolerance ?? 0.1;
     const randomNumControlPoints = params?.randomNumControlPoints ?? false;
@@ -151,7 +151,7 @@ export default class SwordGenerator extends Generator {
 
     if (bladeBaseProportion + bladeMidProportion > 1.0) {
       throw new Error(
-        'Blade middle and base section proportions larger than 1.0'
+        "Blade middle and base section proportions larger than 1.0"
       );
     }
 
@@ -174,9 +174,9 @@ export default class SwordGenerator extends Generator {
 
     let edgeSpline: THREE.SplineCurve;
 
-    if (template.name === 'katana') {
-      crossSection = this.getBladeCrossSection('single_edge');
-      tip = 'clip';
+    if (template.name === "katana") {
+      crossSection = this.getBladeCrossSection("single_edge");
+      tip = "clip";
       edgeScaleTolerance = 0;
 
       edgeSpline = new THREE.SplineCurve([
@@ -252,7 +252,7 @@ export default class SwordGenerator extends Generator {
     params?: GuardParams
   ): void {
     const DEFAULT_PARAMS: GuardParams = {
-      color: '#7f5100',
+      color: "#7f5100",
       thickness: 0.01,
       guardBladeRatio: 1.5,
     };
@@ -284,7 +284,7 @@ export default class SwordGenerator extends Generator {
     template: SwordTemplate,
     params?: HandleParams
   ): void {
-    const color = params?.color ?? '#cc5100';
+    const color = params?.color ?? "#cc5100";
     const radius = params?.radius ?? 0.015;
 
     const handlesCsShape = new THREE.Shape().setFromPoints(
@@ -307,13 +307,13 @@ export default class SwordGenerator extends Generator {
       )
       .translate(-template.handleLength);
 
-    if (template.name !== 'katana') {
+    if (template.name !== "katana") {
       handleGeometryData.scale(1.0 / 2.0);
     }
 
     handleGeometryData.extrude(new THREE.Vector3(0, template.handleLength, 0));
 
-    if (template.name !== 'katana') {
+    if (template.name !== "katana") {
       handleGeometryData.scale(2);
     }
 
@@ -331,7 +331,7 @@ export default class SwordGenerator extends Generator {
     template: SwordTemplate,
     params?: PommelParams
   ): void {
-    const color = params?.color ?? '#e5cc59';
+    const color = params?.color ?? "#e5cc59";
     const pommelBladeWidthRatio = params?.pommelBladeWidthRatio ?? 0.5;
     const pommelRadius = 0.03;
 
@@ -346,7 +346,7 @@ export default class SwordGenerator extends Generator {
       new THREE.Color(color)
     );
 
-    if (template.name === 'katana') {
+    if (template.name === "katana") {
       const pommelCsShape = new THREE.Shape().setFromPoints(
         new THREE.EllipseCurve(
           0,
@@ -385,7 +385,7 @@ export default class SwordGenerator extends Generator {
     evenSpacing = true
   ): THREE.SplineCurve {
     if (nPoints < 0) {
-      throw new Error('Invalid number of points to create spline curve');
+      throw new Error("Invalid number of points to create spline curve");
     }
 
     // Spline points are defined on the interval [0,1]

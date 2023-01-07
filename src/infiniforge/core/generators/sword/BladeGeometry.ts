@@ -1,13 +1,13 @@
-import * as THREE from 'three';
-import GeometryData from '../../modeling/GeometryData';
-import { CrossSection } from '../../modeling/CrossSection';
+import * as THREE from "three";
+import GeometryData from "../../modeling/GeometryData";
+import { CrossSection } from "../../modeling/CrossSection";
 
 /**
  * Swords are the core of this API and manage information about
  * their 3D geometry
  */
 export default class BladeGeometry extends GeometryData {
-  static TIP_GEOMETRIES = ['standard', 'rounded', 'square', 'clip'];
+  static TIP_GEOMETRIES = ["standard", "rounded", "square", "clip"];
 
   private readonly _totalLength: number;
 
@@ -38,7 +38,7 @@ export default class BladeGeometry extends GeometryData {
   /** Extrudes the blade along the extrusion curve */
   extrude(distance: number): this {
     if (!this._activeCrossSection) {
-      throw new Error('BladeGeometry does not have an active cross section');
+      throw new Error("BladeGeometry does not have an active cross section");
     }
 
     if (!this._extrusionCurve) {
@@ -59,7 +59,8 @@ export default class BladeGeometry extends GeometryData {
       extrusionPoint2D.y,
       extrusionPoint2D.x
     );
-    const crossSectionPos: THREE.Vector3 = this._activeCrossSection.getTranslation();
+    const crossSectionPos: THREE.Vector3 =
+      this._activeCrossSection.getTranslation();
     const toExtrusionPoint = new THREE.Vector3().subVectors(
       extrusionPoint3D,
       crossSectionPos
@@ -100,7 +101,7 @@ export default class BladeGeometry extends GeometryData {
     const sampleInterval = length / nSubdivisions;
     let taperInterval: number | THREE.Vector2 = 1;
 
-    if (typeof taper === 'number') {
+    if (typeof taper === "number") {
       taperInterval = 1 - taper / nSubdivisions;
     } else if (taper instanceof THREE.Vector2) {
       taperInterval = new THREE.Vector2(1, 1).sub(
@@ -120,16 +121,16 @@ export default class BladeGeometry extends GeometryData {
   /** Create tip at the end of the blade */
   createTip(style: string, length: number, nSubdivisions = 5): this {
     if (this._activeCrossSection === undefined) {
-      throw new Error('BladeGeometry does not have an active cross section');
+      throw new Error("BladeGeometry does not have an active cross section");
     }
 
-    if (style === 'standard') {
+    if (style === "standard") {
       this.extrude(length);
       this.scale(0);
       return this;
     }
 
-    if (style === 'rounded') {
+    if (style === "rounded") {
       const tipCurve = new THREE.QuadraticBezierCurve(
         new THREE.Vector2(1, 0),
         new THREE.Vector2(0.7, 0.2),
@@ -151,13 +152,13 @@ export default class BladeGeometry extends GeometryData {
       return this;
     }
 
-    if (style === 'square') {
+    if (style === "square") {
       this.extrude(length);
       this.scale(new THREE.Vector2(0, 1));
       return this;
     }
 
-    if (style === 'clip') {
+    if (style === "clip") {
       this.extrude(length);
       this.rotate(
         new THREE.Quaternion().setFromAxisAngle(
@@ -183,11 +184,11 @@ export default class BladeGeometry extends GeometryData {
    */
   modifyEdgeVerts(samplePoint: number): this {
     if (this._activeCrossSection === undefined) {
-      throw new Error('BladeGeometry does not have an active cross section');
+      throw new Error("BladeGeometry does not have an active cross section");
     }
 
     if (this._activeEdgeCurve === undefined) {
-      throw new Error('BladeGeometry does not have an active edge curve');
+      throw new Error("BladeGeometry does not have an active edge curve");
     }
 
     const edgeScaleFactor = this._activeEdgeCurve.getPoint(samplePoint).x + 1;

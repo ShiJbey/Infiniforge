@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 /**
  * Template parameters for building
@@ -30,7 +30,7 @@ export interface SwordTemplate {
 }
 
 const SHORT_SWORD: SwordTemplate = {
-  name: 'short_sword',
+  name: "short_sword",
   bladeLength: 0.4,
   baseBladeWidth: 0.1,
   minBladeLength: 0.5,
@@ -46,7 +46,7 @@ const SHORT_SWORD: SwordTemplate = {
 };
 
 const LONG_SWORD: SwordTemplate = {
-  name: 'long_sword',
+  name: "long_sword",
   bladeLength: 1.11,
   baseBladeWidth: 0.1,
   minBladeLength: 0.85,
@@ -62,7 +62,7 @@ const LONG_SWORD: SwordTemplate = {
 };
 
 const GREAT_SWORD: SwordTemplate = {
-  name: 'great_sword',
+  name: "great_sword",
   bladeLength: 1.55,
   baseBladeWidth: 0.064,
   minBladeLength: 1.27,
@@ -78,7 +78,7 @@ const GREAT_SWORD: SwordTemplate = {
 };
 
 const KATANA: SwordTemplate = {
-  name: 'katana',
+  name: "katana",
   bladeLength: 1.05,
   baseBladeWidth: 0.1,
   minBladeLength: 1.0,

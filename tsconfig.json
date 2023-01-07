@@ -1,28 +1,24 @@
 {
-	"compilerOptions": {
-        "strict": true,
-        "strictFunctionTypes": true,
-        "strictNullChecks": true,
-        "strictPropertyInitialization": true,
-		"target": "ES6",
-        "moduleResolution": "node",
-        "rootDir": "./src",
-        "outDir": "./build",
-        "resolveJsonModule": true,
-        "allowJs": true,
-        "declaration": true,
-        "sourceMap": true,
-        "removeComments": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true
-    },
-    "include": [
-        "./src"
-    ],
-    "exclude": [
-        "./node_modules",
-        "./server",
-        "./build"
-    ]
+  "compilerOptions": {
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "lib": ["ESNext"],
+    "target": "ES2018",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "declaration": true,
+    "sourceMap": true,
+    "removeComments": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

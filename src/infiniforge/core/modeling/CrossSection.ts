@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
@@ -42,7 +42,7 @@ export class CrossSection {
     if (crossSectionData !== undefined) {
       // Check the number of vertices
       if (crossSectionData.vertices.length % 2 !== 0) {
-        throw new Error('Invalid number of vertex components in cross section');
+        throw new Error("Invalid number of vertex components in cross section");
       }
       // Add the vertices to the CrossSection
       for (let i = 0; i < crossSectionData.vertices.length - 1; i += 2) {
@@ -95,7 +95,7 @@ export class CrossSection {
   /** Set the position of a vertex */
   setVertexLocal(index: number, pos: THREE.Vector3): void {
     if (index < 0 || index > this._vertices.length) {
-      throw new Error('Vertex index out of range');
+      throw new Error("Vertex index out of range");
     }
 
     // Calculate the transform matrix and its inverse
@@ -119,7 +119,7 @@ export class CrossSection {
   /** Scale the position of an index */
   scaleVertex(index: number, scaleFactor: number): void {
     if (index < 0 || index > this._vertices.length) {
-      throw new Error('Vertex index out of range');
+      throw new Error("Vertex index out of range");
     }
 
     // Calculate the transform matrix and its inverse
@@ -176,7 +176,7 @@ export class CrossSection {
     // Create geometry from shape
     const geometry = new THREE.ShapeGeometry(shape);
 
-    const verts = geometry.getAttribute('position');
+    const verts = geometry.getAttribute("position");
 
     // Loop though the shape vertices and add
     // them to the new cross section
@@ -226,7 +226,7 @@ export class CrossSection {
 
   /** Scale the size of the cross-section */
   scale(scaleFactor: THREE.Vector2 | number): void {
-    if (typeof scaleFactor === 'number') {
+    if (typeof scaleFactor === "number") {
       scaleFactor = new THREE.Vector2(scaleFactor, scaleFactor);
     }
 

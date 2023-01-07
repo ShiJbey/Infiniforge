@@ -1,7 +1,7 @@
-import seedrandom from 'seedrandom';
+import seedrandom from "seedrandom";
 
 /** Number generator Function */
-type NumGeneratorFn = seedrandom.prng | (() => number);
+type NumGeneratorFn = seedrandom.PRNG | (() => number);
 
 /** Return a random int that is in the range [min,max) */
 export function getRandomInt(
@@ -46,7 +46,7 @@ export function divideValue(
   prng?: NumGeneratorFn
 ): number[] {
   const divisions: number[] = [];
-  const prngFn = !equalDivs && prng ? Math.random : prng;
+  const prngFn = !equalDivs && prng ? prng : Math.random;
   const equalDivSize = value / nDivisions;
 
   if (equalDivs) {
@@ -61,11 +61,7 @@ export function divideValue(
       } else {
         const minDivSize = equalDivSize * 0.25;
         const maxDivSize = equalDivSize * 1.25;
-        const randSize = getRandomFloat(
-          prngFn as NumGeneratorFn,
-          minDivSize,
-          maxDivSize
-        );
+        const randSize = getRandomFloat(prngFn, minDivSize, maxDivSize);
         const sizeCap = remainder - minDivSize * (nDivisions - i);
         const divSize = Math.min(randSize, sizeCap);
 
@@ -81,7 +77,7 @@ export function divideValue(
 /** Normalize magnitude of color vector to be 1 */
 export function normalizeRGB(rgbColor: number[]): [number, number, number] {
   if (rgbColor.length < 3) {
-    throw Error('Invalid RBG color Given. Too few values');
+    throw Error("Invalid RBG color Given. Too few values");
   }
 
   const red = rgbColor[0] > 1.0 ? rgbColor[0] / 255.0 : rgbColor[0];

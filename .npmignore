@@ -1,7 +1,7 @@
+node_modules/
+samples/
+src/
 .eslintrc.json
-.prettierrc
+rollup.config.js
 tsconfig.json
-tsconfig.esm.json
-tsconfig.cjs.json
-src
-webpack.config.js
+yarn.lock

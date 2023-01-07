@@ -1,8 +1,8 @@
-import seedrandom from 'seedrandom';
+import seedrandom from "seedrandom";
 
 /** Base class for all types of weapon generators */
 export default abstract class Generator {
-  protected prng: seedrandom.prng;
+  protected prng: seedrandom.PRNG;
 
   protected verbose: boolean;
 
