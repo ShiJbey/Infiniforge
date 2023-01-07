@@ -1,80 +1,82 @@
 {
   "name": "infiniforge",
   "private": false,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Typescript/Javascript library for procedurally generating 3D fantasy swords",
-  "main": "./build/cjs/index.js",
-  "module": "./build/esm/index.js",
+  "main": "./dist/cjs/infiniforge.js",
+  "module": "./dist/esm/infiniforge.js",
   "readme": "README.md",
   "scripts": {
-    "start": "node server/server.js",
-    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json",
-    "build:server": "npx webpack --config webpack.config.js",
-    "build:all": "npm run build && npm run build:server",
-    "build:check": "tsc --noEmit",
-    "build:watch": "tsc --noEmit --watch",
-    "prepublishOnly": "npm run build:all",
-    "typedoc": "typedoc --out docs ./src/"
+    "start": "node ./bin/infiniforge-cli.js",
+    "start:server": "node ./bin/infiniforge-server.js",
+    "build": "rollup --config --bundleConfigAsCjs ./rollup.config.js",
+    "prepublishOnly": "npm run build",
+    "docs": "typedoc --out docs ./src/",
+    "clean": "rimraf ./dist ./docs"
   },
   "bin": {
-    "infiniforge-server": "server/server.js"
+    "infiniforge-server": "./bin/infiniforge-server.js",
+    "infiniforge": "./bin/infiniforge-cli.js"
   },
   "directories": {
-    "build": "./build",
-    "server": "./server"
+    "dist": "./dist"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ShiJbey/Infiniforge.git"
   },
   "keywords": [
-    "forge",
-    "procedural",
-    "generation",
+    "procedural generation",
+    "pcg",
+    "fantasy",
     "sword",
-    "threejs",
-    "infiniforge"
+    "DnD",
+    "TTRPG"
   ],
-  "author": "Shi Johnson-Bey",
+  "author": "Shi Johnson-Bey <shijbey@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ShiJbey/Infiniforge/issues"
   },
   "homepage": "https://github.com/ShiJbey/Infiniforge#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "browserslist": "^4.16.3",
-    "colors": "^1.3.3",
-    "commander": "^7.1.0",
-    "express": "^4.17.1",
-    "lodash": "^4.17.21",
-    "seedrandom": "^3.0.5",
-    "serve-favicon": "^2.5.0",
-    "serve-static": "^1.14.1",
-    "three": "^0.137.0"
+    "colors": "^1.4.0",
+    "commander": "^9.4.1",
+    "seedrandom": "^3.0.5"
   },
   "devDependencies": {
-    "@types/body-parser": "^1.19.0",
-    "@types/express": "^4.17.11",
-    "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.31",
-    "@types/seedrandom": "^2.4.28",
-    "@types/serve-favicon": "^2.5.0",
-    "@types/three": "^0.126.0",
-    "@typescript-eslint/eslint-plugin": "^4.16.1",
-    "@typescript-eslint/parser": "^4.16.1",
-    "eslint": "^7.21.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-config-airbnb-typescript-prettier": "^4.1.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.3.1",
-    "prettier": "^2.2.1",
-    "typedoc": "^0.20.29",
-    "typescript": "^4.2.3",
-    "webpack": "^5.24.3",
-    "webpack-cli": "^4.5.0"
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-terser": "^0.3.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.15",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.18",
+    "@types/seedrandom": "^3.0.4",
+    "@types/serve-favicon": "^2.5.3",
+    "@types/three": "^0.137.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
+    "body-parser": "^1.20.1",
+    "eslint": "^8.31.0",
+    "eslint-import-resolver-typescript": "^3.5.2",
+    "eslint-plugin-import": "^2.26.0",
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "rimraf": "^3.0.2",
+    "rollup": "^3.9.1",
+    "three": "^0.137.0",
+    "ts-loader": "^9.4.2",
+    "typedoc": "^0.23.23",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "peerDependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "three": "^0.137.0"
   }
 }

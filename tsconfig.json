@@ -4,10 +4,12 @@
         "strictFunctionTypes": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
-		"target": "ES6",
+        "lib": ["ESNext"],
+		"target": "ES2018",
+        "noImplicitAny": true,
+        "preserveConstEnums": true,
         "moduleResolution": "node",
-        "rootDir": "./src",
-        "outDir": "./build",
+        "outDir": "./dist",
         "resolveJsonModule": true,
         "allowJs": true,
         "declaration": true,
@@ -17,12 +19,6 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true
     },
-    "include": [
-        "./src"
-    ],
-    "exclude": [
-        "./node_modules",
-        "./server",
-        "./build"
-    ]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
 }
