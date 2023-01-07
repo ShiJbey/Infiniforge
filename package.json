@@ -2,25 +2,26 @@
   "name": "infiniforge",
   "private": false,
   "version": "2.2.0",
-  "description": "Typescript/Javascript library for procedurally generating 3D fantasy swords",
+  "description": "Procedurally generate 3D fantasy sword meshes",
   "main": "./dist/cjs/infiniforge.js",
   "module": "./dist/esm/infiniforge.js",
   "readme": "README.md",
   "scripts": {
-    "start": "node ./bin/infiniforge-cli.js",
-    "start:server": "node ./bin/infiniforge-server.js",
     "build": "rollup --config --bundleConfigAsCjs ./rollup.config.js",
+    "lint": "eslint ./src/infiniforge",
+    "format": "prettier --write ./src/infiniforge",
     "prepublishOnly": "npm run build",
-    "docs": "typedoc --out docs ./src/",
+    "build:docs": "typedoc --out docs ./src/",
     "clean": "rimraf ./dist ./docs"
-  },
-  "bin": {
-    "infiniforge-server": "./bin/infiniforge-server.js",
-    "infiniforge": "./bin/infiniforge-cli.js"
   },
   "directories": {
     "dist": "./dist"
   },
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE.txt",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ShiJbey/Infiniforge.git"
@@ -40,8 +41,10 @@
   },
   "homepage": "https://github.com/ShiJbey/Infiniforge#readme",
   "dependencies": {
+    "body-parser": "^1.20.1",
     "colors": "^1.4.0",
     "commander": "^9.4.1",
+    "express": "^4.18.2",
     "seedrandom": "^3.0.5"
   },
   "devDependencies": {
@@ -55,28 +58,22 @@
     "@types/node": "^18.11.18",
     "@types/seedrandom": "^3.0.4",
     "@types/serve-favicon": "^2.5.3",
-    "@types/three": "^0.137.0",
+    "@types/three": "^0.148.0",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "@typescript-eslint/parser": "^5.48.0",
-    "body-parser": "^1.20.1",
     "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-plugin-import": "^2.26.0",
-    "express": "^4.18.2",
-    "lodash": "^4.17.21",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "2.8.2",
     "rimraf": "^3.0.2",
     "rollup": "^3.9.1",
-    "three": "^0.137.0",
-    "ts-loader": "^9.4.2",
     "typedoc": "^0.23.23",
-    "typescript": "^4.9.4",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "typescript": "^4.9.4"
   },
   "peerDependencies": {
-    "body-parser": "^1.20.1",
-    "express": "^4.18.2",
     "lodash": "^4.17.21",
-    "three": "^0.137.0"
+    "three": "^0.148.0"
   }
 }

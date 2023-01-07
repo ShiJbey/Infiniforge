@@ -1,42 +1,32 @@
-# ![](server/www/anvil.png) Infiniforge 2.0
+# Infiniforge
 
-Typescript/Javascript library for procedurally generating 3D fantasy swords.
+TypeScript library for procedurally generating 3D fantasy swords using ThreeJS.
 
 This project was originally made as part of the August 2016 Reddit procedural generation challenge
 Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
 
-## Whats New
-
-Infiniforge 2.0 features a revamped generation process that
-is much easier to maintain, and has the ability to produce
-a wider array of weapons.
 
 ## Installation
 
-If you want to use it as a dependency in a project run:
-`npm install infiniforge`
+```commandline
+npm install infiniforge
+```
 
-However, if you just want to run the server:
+This package has `three` and `lodash` as peer dependencies.
+So, those will need to be installed too.
 
-1. `$ npm install -g infiniforge`
-2. `$ infiniforge-server`
+## Usage
 
-## Development
+The code below imports the infiniforge library, generates
+a new sword model and writes it to local disk as a `*.gltf`
+file. The `generate` function takes a `SwordGenerationParams`
+object that specifies fields that affect the generator's
+behavior. Here we specify that we want the output to be
+glTF and we want the style of sword to be a long sword.
 
-1. `$ git clone https://github.com/ShiJbey/Infiniforge`
-2. `$ cd Infiniforge`
-3. `$ npm install`
-4. `$ npm run build:all`
-5. `$ npm start`
-6. Open your web browser and go to `localhost:8080`
+Please refer to [this typescript file](https://github.com/ShiJbey/Infiniforge/blob/develop/src/infiniforge/core/generators/sword/SwordGenerationParams.ts)
+for the most comprehensive list of generator params.
 
-## Building the Documentation
-
-The documentation is generated using [Typedoc](https://typedoc.org):
-
-`$ npm run typedoc`
-
-## Example Usage
 
 ```javascript
 // Generate random sword and write it to a file
@@ -60,27 +50,26 @@ swordGenerator
   .catch(console.error);
 ```
 
-Or you can generate using the CLI
+## Building the Documentation
 
-```json
-{
-  "output": "gltf",
-  "style": "long"
-}
+The documentation is generated using [Typedoc](https://typedoc.org):
+
+```commandline
+npm run build:docs
 ```
 
-`npm start ./sample.json -o sample_sword.gltf`
+## Frequently asked questions
 
-## How are models exported
+### What is glTF?
 
-The server exports 3D meshes as JSON in the
+Infiniforge exports 3D meshes as JSON in the
 glTF 2.0 (GL Transmission Format ) by Khronos Group. It is a royalty-free
 specification for the efficient transmission and loading of 3D scenes and
 models by applications. The spec is available [here](https://www.khronos.org/gltf/ "glTF Overview").
 This application uses a modified version of the GLTFExporter provided
 with [ThreeJS](https://threejs.org/docs/#examples/exporters/GLTFExporter).
 
-## What can I do with this
+### What can I do with this?
 
 Infiniforge output can be saved as a \*.gltf file and used in a multitude of projects. Various importers are
 available from [Khronos Group](https://www.khronos.org/gltf/). For example, one could use this
@@ -89,7 +78,5 @@ in a unity game by taking advantage of the [UnityGLTF plugin](https://github.com
 ## References
 
 - https://en.wikipedia.org/wiki/Longsword
-
 - http://www.lordsandladies.org/middle-ages-weapons.htm
-
 - https://www.medievalswordsworld.com/

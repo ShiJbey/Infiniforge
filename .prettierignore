@@ -1,0 +1,41 @@
+# Node
+node_modules/
+.node_modules/
+
+# Build output
+docs/
+dist/
+
+# Temp files
+\#*\#
+.\#*
+
+# VSCode
+**/.DS_Store
+.settings
+**/.vs
+**/.vscode/*
+!**/.vscode/tasks.json
+!**/.vscode/settings.template.json
+!**/.vscode/launch.template.json
+!**/.vscode/extensions.json
+
+# Webstorm
+.idea
+
+# Yarn
+yarn.lock
+yarn-error.log
+.parallelperf.*
+
+
+# NPM
+package-lock.json
+
+# ESLint
+.eslintcache
+
+# Non-Code
+CHANGELOG.md
+package.json
+README.md
