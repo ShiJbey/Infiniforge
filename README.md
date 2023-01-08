@@ -8,7 +8,7 @@ Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/com
 
 ## Installation
 
-```commandline
+```
 npm install infiniforge
 ```
 
@@ -54,7 +54,7 @@ swordGenerator
 
 The documentation is generated using [Typedoc](https://typedoc.org):
 
-```commandline
+```
 npm run build:docs
 ```
 
