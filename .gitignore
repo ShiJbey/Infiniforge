@@ -26,13 +26,8 @@ dist/
 .idea
 
 # Yarn
-yarn.lock
 yarn-error.log
 .parallelperf.*
-
-
-# NPM
-package-lock.json
 
 # ESLint
 .eslintcache
