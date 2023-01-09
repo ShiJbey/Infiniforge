@@ -21,7 +21,6 @@ export default [
         ],
         plugins: [
             resolve({
-                // pass custom options to the resolve plugin
                 moduleDirectories: ['node_modules'],
                 preferBuiltins: false,
             }),
@@ -29,6 +28,7 @@ export default [
             typescript({ tsconfig: './tsconfig.json' }),
             terser(),
         ],
+        external: ['lodash', 'three', 'seedrandom'],
     },
     {
         input: './src/infiniforge/index.ts',
