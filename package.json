@@ -1,7 +1,7 @@
 {
   "name": "infiniforge",
   "private": false,
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Procedurally generate 3D fantasy sword meshes",
   "main": "./dist/cjs/infiniforge.js",
   "module": "./dist/esm/infiniforge.module.js",
