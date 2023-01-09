@@ -5,10 +5,9 @@ TypeScript library for procedurally generating 3D fantasy swords using ThreeJS.
 This project was originally made as part of the August 2016 Reddit procedural generation challenge
 Found here: [Reddit Challenge](https://www.reddit.com/r/proceduralgeneration/comments/4wubjy/monthly_challenge_9_august_2016_procedural_weapons/)
 
-
 ## Installation
 
-```
+```bash
 npm install infiniforge
 ```
 
@@ -26,7 +25,6 @@ glTF and we want the style of sword to be a long sword.
 
 Please refer to [this typescript file](https://github.com/ShiJbey/Infiniforge/blob/develop/src/infiniforge/core/generators/sword/SwordGenerationParams.ts)
 for the most comprehensive list of generator params.
-
 
 ```javascript
 // Generate random sword and write it to a file
@@ -54,7 +52,7 @@ swordGenerator
 
 The documentation is generated using [Typedoc](https://typedoc.org):
 
-```
+```bash
 npm run build:docs
 ```
 
@@ -77,6 +75,6 @@ in a unity game by taking advantage of the [UnityGLTF plugin](https://github.com
 
 ## References
 
-- https://en.wikipedia.org/wiki/Longsword
-- http://www.lordsandladies.org/middle-ages-weapons.htm
-- https://www.medievalswordsworld.com/
+- [https://en.wikipedia.org/wiki/Longsword](https://en.wikipedia.org/wiki/Longsword)
+- [http://www.lordsandladies.org/middle-ages-weapons.htm](http://www.lordsandladies.org/middle-ages-weapons.htm)
+- [https://www.medievalswordsworld.com/](https://www.medievalswordsworld.com/)
