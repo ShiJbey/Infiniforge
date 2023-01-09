@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.2.1]
+
+- [Updated] Rollup config to include `three`, `lodash`, and `seedrandom` as external dependencies. (greatly reduced bundle size)
+- [Updated] Version requirement for `three` to `>=0.137.0`
+
 ## [2.2.0]
 
 - [Added] Rollup as the new bundling tool

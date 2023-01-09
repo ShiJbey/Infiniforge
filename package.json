@@ -86,6 +86,6 @@
   "peerDependencies": {
     "lodash": "^4.17.21",
     "seedrandom": "^3.0.5",
-    "three": "^0.148.0"
+    "three": ">=0.137.0"
   }
 }
