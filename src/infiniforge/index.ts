@@ -26,6 +26,8 @@ import { CrossSection, CrossSectionData } from "./core/modeling/CrossSection";
 
 import GeometryData from "./core/modeling/GeometryData";
 
+import { GLTFExporter, GLTFData } from "./lib/GLTFExporter";
+
 export {
   Generator,
   SwordGenerator,
@@ -42,4 +44,6 @@ export {
   CrossSection,
   CrossSectionData,
   GeometryData,
+  GLTFExporter,
+  GLTFData,
 };

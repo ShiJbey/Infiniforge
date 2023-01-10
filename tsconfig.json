@@ -1,20 +1,20 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "lib": ["ESNext", "DOM", "ES2018"],
-        "target": "ES2018",
-        "moduleResolution": "node",
-        "outDir": "./dist",
-        "resolveJsonModule": true,
-        "declaration": true,
-        "sourceMap": true,
-        "removeComments": false,
-        "module": "CommonJS",
-        "noEmitOnError": true,
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["ESNext"],
+    "target": "ES2018",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "declaration": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "module": "ESNext",
+    "noEmitOnError": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
