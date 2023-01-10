@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import _ from "lodash";
 import { CrossSection } from "./CrossSection";
-import { GLTFExporter } from "../../lib/GLTFExporter";
+import { GLTFData, GLTFExporter } from "../../lib/GLTFExporter";
 
 /** Custom class for organizing/modifying 3D mesh information  */
 export default class GeometryData {
@@ -301,17 +301,19 @@ export default class GeometryData {
   }
 
   /** Covert to GLTF data */
-  toGlTF(verbose = false): Promise<object> {
+  toGlTF(verbose = false): Promise<GLTFData> {
     const gltfExporter = new GLTFExporter();
 
     // Parse the swords mesh and create a new promise to access the result
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       gltfExporter.parse(
         this.toMesh(),
         (gltf) => {
           resolve(gltf);
         },
-        { verbose }
+        (error) => {
+          reject(error);
+        }
       );
     });
   }
