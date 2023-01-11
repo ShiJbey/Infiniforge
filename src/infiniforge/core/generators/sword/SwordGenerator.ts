@@ -14,7 +14,7 @@ import GeometryData from "../../modeling/GeometryData";
 import { CrossSection } from "../../modeling/CrossSection";
 import BladeGeometry from "./BladeGeometry";
 
-export default class SwordGenerator extends Generator {
+export default class SwordGenerator extends Generator<SwordGenerationParams> {
   constructor(verbose = false) {
     super(verbose);
   }
@@ -25,7 +25,7 @@ export default class SwordGenerator extends Generator {
    * @param params
    * @return
    */
-  async generate(params: SwordGenerationParams): Promise<object> {
+  generate(params: SwordGenerationParams): Promise<object> {
     if (params.seed) {
       this.setSeed(params.seed);
     }
@@ -40,10 +40,27 @@ export default class SwordGenerator extends Generator {
     this.buildPommel(sword, template, params.pommelParams);
 
     if (params.output === "mesh") {
-      return sword.toMesh();
+      return new Promise((resolve) => resolve(sword.toMesh()));
     }
 
     return sword.toGlTF(this.verbose);
+  }
+
+  generateMesh(params: SwordGenerationParams): THREE.Mesh {
+    if (params.seed) {
+      this.setSeed(params.seed);
+    }
+
+    const template = this.getSwordTemplate(params.template);
+
+    const sword = new GeometryData();
+
+    this.buildBlade(sword, template, params.bladeParams);
+    this.buildGuard(sword, template, params.guardParams);
+    this.buildHandle(sword, template, params.handleParams);
+    this.buildPommel(sword, template, params.pommelParams);
+
+    return sword.toMesh();
   }
 
   private getSwordTemplate(templateName?: string): SwordTemplate {

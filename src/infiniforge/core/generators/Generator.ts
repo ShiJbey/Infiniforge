@@ -1,7 +1,7 @@
 import seedrandom from "seedrandom";
 
 /** Base class for all types of weapon generators */
-export default abstract class Generator {
+export default abstract class Generator<GeneratorParameterType = unknown> {
   protected prng: seedrandom.PRNG;
 
   protected verbose: boolean;
@@ -21,6 +21,14 @@ export default abstract class Generator {
     this.verbose = verbose;
   }
 
-  /** Generate new GeometryData */
-  abstract generate(params: Record<string, any>): Promise<any>;
+  /**
+   * @deprecated
+   * Generate new GeometryData
+   * */
+  abstract generate(params: GeneratorParameterType): Promise<object>;
+
+  /**
+   * Generates ThreeJS Mesh Object containing sword data
+   */
+  abstract generateMesh(params: GeneratorParameterType): THREE.Mesh;
 }
