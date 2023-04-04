@@ -1,4 +1,5 @@
 import seedrandom from "seedrandom";
+import * as THREE from "three";
 
 /** Number generator Function */
 type NumGeneratorFn = seedrandom.PRNG | (() => number);
@@ -98,4 +99,49 @@ export function hexToRGB(hexColor: number): [number, number, number] {
   const blue = hexColor & BLUE_MASK;
 
   return [red / 255.0, green / 255.0, blue / 255.0];
+}
+
+/**
+ * Creates a SplineCurve for edge geometry
+ *
+ * @param nPoints Number of points in the curve not including ends
+ */
+export function createEdgeSpline(
+  prng: seedrandom.PRNG,
+  nPoints: number,
+  widthTolerance: number,
+  evenSpacing = true
+): THREE.SplineCurve {
+  if (nPoints < 0) {
+    throw new Error("Invalid number of points to create spline curve");
+  }
+
+  // Spline points are defined on the interval [0,1]
+  // and are defined along the positive y-axis.
+  // The  x-values of the points along the curve represent
+  // the width of the blade's edge when measured from
+  // the center of the cross-section
+
+  const splinePoints: THREE.Vector2[] = [new THREE.Vector2(0, 0)];
+
+  // Spacings are the vertical distance between control points on the spline curve
+  const spacing = divideValue(1.0, nPoints + 1, evenSpacing, prng);
+
+  let totalSpacing = 0;
+
+  for (let i = 0; i < spacing.length; i++) {
+    // Space the point vertically
+    const point = new THREE.Vector2();
+    if (i === spacing.length - 1) {
+      point.y = 1.0;
+      point.x = 0.0;
+    } else {
+      totalSpacing += spacing[i];
+      point.y = totalSpacing;
+      point.x = getRandomFloat(prng, -widthTolerance, widthTolerance);
+    }
+    splinePoints.push(point);
+  }
+
+  return new THREE.SplineCurve(splinePoints);
 }

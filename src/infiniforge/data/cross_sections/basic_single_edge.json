@@ -1,0 +1,8 @@
+{
+  "name": "Basic Single Edge",
+  "vertices": [0.0, 0.5, 0.01, 0.1, 0.01, -0.5, -0.01, -0.5, -0.01, 0.1],
+  "edgeVertices": [0],
+  "normEdgeVertices": [2, 3],
+  "width": 1,
+  "thickness": 0.02
+}

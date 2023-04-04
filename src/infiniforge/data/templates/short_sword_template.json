@@ -1,0 +1,36 @@
+{
+  "name": "Short Sword",
+  "functions": {
+    "type": "DoubleEdgedBlade",
+    "options": {
+      "bladeLength": 0.4,
+      "baseBladeWidth": 0.1,
+      "minBladeLength": 0.5,
+      "maxBladeLength": 0.5,
+      "minHandleLength": 0.12,
+      "maxHandleLength": 0.18,
+      "handleLength": 0.15,
+      "bladeThickness": 0.05,
+      "extrusionCurve": [
+        [0, 0],
+        [0, 1]
+      ]
+    },
+    "slots": {
+      "handle": {
+        "type": "StandardHandle",
+        "options": {}
+      },
+      "guard": {
+        "type": "StandardHandle",
+        "options": {},
+        "slots": {
+          "pommel": {
+            "type": "SpherePommel",
+            "options": {}
+          }
+        }
+      }
+    }
+  }
+}

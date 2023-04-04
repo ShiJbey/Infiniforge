@@ -1,0 +1,36 @@
+{
+  "name": "Great Sword",
+  "functions": {
+    "type": "DoubleEdgedBlade",
+    "options": {
+      "bladeLength": 1.55,
+      "baseBladeWidth": 0.064,
+      "minBladeLength": 1.27,
+      "maxBladeLength": 1.83,
+      "minHandleLength": 0.457,
+      "maxHandleLength": 0.533,
+      "handleLength": 0.3,
+      "bladeThickness": 0.05,
+      "extrusionCurve": [
+        [0, 0],
+        [0, 1]
+      ]
+    },
+    "slots": {
+      "handle": {
+        "type": "StandardHandle",
+        "options": {}
+      },
+      "guard": {
+        "type": "StandardHandle",
+        "options": {},
+        "slots": {
+          "pommel": {
+            "type": "SpherePommel",
+            "options": {}
+          }
+        }
+      }
+    }
+  }
+}

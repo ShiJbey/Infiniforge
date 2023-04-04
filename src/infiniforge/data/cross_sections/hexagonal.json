@@ -1,0 +1,8 @@
+{
+  "name": "Hexagonal",
+  "vertices": [0.0, 0.5, 0.1, 0.3, 0.1, -0.3, 0.0, -0.5, -0.1, -0.3, -0.1, 0.3],
+  "edgeVertices": [0, 3],
+  "normEdgeVertices": [1, 2, 4, 5],
+  "width": 1,
+  "thickness": 0.2
+}
