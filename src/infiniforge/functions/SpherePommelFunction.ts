@@ -1,6 +1,6 @@
-import * as THREE from "three";
-import GeometryData from "../modeling/GeometryData";
-import Weapon from "../Weapon";
+import { SphereGeometry } from "three";
+import { GeometryData } from "../modeling/GeometryData";
+import { Weapon } from "../Weapon";
 
 export default class SpherePommelFunction {
   /** Ratio of the pommel to the base blade width */
@@ -11,7 +11,7 @@ export default class SpherePommelFunction {
   execute(weapon: Weapon): void {
     // Convert the box to a buffer geometry
     const geometry = GeometryData.fromGeometry(
-      new THREE.SphereGeometry(this.radius, 5, 5)
+      new SphereGeometry(this.radius, 5, 5)
     );
 
     // Add the pommel's geometry data to the sword

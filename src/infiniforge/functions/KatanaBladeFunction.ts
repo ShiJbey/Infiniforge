@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { Curve, Vector2, QuadraticBezierCurve, SplineCurve } from "three";
 
 interface BladeParameters {
   /** Template name */
@@ -12,25 +12,21 @@ interface BladeParameters {
   /** thickness of the blade */
   bladeThickness: number;
   /** curve that the blade's spine follows */
-  extrusionCurve: THREE.Curve<THREE.Vector2>;
+  extrusionCurve: Curve<Vector2>;
 }
 
 export default class KatanaBladeFunction {
   public parameters: BladeParameters;
 
-  edgeSpline = new THREE.SplineCurve([
-    new THREE.Vector2(0, 0),
-    new THREE.Vector2(0, 1),
-  ]);
+  edgeSpline = new SplineCurve([new Vector2(0, 0), new Vector2(0, 1)]);
 
-  private static extrusionCurve = new THREE.QuadraticBezierCurve(
-    new THREE.Vector2(0, 0),
-    new THREE.Vector2(0.0, 0.7),
-    new THREE.Vector2(-0.1, 1)
+  private static extrusionCurve = new QuadraticBezierCurve(
+    new Vector2(0, 0),
+    new Vector2(0.0, 0.7),
+    new Vector2(-0.1, 1)
   );
 
   constructor(parameters: BladeParameters) {
     this.parameters = parameters;
-
   }
 }

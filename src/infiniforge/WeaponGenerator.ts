@@ -1,5 +1,5 @@
-import Weapon from "./Weapon";
-import WeaponFunction from "./WeaponFunction";
+import { Weapon } from "./Weapon";
+import { WeaponFunction } from "./WeaponFunction";
 
 /**
  * Parameters passes to a weapon generator instance to

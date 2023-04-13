@@ -1,4 +1,4 @@
-import Weapon from "../Weapon";
+import { Weapon } from "../Weapon";
 
 export default class StandardTipFunction {
   public length: number;

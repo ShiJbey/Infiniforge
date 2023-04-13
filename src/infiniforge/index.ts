@@ -1,12 +1,10 @@
-import { WeaponGenerator, WeaponGeneratorParams } from "./WeaponGenerator";
-import WeaponFunction from "./WeaponFunction";
-import Weapon from "./Weapon";
-import WeaponTemplate from "./WeaponTemplate";
-
+export { WeaponGenerator, WeaponGeneratorParams } from "./WeaponGenerator";
 export {
-  Weapon,
   WeaponFunction,
-  WeaponGenerator,
-  WeaponGeneratorParams,
-  WeaponTemplate,
-};
+  WeaponFactoryFn,
+  WeaponFunctionFactory,
+} from "./WeaponFunction";
+export { Weapon } from "./Weapon";
+export { WeaponTemplate } from "./WeaponTemplate";
+export * from "./utilities/three_utilities";
+export * from "./modeling";

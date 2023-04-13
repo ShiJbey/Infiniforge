@@ -1,0 +1,13 @@
+{
+  "name": "infiniforge-samples",
+  "private": "true",
+  "version": "3.0.0",
+  "description": "code samples for Infiniforge",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "webpack": "^5.78.0",
+    "webpack-cli": "^5.0.1"
+  }
+}

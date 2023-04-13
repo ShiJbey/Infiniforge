@@ -1,9 +1,9 @@
-import GeometryData from "./modeling/GeometryData";
+import { GeometryData } from "./modeling";
 
 /**
  * A collection of 3D geometry information for constructing the final weapon mesh
  */
-export default class Weapon {
+export class Weapon {
   /** Maps each part of the weapon to a string identifier */
   public parts: Map<string, GeometryData>;
 

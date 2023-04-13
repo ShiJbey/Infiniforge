@@ -1,4 +1,4 @@
 /** Configuration settings for constructing various types of weapons */
-export default interface WeaponTemplate {
+export interface WeaponTemplate {
   name: string;
 }

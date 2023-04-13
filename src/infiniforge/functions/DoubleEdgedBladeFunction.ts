@@ -1,6 +1,6 @@
 import seedrandom from "seedrandom";
-import * as THREE from "three";
-import Weapon from "../Weapon";
+import { Vector2, Curve, SplineCurve } from "three";
+import { Weapon } from "../Weapon";
 import { getRandomFloat, getRandomInt } from "../utilities/utils";
 
 export default class DoubleEdgedBladeFunction {
@@ -27,23 +27,23 @@ export default class DoubleEdgedBladeFunction {
   private createEdgeSpline(
     numPoints: number,
     widthTolerance: number
-  ): THREE.Curve<THREE.Vector2> {
-    const splinePoints: THREE.Vector2[] = [];
+  ): Curve<Vector2> {
+    const splinePoints: Vector2[] = [];
 
     // Add 2 to include the end points
     const totalPoints = numPoints + 2;
 
     for (let i = 0; i < numPoints + 2; ++i) {
-      const point = new THREE.Vector2(
+      const point = new Vector2(
         i * (1.0 / totalPoints),
         getRandomFloat(this.prng, -widthTolerance, widthTolerance)
       );
       splinePoints.push(point);
     }
 
-    splinePoints.push(new THREE.Vector2(0, 0));
+    splinePoints.push(new Vector2(0, 0));
 
-    return new THREE.SplineCurve(splinePoints);
+    return new SplineCurve(splinePoints);
   }
 
   execute(weapon: Weapon): void {
@@ -77,36 +77,36 @@ export default class DoubleEdgedBladeFunction {
       this.edgeScaleTolerance
     );
 
-    const bladeGeometry = new BladeGeometry(
-      bladeLength,
-      template.extrusionCurve
-    )
-      .setBladeCrossSection(
-        new CrossSection(crossSection),
-        crossSection.edgeVertices,
-        new THREE.Color(color),
-        crossSection.normEdgeVertices ?? [],
-        true
-      )
-      // Scale the cross section to fit the template
-      .scale(
-        new THREE.Vector2(
-          this.thickness / crossSection.thickness,
-          this.baseBladeWidth / crossSection.width
-        )
-      )
-      // Extrude the base section of the blade
-      .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength, 0.2)
-      // Extrude the mid section of the blade
-      // .extrude(midSectionLength)
-      .extrudeSection(
-        new THREE.SplineCurve([
-          new THREE.Vector2(0, 0),
-          new THREE.Vector2(0, 1),
-        ]),
-        midSplineSamples,
-        midSectionLength,
-        0.3
-      );
+    // const bladeGeometry = new BladeGeometry(
+    //   bladeLength,
+    //   template.extrusionCurve
+    // )
+    //   .setBladeCrossSection(
+    //     new CrossSection(crossSection),
+    //     crossSection.edgeVertices,
+    //     new Color(color),
+    //     crossSection.normEdgeVertices ?? [],
+    //     true
+    //   )
+    //   // Scale the cross section to fit the template
+    //   .scale(
+    //     new Vector2(
+    //       this.thickness / crossSection.thickness,
+    //       this.baseBladeWidth / crossSection.width
+    //     )
+    //   )
+    //   // Extrude the base section of the blade
+    //   .extrudeSection(edgeSpline, baseSplineSamples, baseSectionLength, 0.2)
+    //   // Extrude the mid section of the blade
+    //   // .extrude(midSectionLength)
+    //   .extrudeSection(
+    //     new SplineCurve([
+    //       new Vector2(0, 0),
+    //       new Vector2(0, 1),
+    //     ]),
+    //     midSplineSamples,
+    //     midSectionLength,
+    //     0.3
+    //   );
   }
 }

@@ -1,9 +1,8 @@
-import * as THREE from "three";
-import { CrossSection } from "../modeling/CrossSection";
+import { Shape, EllipseCurve } from "three";
 import { getRandomFloat } from "../utilities/utils";
 import seedrandom from "seedrandom";
-import Weapon from "../Weapon";
-import GeometryData from "../modeling/GeometryData";
+import { Weapon } from "../Weapon";
+import { GeometryData } from "../modeling/GeometryData";
 
 /** Creates a cylindrical sword handle */
 export default class StandardHandleFunction {
@@ -25,8 +24,8 @@ export default class StandardHandleFunction {
 
     const length = getRandomFloat(this.prng, this.minLength, this.maxLength);
 
-    const handlesCsShape = new THREE.Shape().setFromPoints(
-      new THREE.EllipseCurve(
+    const handlesCsShape = new Shape().setFromPoints(
+      new EllipseCurve(
         0,
         0,
         this.radius,
@@ -40,13 +39,13 @@ export default class StandardHandleFunction {
 
     const handleGeometry = new GeometryData();
 
-    const handleGeometryData = new GeometryData()
-      .setCrossSection(
-        CrossSection.createFromShape(handlesCsShape),
-      )
-      .translate(-length);
+    // const handleGeometryData = new GeometryData()
+    //   .setCrossSection(
+    //     CrossSection.createFromShape(handlesCsShape),
+    //   )
+    //   .translate(-length);
 
-    handleGeometryData.extrude(new THREE.Vector3(0, length, 0));
+    // handleGeometryData.extrude(new Vector3(0, length, 0));
 
     weapon.parts.set("handle", handleGeometry);
   }

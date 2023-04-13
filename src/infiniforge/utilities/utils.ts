@@ -1,5 +1,5 @@
 import seedrandom from "seedrandom";
-import * as THREE from "three";
+import { Vector2, SplineCurve } from "three";
 
 /** Number generator Function */
 type NumGeneratorFn = seedrandom.PRNG | (() => number);
@@ -122,7 +122,7 @@ export function createEdgeSpline(
   // the width of the blade's edge when measured from
   // the center of the cross-section
 
-  const splinePoints: THREE.Vector2[] = [new THREE.Vector2(0, 0)];
+  const splinePoints: THREE.Vector2[] = [new Vector2(0, 0)];
 
   // Spacings are the vertical distance between control points on the spline curve
   const spacing = divideValue(1.0, nPoints + 1, evenSpacing, prng);
@@ -131,7 +131,7 @@ export function createEdgeSpline(
 
   for (let i = 0; i < spacing.length; i++) {
     // Space the point vertically
-    const point = new THREE.Vector2();
+    const point = new Vector2();
     if (i === spacing.length - 1) {
       point.y = 1.0;
       point.x = 0.0;
@@ -143,5 +143,5 @@ export function createEdgeSpline(
     splinePoints.push(point);
   }
 
-  return new THREE.SplineCurve(splinePoints);
+  return new SplineCurve(splinePoints);
 }

@@ -1,5 +1,3 @@
-import * as THREE from "three";
-
 export interface GuardParams {
   crossSection?: string;
   thickness?: number;
@@ -19,21 +17,16 @@ export default class StandardGuardFunction {
   }
 
   execute(): void {
-
-
-    params = Object.assign(DEFAULT_PARAMS, params);
-
-    const guardGeometry = new THREE.BoxGeometry(
-      template.bladeThickness + 0.04,
-      params.thickness,
-      0.06 + template.baseBladeWidth
-    );
-
-    const guardGeometryData = new GeometryData().fromGeometry(
-      guardGeometry,
-      new THREE.Color(params.color)
-    );
-
-    sword.add(guardGeometryData);
+    // params = Object.assign(DEFAULT_PARAMS, params);
+    // const guardGeometry = new THREE.BoxGeometry(
+    //   template.bladeThickness + 0.04,
+    //   params.thickness,
+    //   0.06 + template.baseBladeWidth
+    // );
+    // const guardGeometryData = new GeometryData().fromGeometry(
+    //   guardGeometry,
+    //   new THREE.Color(params.color)
+    // );
+    // sword.add(guardGeometryData);
   }
 }

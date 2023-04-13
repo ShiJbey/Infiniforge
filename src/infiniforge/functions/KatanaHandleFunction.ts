@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import Weapon from "../Weapon";
+import { Shape, EllipseCurve } from "three";
+import { Weapon } from "../Weapon";
 
 export default class KatanaHandleFunction {
   /** The minimum length of the handle */
@@ -10,8 +10,8 @@ export default class KatanaHandleFunction {
   public radius = 0.015;
 
   execute(weapon: Weapon): void {
-    const handlesCsShape = new THREE.Shape().setFromPoints(
-      new THREE.EllipseCurve(
+    const handlesCsShape = new Shape().setFromPoints(
+      new EllipseCurve(
         0,
         0,
         this.radius,
@@ -23,18 +23,18 @@ export default class KatanaHandleFunction {
       ).getPoints(8)
     );
 
-    const handleGeometryData = new GeometryData()
-      .setCrossSection(
-        CrossSection.createFromShape(handlesCsShape),
-      )
-      .translate(-template.handleLength);
+    // const handleGeometryData = new GeometryData()
+    //   .setCrossSection(
+    //     CrossSection.createFromShape(handlesCsShape),
+    //   )
+    //   .translate(-template.handleLength);
 
-    handleGeometryData.scale(1.0 / 2.0);
+    // handleGeometryData.scale(1.0 / 2.0);
 
-    handleGeometryData.extrude(new THREE.Vector3(0, template.handleLength, 0));
+    // handleGeometryData.extrude(new Vector3(0, template.handleLength, 0));
 
-    handleGeometryData.scale(2);
+    // handleGeometryData.scale(2);
 
-    weapon.parts.set("handle", handleGeometryData);
+    // weapon.parts.set("handle", handleGeometryData);
   }
 }

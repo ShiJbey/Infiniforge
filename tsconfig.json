@@ -6,8 +6,6 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "resolveJsonModule": true,
-    "declaration": true,
-    "sourceMap": true,
     "removeComments": false,
     "module": "ESNext",
     "noEmitOnError": true,

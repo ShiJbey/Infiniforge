@@ -1,15 +1,21 @@
 {
   "name": "infiniforge",
   "private": false,
-  "version": "2.2.1",
+  "version": "3.0.0",
   "description": "Procedurally generate 3D fantasy sword meshes",
   "main": "./dist/cjs/infiniforge.js",
   "module": "./dist/esm/infiniforge.module.js",
-  "types": "./dist/types.d.ts",
+  "types": "./dist/types/infiniforge.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types/infiniforge.d.ts",
       "import": "./dist/esm/infiniforge.module.js",
       "require": "./dist/cjs/infiniforge.js"
+    },
+    "./exporter_polyfills": {
+      "types": "./dist/types/exporter_polyfills.d.ts",
+      "import": "./dist/esm/exporter_polyfills.module.js",
+      "require": "./dist/cjs/exporter_polyfills.js"
     }
   },
   "readme": "README.md",
@@ -31,9 +37,14 @@
     "package.json",
     "dist/cjs/infiniforge.js",
     "dist/cjs/infiniforge.js.map",
+    "dist/cjs/exporter_polyfills.js",
+    "dist/cjs/exporter_polyfills.js.map",
     "dist/esm/infiniforge.module.js",
     "dist/esm/infiniforge.module.js.map",
-    "dist/types.d.ts"
+    "dist/esm/exporter_polyfills.module.js",
+    "dist/esm/exporter_polyfills.module.js.map",
+    "dist/types/infiniforge.d.ts",
+    "dist/types/exporter_polyfills.d.ts"
   ],
   "repository": {
     "type": "git",

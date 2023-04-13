@@ -6,15 +6,20 @@ import dts from "rollup-plugin-dts";
 
 export default [
   {
-    input: "./src/infiniforge/index.ts",
+    input: {
+      infiniforge: "./src/infiniforge/index.ts",
+      exporter_polyfills: "./src/infiniforge/utilities/exporter_polyfills.ts",
+    },
     output: [
       {
-        file: "./dist/esm/infiniforge.module.js",
+        entryFileNames: "esm/[name].module.js",
+        dir: "./dist",
         format: "esm",
         sourcemap: true,
       },
       {
-        file: "./dist/cjs/infiniforge.js",
+        entryFileNames: "cjs/[name].js",
+        dir: "./dist",
         format: "cjs",
         sourcemap: true,
       },
@@ -31,8 +36,17 @@ export default [
     external: ["lodash", "three", "seedrandom", "vblob", "canvas"],
   },
   {
-    input: "./src/infiniforge/index.ts",
-    output: [{ file: "dist/types.d.ts", format: "esm" }],
+    input: {
+      infiniforge: "./src/infiniforge/index.ts",
+      exporter_polyfills: "./src/infiniforge/utilities/exporter_polyfills.ts",
+    },
+    output: [
+      {
+        entryFileNames: "types/[name].d.ts",
+        dir: "./dist",
+        format: "esm",
+      },
+    ],
     plugins: [dts.default({ tsconfig: "./tsconfig.json" })],
   },
 ];

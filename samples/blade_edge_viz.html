@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://unpkg.com/konva@8.4.3/konva.min.js"></script>
+  <meta charset="utf-8" />
+  <title>Konva Modify Curves with Anchor Points Demo</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #f0f0f0;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script>
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const blueprintXOffset = 100;
+    const blueprintYOffset = 200;
+    const blueprintWidth = 100;
+    const blueprintLength = 500;
+
+    const stage = new Konva.Stage({
+      container: "container",
+      width: width,
+      height: height,
+    });
+
+    const layer = new Konva.Layer();
+    stage.add(layer);
+
+    const backgroundRect = new Konva.Rect({
+      fill: "#d9d9d9",
+      width: 500,
+      height: 100,
+      x: blueprintXOffset,
+      y: blueprintYOffset,
+    });
+    layer.add(backgroundRect);
+
+    // function to create the anchor point for the tip of the blade
+    function createBladeTipAnchor(x, y) {
+      const anchor = new Konva.Circle({
+        x: blueprintXOffset + x,
+        y: blueprintYOffset + (blueprintWidth / 2.0) + y,
+        radius: 5,
+        stroke: "#ffff66",
+        fill: "#3399ff",
+        strokeWidth: 0,
+        draggable: true,
+      });
+      layer.add(anchor);
+
+      // add hover styling
+      anchor.on("mouseover", function () {
+        document.body.style.cursor = "pointer";
+        this.strokeWidth(2);
+      });
+
+      anchor.on("mouseout", function () {
+        document.body.style.cursor = "default";
+        this.strokeWidth(0);
+      });
+
+      anchor.on("dragmove", function () {
+        updateDottedLines();
+      });
+
+      anchor.dragBoundFunc(function (pos) {
+        // The tip anchor for the blade can only move in the y-direction
+        return {
+          x: this.absolutePosition().x,
+          y: pos.y,
+        };
+      });
+
+      return anchor;
+    }
+
+    // function to create the anchor point for where the tang is
+    function createTangAnchor(x, y) {
+      const anchor = new Konva.Circle({
+        x: blueprintXOffset + x + blueprintLength,
+        y: blueprintYOffset + (blueprintWidth / 2.0) + y,
+        radius: 5,
+        stroke: "#00ff00",
+        fill: "#00ff00",
+        strokeWidth: 0,
+        draggable: false,
+      });
+      layer.add(anchor);
+
+      return anchor;
+    }
+
+    // function to create the control point for the spine of the blade
+    function createSpineControlPoint(x, y) {
+      const anchor = new Konva.Circle({
+        x: blueprintXOffset + x + (blueprintLength / 2),
+        y: blueprintYOffset + (blueprintWidth / 2.0) + y,
+        radius: 5,
+        stroke: "#00ff00",
+        fill: "#ff3300",
+        strokeWidth: 0,
+        draggable: true,
+      });
+      layer.add(anchor);
+
+      // add hover styling
+      anchor.on("mouseover", function () {
+        document.body.style.cursor = "pointer";
+        this.strokeWidth(2);
+      });
+
+      anchor.on("mouseout", function () {
+        document.body.style.cursor = "default";
+        this.strokeWidth(0);
+      });
+
+      anchor.on("dragmove", function () {
+        updateDottedLines();
+      });
+
+      return anchor;
+    }
+
+
+    const spineCurve = {
+      tip: createBladeTipAnchor(0, 0),
+      tang: createTangAnchor(0, 0),
+      control: createSpineControlPoint(0, 0),
+    };
+
+    const upperBladeCurve = {
+      tip: spineCurve.tip,
+      base: createTangAnchor(0, -blueprintWidth / 2),
+      control: createSpineControlPoint(0, -blueprintWidth / 2),
+    };
+
+    const lowerBladeCurve = {
+      tip: spineCurve.tip,
+      base: createTangAnchor(0, blueprintWidth / 2),
+      control: createSpineControlPoint(0, blueprintWidth / 2),
+    };
+
+    // function to update line points from anchors
+    function updateDottedLines() {
+      const sp = spineCurve;
+      const spineLinePath = layer.findOne("#spineLinePath");
+
+      spineLinePath.points([
+        sp.tang.x(),
+        sp.tang.y(),
+        sp.control.x(),
+        sp.control.y(),
+        sp.tip.x(),
+        sp.tip.y(),
+      ]);
+    }
+
+
+    // User a custom shape for the curve
+    const spineLine = new Konva.Shape({
+      stroke: "darkgrey",
+      strokeWidth: 2,
+      sceneFunc: (ctx, shape) => {
+        ctx.beginPath();
+        ctx.moveTo(spineCurve.tang.x(), spineCurve.tang.y());
+        ctx.quadraticCurveTo(
+          spineCurve.control.x(),
+          spineCurve.control.y(),
+          spineCurve.tip.x(),
+          spineCurve.tip.y()
+        );
+        ctx.fillStrokeShape(shape);
+      },
+    });
+    layer.add(spineLine);
+
+    const upperBladeLine = new Konva.Shape({
+      stroke: "darkgrey",
+      strokeWidth: 2,
+      sceneFunc: (ctx, shape) => {
+        ctx.beginPath();
+        ctx.moveTo(upperBladeCurve.base.x(), upperBladeCurve.base.y());
+        ctx.quadraticCurveTo(
+          upperBladeCurve.control.x(),
+          upperBladeCurve.control.y(),
+          upperBladeCurve.tip.x(),
+          upperBladeCurve.tip.y()
+        );
+        ctx.fillStrokeShape(shape);
+      },
+    });
+    layer.add(upperBladeLine);
+
+    const lowerBladeLine = new Konva.Shape({
+      stroke: "darkgrey",
+      strokeWidth: 2,
+      sceneFunc: (ctx, shape) => {
+        ctx.beginPath();
+        ctx.moveTo(lowerBladeCurve.base.x(), lowerBladeCurve.base.y());
+        ctx.quadraticCurveTo(
+          lowerBladeCurve.control.x(),
+          lowerBladeCurve.control.y(),
+          lowerBladeCurve.tip.x(),
+          lowerBladeCurve.tip.y()
+        );
+        ctx.fillStrokeShape(shape);
+      },
+    });
+    layer.add(lowerBladeLine);
+
+    const spineLinePath = new Konva.Line({
+      dash: [10, 10, 0, 10],
+      strokeWidth: 3,
+      stroke: "black",
+      lineCap: "round",
+      id: "spineLinePath",
+      opacity: 0.3,
+      points: [0, 0],
+    });
+    layer.add(spineLinePath);
+
+
+    updateDottedLines();
+  </script>
+</body>
+
+</html>
