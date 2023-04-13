@@ -35,16 +35,7 @@
     "LICENSE.txt",
     "README.md",
     "package.json",
-    "dist/cjs/infiniforge.js",
-    "dist/cjs/infiniforge.js.map",
-    "dist/cjs/exporter_polyfills.js",
-    "dist/cjs/exporter_polyfills.js.map",
-    "dist/esm/infiniforge.module.js",
-    "dist/esm/infiniforge.module.js.map",
-    "dist/esm/exporter_polyfills.module.js",
-    "dist/esm/exporter_polyfills.module.js.map",
-    "dist/types/infiniforge.d.ts",
-    "dist/types/exporter_polyfills.d.ts"
+    "dist/*"
   ],
   "repository": {
     "type": "git",
@@ -87,6 +78,7 @@
     "prettier": "2.8.2",
     "rimraf": "^3.0.2",
     "rollup": "^3.9.1",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-dts": "^5.1.1",
     "seedrandom": "^3.0.5",
     "three": "^0.148.0",

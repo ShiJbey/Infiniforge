@@ -1,9 +1,31 @@
 import * as THREE from "three";
-import { Weapon, ThreeMesher } from "infiniforge";
+import {
+  ThreeMesher,
+  MaterialFactory,
+  WeaponFunction,
+  GeometryData,
+  WeaponGenerator,
+} from "infiniforge";
+
+class BilletBladeFunction extends WeaponFunction {
+  execute(weapon) {
+    const bladeGeometry = new GeometryData();
+    weapon.parts.set("blade", bladeGeometry);
+  }
+}
 
 (function main() {
-  const w = new Weapon();
+  const generator = new WeaponGenerator(23, new BilletBladeFunction());
+  const w = generator.generate();
   const mesher = new ThreeMesher();
+
+  MaterialFactory.register("basic_red", () => {
+    return new THREE.MeshStandardMaterial({ color: "#FF0000" });
+  });
+
+  MaterialFactory.register("basic_yellow", () => {
+    return new THREE.MeshStandardMaterial({ color: "#FFFF00" });
+  });
 
   console.log(w);
   console.log(mesher);
@@ -69,7 +91,7 @@ import { Weapon, ThreeMesher } from "infiniforge";
   scene.add(ground);
 
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+  const material = MaterialFactory.instantiate("basic_yellow", {});
   const cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
 

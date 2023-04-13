@@ -3,6 +3,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import dts from "rollup-plugin-dts";
+import copy from "rollup-plugin-copy";
 
 export default [
   {
@@ -32,6 +33,15 @@ export default [
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
       terser(),
+      copy({
+        targets: [
+          {
+            src: "./data/cross_sections/*",
+            dest: "./dist/data/cross_sections",
+          },
+          { src: "./data/templates/*", dest: "./dist/data/templates" },
+        ],
+      }),
     ],
     external: ["lodash", "three", "seedrandom", "vblob", "canvas"],
   },
