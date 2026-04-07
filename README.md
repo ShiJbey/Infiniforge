@@ -1,4 +1,4 @@
-# Infiniforge
+# Infiniforge (Deprecated)
 
 > [!WARNING]
 > This project is deprecated and is not supported or maintained.
