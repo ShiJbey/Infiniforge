@@ -1,4 +1,7 @@
-# Infiniforge
+# Infiniforge (Deprecated)
+
+> [!WARNING]
+> This project is deprecated and is not supported or maintained.
 
 TypeScript library for procedurally generating 3D fantasy swords using ThreeJS.
 
